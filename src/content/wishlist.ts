@@ -6,6 +6,8 @@
 // we look for links to /app/<id> that carry the title as text. The native
 // Mac flag arrives via Steam's appdetails API (resolved in lib/auto).
 import { attach } from '../lib/auto';
+import { SCAN_DEBOUNCE_MS } from '../lib/constants';
+import { coalesce } from '../lib/debounce';
 import { getSettings } from '../lib/settings';
 import '../styles.css';
 
@@ -37,15 +39,7 @@ function scan(): void {
   });
 }
 
-let scheduled = false;
-function scheduleScan(): void {
-  if (scheduled) return;
-  scheduled = true;
-  setTimeout(() => {
-    scheduled = false;
-    scan();
-  }, 300);
-}
+const scheduleScan = coalesce(scan, SCAN_DEBOUNCE_MS);
 
 void (async () => {
   if (!(await getSettings()).surfaces.wishlist) return;

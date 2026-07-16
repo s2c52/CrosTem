@@ -4,6 +4,7 @@
 // Parsers for CodeWeavers HTML. All scraping lives here so that a site
 // redesign only requires touching this file.
 import { isRecord } from './guards';
+import { logDebug } from './log';
 import type { CwAppPage, CwRatingBox, CwSearchResult, CwVersionRating } from '../types';
 
 function parseDoc(html: string): Document {
@@ -104,8 +105,9 @@ export function parseAppPage(html: string): CwAppPage | null {
           break;
         }
       }
-    } catch {
-      // Malformed JSON-LD: ignored
+    } catch (e) {
+      // Malformed JSON-LD: ignored.
+      logDebug('malformed JSON-LD ignored', e);
     }
   });
 

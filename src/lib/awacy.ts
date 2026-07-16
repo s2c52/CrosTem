@@ -9,6 +9,7 @@
 import * as cache from './cache';
 import { fetchExt } from './client';
 import { isRecord } from './guards';
+import { logDebug } from './log';
 import { normalizeName } from './matcher';
 import type { AnticheatInfo, AnticheatStatus } from '../types';
 
@@ -67,8 +68,9 @@ async function getIndex(): Promise<AwacyIndex | null> {
     const index = buildIndex(Array.isArray(parsed) ? parsed : []);
     await cache.set('awacy:index', index, await cache.ttlResult());
     return index;
-  } catch {
+  } catch (e) {
     // AWACY down: no anticheat data, the verdict keeps working.
+    logDebug('AWACY index unavailable', e);
     await cache.set('awacy:index', null, cache.TTL_NEGATIVE);
     return null;
   }

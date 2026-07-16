@@ -4,6 +4,8 @@
 // Toolbar popup: manual search against CodeWeavers (useful outside
 // Steam) + access to settings. Uses the same client/cache as the rest.
 import { appUrl, search } from '../lib/client';
+import { MAX_POPUP_RESULTS, SEARCH_DEBOUNCE_MS } from '../lib/constants';
+import { debounce } from '../lib/debounce';
 import { t } from '../lib/i18n';
 
 function mustGet(id: string): HTMLElement {
@@ -40,7 +42,6 @@ function starsSpan(n: number | null): HTMLElement {
   return span;
 }
 
-let timer: ReturnType<typeof setTimeout> | undefined;
 let lastQuery = '';
 
 async function runSearch(q: string): Promise<void> {
@@ -62,7 +63,7 @@ async function runSearch(q: string): Promise<void> {
       resultsEl.appendChild(none);
       return;
     }
-    for (const r of results.slice(0, 8)) {
+    for (const r of results.slice(0, MAX_POPUP_RESULTS)) {
       const a = document.createElement('a');
       a.className = 'result';
       a.href = appUrl(r.slug);
@@ -88,7 +89,5 @@ async function runSearch(q: string): Promise<void> {
   }
 }
 
-queryEl.addEventListener('input', () => {
-  clearTimeout(timer);
-  timer = setTimeout(() => void runSearch(queryEl.value), 350);
-});
+const debouncedSearch = debounce(() => void runSearch(queryEl.value), SEARCH_DEBOUNCE_MS);
+queryEl.addEventListener('input', debouncedSearch);

@@ -4,8 +4,10 @@
 // High-level client used by the content scripts: fetch (via the service
 // worker, which avoids CORS), parsing and caching of CodeWeavers and Steam data.
 import * as cache from './cache';
+import { MAX_CONCURRENT_FETCHES } from './constants';
 import { baseName } from './matcher';
 import { parseAppPage, parseSearchResults } from './parser';
+import { createFetchQueue } from './queue';
 import type {
   CwAppPage,
   CwSearchResult,
@@ -90,29 +92,7 @@ export async function getApp(slug: string): Promise<CwAppPage | null> {
 // Throttled and cached long-term because of Steam's rate limit.
 
 const STEAM_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
-const STEAM_MAX_CONCURRENT = 2;
-let steamActive = 0;
-const steamQueue: Array<{
-  appid: string;
-  resolve: (v: SteamDetails | null) => void;
-  reject: (e: unknown) => void;
-}> = [];
-const steamInflight = new Map<string, Promise<SteamDetails | null>>();
-
-function steamPump(): void {
-  while (steamActive < STEAM_MAX_CONCURRENT && steamQueue.length > 0) {
-    const job = steamQueue.shift();
-    if (!job) break;
-    steamActive++;
-    fetchSteamDetails(job.appid)
-      .then(job.resolve, job.reject)
-      .finally(() => {
-        steamActive--;
-        steamInflight.delete(job.appid);
-        steamPump();
-      });
-  }
-}
+const steamQueue = createFetchQueue<SteamDetails | null>(MAX_CONCURRENT_FETCHES);
 
 function stripHtml(s: string): string {
   return s
@@ -163,12 +143,5 @@ async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
 export async function steamDetails(appid: string): Promise<SteamDetails | null> {
   const cached = await cache.get<SteamDetails | null>('steam:' + appid);
   if (cached !== undefined) return cached;
-  const existing = steamInflight.get(appid);
-  if (existing) return existing;
-  const p = new Promise<SteamDetails | null>((resolve, reject) => {
-    steamQueue.push({ appid, resolve, reject });
-    steamPump();
-  });
-  steamInflight.set(appid, p);
-  return p;
+  return steamQueue.run(appid, () => fetchSteamDetails(appid));
 }

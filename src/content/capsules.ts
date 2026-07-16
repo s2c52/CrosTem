@@ -4,6 +4,8 @@
 // Star overlay on game capsules (images) across the whole
 // Steam store: front page, deals, categories, "more like this", etc.
 import { attach } from '../lib/auto';
+import { SCAN_DEBOUNCE_MS } from '../lib/constants';
+import { coalesce } from '../lib/debounce';
 import { getSettings } from '../lib/settings';
 import '../styles.css';
 
@@ -42,15 +44,7 @@ function scan(): void {
   document.querySelectorAll<HTMLAnchorElement>('a[href*="/app/"]').forEach(processAnchor);
 }
 
-let scheduled = false;
-function scheduleScan(): void {
-  if (scheduled) return;
-  scheduled = true;
-  setTimeout(() => {
-    scheduled = false;
-    scan();
-  }, 300);
-}
+const scheduleScan = coalesce(scan, SCAN_DEBOUNCE_MS);
 
 // Wishlist rows carry their own inline badge (content/wishlist.ts);
 // overlaying their capsules too would duplicate the information.

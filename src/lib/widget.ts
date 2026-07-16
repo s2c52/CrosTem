@@ -7,6 +7,7 @@
 import { agwPageUrl } from './agw';
 import { AWACY_SITE } from './awacy';
 import { appUrl, searchUrl } from './client';
+import { MAX_VERSION_ROWS } from './constants';
 import { t } from './i18n';
 import type {
   AgwCompat,
@@ -178,7 +179,9 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
         (mac.reportCount ? ` (${t('reports', String(mac.reportCount))})` : '');
       sec.appendChild(el('div', 'crostem-muted crostem-small', testedLine));
     }
-    const macVersions = (data.cw?.versions ?? []).filter((v) => v.platform === 'macOS').slice(0, 3);
+    const macVersions = (data.cw?.versions ?? [])
+      .filter((v) => v.platform === 'macOS')
+      .slice(0, MAX_VERSION_ROWS);
     if (macVersions.length > 0) {
       const table = el('div', 'crostem-versions');
       for (const v of macVersions) {

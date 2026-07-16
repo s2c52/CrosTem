@@ -8,6 +8,7 @@ import { resolveNativeArch } from '../lib/arch';
 import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
 import { appCacheKey, getApp, search, searchCacheKey, steamCacheKey } from '../lib/client';
+import { logWarn } from '../lib/log';
 import { rank } from '../lib/matcher';
 import { computeVerdict } from '../lib/verdict';
 import { getSettings } from '../lib/settings';
@@ -170,7 +171,7 @@ if (appidFromPath && nameFromDom) {
         .then((arch) => {
           if (arch) show(renderNativeBadge(arch));
         })
-        .catch(() => {});
+        .catch((e: unknown) => logWarn('native arch resolution failed', e));
       return;
     }
     void resolveAll(false);

@@ -11,6 +11,8 @@ import { resolveNativeArch } from './arch';
 import { anticheatLookup } from './awacy';
 import * as cache from './cache';
 import { appUrl, getApp, search, searchUrl, steamDetails } from './client';
+import { LAZY_ROOT_MARGIN } from './constants';
+import { logDebug, logWarn } from './log';
 import { rank } from './matcher';
 import { computeVerdict } from './verdict';
 import { getSettings } from './settings';
@@ -35,7 +37,7 @@ const io = new IntersectionObserver(
       if (opts) void resolveAndRender(entry.target as HTMLElement, opts);
     }
   },
-  { rootMargin: '150px' },
+  { rootMargin: LAZY_ROOT_MARGIN },
 );
 
 export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
@@ -52,7 +54,8 @@ export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
 async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<void> {
   try {
     render(el, await resolve(opts), opts);
-  } catch {
+  } catch (e) {
+    logWarn('badge resolution failed', e);
     // Never remove the provisional native badge because of a network failure.
     render(el, opts.native === true ? { kind: 'native', arch: null } : { kind: 'none' }, opts);
   }
@@ -70,8 +73,9 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
         if (name == null) name = details.name;
         if (native == null) native = details.mac;
       }
-    } catch {
-      // Steam failed; carry on with what we have
+    } catch (e) {
+      // Steam failed; carry on with what we have.
+      logDebug('steam details unavailable', e);
     }
   }
 
@@ -85,10 +89,16 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   // Secondary sources in parallel with the CodeWeavers resolution
   // (each can be disabled in the options).
   const agwPromise = settings.sources.agw
-    ? agwLookup(name, opts.appid).catch(() => null)
+    ? agwLookup(name, opts.appid).catch((e: unknown) => {
+        logDebug('AGW lookup failed', e);
+        return null;
+      })
     : Promise.resolve(null);
   const acPromise = settings.sources.anticheat
-    ? anticheatLookup(opts.appid, name).catch(() => null)
+    ? anticheatLookup(opts.appid, name).catch((e: unknown) => {
+        logDebug('anticheat lookup failed', e);
+        return null;
+      })
     : Promise.resolve(null);
 
   // CodeWeavers: user choice > name matching.

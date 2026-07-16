@@ -8,6 +8,7 @@
 import * as cache from './cache';
 import { fetchExt } from './client';
 import { asString, isRecord } from './guards';
+import { logDebug } from './log';
 import { baseName, rank } from './matcher';
 import type { AgwCompat, AgwStatus, CwSearchResult } from '../types';
 
@@ -116,8 +117,9 @@ export async function agwLookup(name: string, appid?: string | null): Promise<Ag
     const ranked = rank(name, asResults);
     const pick = ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
     result = pick ? (rows.find((r) => r.page === pick.slug) ?? null) : null;
-  } catch {
+  } catch (e) {
     result = null; // AGW being down must not break the widget
+    logDebug('AGW query failed', e);
   }
 
   await cache.set(cacheKey, result, result ? await cache.ttlResult() : cache.TTL_NEGATIVE);

@@ -5,35 +5,15 @@
 // (which cannot do cross-origin fetches due to CORS; with host_permissions the
 // service worker can). The body comes back as text and is parsed in the content
 // script (DOMParser does not exist in service workers; JSON.parse works anywhere).
+import { isAllowedUrl } from './lib/allowlist';
+import { MAX_CONCURRENT_FETCHES } from './lib/constants';
+import { createFetchQueue } from './lib/queue';
 import type { ExtFetchRequest, ExtFetchResponse } from './types';
 
-// Strict allowlist of queryable external resources.
-const ALLOWED: Array<{ host: string; pathPrefix: string }> = [
-  { host: 'www.codeweavers.com', pathPrefix: '/compatibility' },
-  { host: 'www.applegamingwiki.com', pathPrefix: '/w/api.php' },
-  { host: 'raw.githubusercontent.com', pathPrefix: '/AreWeAntiCheatYet/' },
-];
-
-const MAX_CONCURRENT = 2;
-
-let activeCount = 0;
-const queue: Array<{ url: string; resolve: (r: ExtFetchResponse) => void }> = [];
-const inflight = new Map<string, Promise<ExtFetchResponse>>();
-
-function pump(): void {
-  while (activeCount < MAX_CONCURRENT && queue.length > 0) {
-    const job = queue.shift();
-    if (!job) break;
-    activeCount++;
-    doFetch(job.url)
-      .then(job.resolve, job.resolve)
-      .finally(() => {
-        activeCount--;
-        inflight.delete(job.url);
-        pump();
-      });
-  }
-}
+// Queue state is module-level and therefore ephemeral: MV3 may kill the
+// service worker at any time. That is fine — pending sendMessage calls
+// fail on the content-script side and are retried there.
+const queue = createFetchQueue<ExtFetchResponse>(MAX_CONCURRENT_FETCHES);
 
 async function doFetch(url: string): Promise<ExtFetchResponse> {
   try {
@@ -46,25 +26,8 @@ async function doFetch(url: string): Promise<ExtFetchResponse> {
 }
 
 function enqueueFetch(url: string): Promise<ExtFetchResponse> {
-  let parsed: URL;
-  try {
-    parsed = new URL(url);
-  } catch {
-    return Promise.resolve({ ok: false, error: 'Invalid URL' });
-  }
-  const allowed =
-    parsed.protocol === 'https:' &&
-    ALLOWED.some((a) => parsed.hostname === a.host && parsed.pathname.startsWith(a.pathPrefix));
-  if (!allowed) return Promise.resolve({ ok: false, error: 'URL not allowed' });
-
-  const existing = inflight.get(url);
-  if (existing) return existing;
-  const p = new Promise<ExtFetchResponse>((resolve) => {
-    queue.push({ url, resolve });
-    pump();
-  });
-  inflight.set(url, p);
-  return p;
+  if (!isAllowedUrl(url)) return Promise.resolve({ ok: false, error: 'URL not allowed' });
+  return queue.run(url, () => doFetch(url));
 }
 
 chrome.runtime.onMessage.addListener((msg: ExtFetchRequest, _sender, sendResponse) => {
