@@ -4,7 +4,7 @@
   "private": true,
   "description": "CrosTem — Mac compatibility for Steam (browser extension)",
   "author": "Sacha Gennari (s2c52)",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "vite",
