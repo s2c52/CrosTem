@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CrosTem</title>
+  <link rel="stylesheet" href="./options.css">
+</head>
+<body>
+  <main>
+    <h1><span class="logo"></span> <span data-i18n="optionsTitle"></span></h1>
+
+    <section>
+      <h2 data-i18n="optSurfaces"></h2>
+      <label><input type="checkbox" id="surface-app"> <span data-i18n="optSurfaceApp"></span></label>
+      <label><input type="checkbox" id="surface-capsules"> <span data-i18n="optSurfaceCapsules"></span></label>
+      <label><input type="checkbox" id="surface-search"> <span data-i18n="optSurfaceSearch"></span></label>
+      <label><input type="checkbox" id="surface-wishlist"> <span data-i18n="optSurfaceWishlist"></span></label>
+    </section>
+
+    <section>
+      <h2 data-i18n="optSources"></h2>
+      <label><input type="checkbox" id="source-cw"> <span data-i18n="optSourceCw"></span></label>
+      <label><input type="checkbox" id="source-agw"> <span data-i18n="optSourceAgw"></span></label>
+      <label><input type="checkbox" id="source-anticheat"> <span data-i18n="optSourceAc"></span></label>
+    </section>
+
+    <section>
+      <h2 data-i18n="optCxVersion"></h2>
+      <input type="text" id="cx-version" size="6" maxlength="10">
+      <p class="muted" data-i18n="optCxVersionNote"></p>
+    </section>
+
+    <section>
+      <h2 data-i18n="optCache"></h2>
+      <label class="inline"><span data-i18n="optCacheTtl"></span>
+        <input type="number" id="cache-ttl" min="1" max="30" step="1">
+      </label>
+      <p class="muted"><span id="cache-count"></span></p>
+      <button id="clear-cache" data-i18n="optCacheClear"></button>
+    </section>
+
+    <section>
+      <h2 data-i18n="optChoices"></h2>
+      <p class="muted"><span id="choices-count"></span></p>
+      <button id="export-choices" data-i18n="optExport"></button>
+      <button id="import-choices" data-i18n="optImport"></button>
+      <button id="clear-choices" class="danger" data-i18n="optClearChoices"></button>
+      <input type="file" id="import-file" accept="application/json" hidden>
+    </section>
+
+    <p class="muted" data-i18n="optReloadNote"></p>
+    <p id="status" class="status" role="status"></p>
+  </main>
+  <script type="module" src="./options.ts"></script>
+</body>
+</html>

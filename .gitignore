@@ -3,3 +3,9 @@ node_modules/
 dist/
 *.zip
 .higinio/local*
+.worktrees/
+.backups/
+.higinio/run/
+e2e-results/
+store-assets/.profile/
+crostem-v*.zip

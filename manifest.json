@@ -1,70 +1,78 @@
 {
   "manifest_version": 3,
-  "name": "CrosTem — CrossOver Compatibility for Steam",
-  "version": "0.2.0",
-  "description": "Shows CodeWeavers CrossOver (macOS) compatibility ratings on Steam store pages, capsules, search results and wishlist.",
-  "author": "Sacha Gennari (s2c52)",
-  "permissions": ["storage"],
-  "host_permissions": ["https://www.codeweavers.com/*"],
+  "name": "__MSG_appName__",
+  "version": "0.6.0",
+  "description": "__MSG_appDesc__",
+  "author": {
+    "email": "s2c52@users.noreply.github.com"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.codeweavers.com/*",
+    "https://www.applegamingwiki.com/*",
+    "https://raw.githubusercontent.com/*"
+  ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.ts",
+    "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["https://store.steampowered.com/app/*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-app.js"
+      "matches": [
+        "https://store.steampowered.com/app/*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/app.ts"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://store.steampowered.com/search*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-search.js"
+      "matches": [
+        "https://store.steampowered.com/search*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/search.ts"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://store.steampowered.com/wishlist*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-wishlist.js"
+      "matches": [
+        "https://store.steampowered.com/wishlist*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/wishlist.ts"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://store.steampowered.com/*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-capsules.js"
+      "matches": [
+        "https://store.steampowered.com/*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/capsules.ts"
+      ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "default_locale": "en",
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "CrosTem",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
 }

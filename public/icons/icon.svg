@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- CrosTem: estrella de rating + semáforo de veredicto sobre fondo Steam.
+       Sin logos de terceros (Apple/Valve) para evitar problemas de marca. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2838"/>
+      <stop offset="1" stop-color="#16202d"/>
+    </linearGradient>
+    <linearGradient id="star" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd75e"/>
+      <stop offset="1" stop-color="#ffc82c"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#bg)"/>
+  <rect x="2" y="2" width="124" height="124" rx="24" fill="none" stroke="#2a3f5a" stroke-width="2"/>
+  <!-- Estrella -->
+  <path fill="url(#star)" d="M64 18 L76.8 46.2 L107 49.6 L84.5 70.2 L90.5 100 L64 84.6 L37.5 100 L43.5 70.2 L21 49.6 L51.2 46.2 Z"/>
+  <!-- Semáforo -->
+  <circle cx="42" cy="111" r="7" fill="#7bc144"/>
+  <circle cx="64" cy="111" r="7" fill="#e5b567"/>
+  <circle cx="86" cy="111" r="7" fill="#d94126"/>
+</svg>
