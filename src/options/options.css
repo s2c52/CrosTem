@@ -1,0 +1,67 @@
+body {
+  background: linear-gradient(135deg, #1b2838 0%, #16202d 100%);
+  color: #c6d4df;
+  font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  margin: 0;
+  min-height: 100vh;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 560px;
+  padding: 24px 16px 48px;
+}
+
+h1 {
+  color: #66c0f4;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+h2 {
+  border-bottom: 1px solid #2a3f5a;
+  color: #66c0f4;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  margin: 24px 0 8px;
+  padding-bottom: 4px;
+  text-transform: uppercase;
+}
+
+label {
+  display: block;
+  margin: 6px 0;
+}
+
+label.inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type="text"], input[type="number"] {
+  background: #2a3f5a;
+  border: 1px solid #3d5a80;
+  border-radius: 3px;
+  color: #fff;
+  padding: 4px 8px;
+  width: 70px;
+}
+
+button {
+  background: #2a3f5a;
+  border: 1px solid #3d5a80;
+  border-radius: 3px;
+  color: #66c0f4;
+  cursor: pointer;
+  margin-right: 6px;
+  padding: 6px 12px;
+}
+
+button:hover { background: #3d5a80; color: #fff; }
+button.danger { color: #d94126; }
+
+.muted { color: #8f98a0; font-size: 12px; }
+.status { color: #a3cf06; font-size: 13px; min-height: 18px; }
+.logo { font-size: 18px; }

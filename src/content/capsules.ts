@@ -1,6 +1,7 @@
 // Overlay de estrellas sobre las cápsulas (imágenes) de juego en toda la
 // tienda de Steam: portada, ofertas, categorías, "more like this", etc.
 import { attach } from '../lib/auto';
+import { getSettings } from '../lib/settings';
 import '../styles.css';
 
 const APP_LINK = /\/app\/(\d+)/;
@@ -51,6 +52,9 @@ function scheduleScan(): void {
 // Las filas de la wishlist llevan su propio badge inline (content/wishlist.ts);
 // superponer también sus cápsulas duplicaría la información.
 if (!location.pathname.startsWith('/wishlist')) {
-  scan();
-  new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });
+  void (async () => {
+    if (!(await getSettings()).surfaces.capsules) return;
+    scan();
+    new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });
+  })();
 }

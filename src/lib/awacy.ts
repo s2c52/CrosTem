@@ -45,7 +45,7 @@ async function getIndex(): Promise<AwacyIndex | null> {
   try {
     const body = await fetchExt(AWACY_URL);
     const index = buildIndex(JSON.parse(body));
-    await cache.set('awacy:index', index, cache.TTL_RESULT);
+    await cache.set('awacy:index', index, await cache.ttlResult());
     return index;
   } catch {
     // AWACY caído: sin datos de anticheat, el veredicto sigue funcionando.
