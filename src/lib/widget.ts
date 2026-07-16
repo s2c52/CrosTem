@@ -1,7 +1,9 @@
 // Constructores de DOM del widget de ficha y elementos comunes. Los textos
-// se mantienen en inglés, fieles a la redacción de CodeWeavers.
+// se mantienen en inglés, fieles a la redacción de las fuentes.
+import { agwPageUrl } from './agw';
+import { AWACY_SITE } from './awacy';
 import { appUrl, searchUrl } from './client';
-import type { CwAppPage, RankedResult } from '../types';
+import type { AgwCompat, AnticheatInfo, CwAppPage, RankedResult, Verdict, VerdictLevel } from '../types';
 
 function el(tag: string, className?: string, text?: string): HTMLElement {
   const node = document.createElement(tag);
@@ -21,6 +23,13 @@ export function starsEl(n: number | null, max = 5): HTMLElement {
   return span;
 }
 
+/** Punto de semáforo del veredicto. */
+export function dotEl(level: VerdictLevel, title?: string): HTMLElement {
+  const dot = el('span', 'crostem-dot crostem-dot-' + level);
+  if (title) dot.title = title;
+  return dot;
+}
+
 function statusClass(status: string): string {
   const s = (status || '').toLowerCase();
   if (s.includes('great')) return 'crostem-status-great';
@@ -29,6 +38,13 @@ function statusClass(status: string): string {
     return 'crostem-status-bad';
   }
   return 'crostem-status-mid';
+}
+
+function agwStatusClass(status: string): string {
+  if (status === 'perfect' || status === 'playable') return 'crostem-status-great';
+  if (status === 'runs') return 'crostem-status-mid';
+  if (status === 'na' || status === 'unknown') return 'crostem-muted';
+  return 'crostem-status-bad';
 }
 
 function linkEl(href: string, text: string, className = 'crostem-link'): HTMLAnchorElement {
@@ -49,7 +65,7 @@ function box(title: string): HTMLElement {
 }
 
 export function renderNativeBadge(): HTMLElement {
-  const root = box('macOS');
+  const root = box('Runs on Mac?');
   const body = el('div', 'crostem-body');
   body.appendChild(el('span', 'crostem-native-badge', 'Native on macOS'));
   body.appendChild(el('div', 'crostem-muted crostem-small',
@@ -59,82 +75,147 @@ export function renderNativeBadge(): HTMLElement {
 }
 
 export function renderLoading(): HTMLElement {
-  const root = box('CrossOver');
-  root.appendChild(el('div', 'crostem-body crostem-muted', 'Checking CodeWeavers…'));
+  const root = box('Runs on Mac?');
+  root.appendChild(el('div', 'crostem-body crostem-muted', 'Checking compatibility sources…'));
   return root;
 }
 
 export function renderError(message?: string): HTMLElement {
-  const root = box('CrossOver');
+  const root = box('Runs on Mac?');
   const body = el('div', 'crostem-body');
-  body.appendChild(el('div', 'crostem-muted', message ?? "Couldn't reach CodeWeavers."));
+  body.appendChild(el('div', 'crostem-muted', message ?? "Couldn't reach the compatibility sources."));
   root.appendChild(body);
   return root;
 }
 
-export function renderNoData(gameName: string): HTMLElement {
-  const root = box('CrossOver');
-  const body = el('div', 'crostem-body');
-  body.appendChild(el('div', 'crostem-muted', 'No data on CodeWeavers.'));
-  body.appendChild(linkEl(searchUrl(gameName), 'Search CodeWeavers manually ↗'));
-  root.appendChild(body);
-  return root;
+export interface FullCompat {
+  cw: CwAppPage | null;
+  cwSlug: string | null;
+  agw: AgwCompat | null;
+  ac: AnticheatInfo | null;
+  verdict: Verdict;
 }
 
 export interface AppWidgetOpts {
-  slug: string;
+  gameName: string;
   cwName?: string;
   approximate: boolean;
   onChangeMatch?: () => void;
+  onRefresh?: () => void;
 }
 
-/** Widget completo para la ficha del juego. */
-export function renderAppWidget(data: CwAppPage, opts: AppWidgetOpts): HTMLElement {
-  const root = box('CrossOver · macOS');
+function section(root: HTMLElement, title: string): HTMLElement {
+  const sec = el('div', 'crostem-section');
+  sec.appendChild(el('div', 'crostem-section-title', title));
+  root.appendChild(sec);
+  return sec;
+}
+
+/** Widget completo para la ficha del juego: veredicto + desglose por fuente. */
+export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElement {
+  const root = box('Runs on Mac?');
   const body = el('div', 'crostem-body');
 
-  const mac = data.mac;
+  // Veredicto sintetizado
   const headline = el('div', 'crostem-headline');
-  headline.appendChild(starsEl(mac?.stars ?? null));
-  headline.appendChild(el('span', 'crostem-status ' + statusClass(mac?.status ?? ''),
-    mac?.status || 'Unrated'));
+  headline.appendChild(dotEl(data.verdict.level));
+  headline.appendChild(el('span', 'crostem-verdict-label crostem-verdict-' + data.verdict.level,
+    data.verdict.label));
   body.appendChild(headline);
 
-  if (mac?.lastTested) {
-    body.appendChild(el('div', 'crostem-muted crostem-small',
-      'Last Tested: ' + mac.lastTested +
-      (mac.reportCount ? ` (${mac.reportCount} reports)` : '')));
-  }
-
-  const macVersions = data.versions.filter((v) => v.platform === 'macOS').slice(0, 3);
-  if (macVersions.length > 0) {
-    const table = el('div', 'crostem-versions');
-    for (const v of macVersions) {
-      const row = el('div', 'crostem-version-row' +
-        (v.version.startsWith('26.') ? ' crostem-version-current' : ''));
-      row.appendChild(el('span', 'crostem-version-label', v.version));
-      row.appendChild(starsEl(v.stars));
-      table.appendChild(row);
+  // CodeWeavers
+  const mac = data.cw?.mac ?? null;
+  if (mac && data.cwSlug) {
+    const sec = section(body, 'CrossOver — CodeWeavers');
+    const line = el('div', 'crostem-headline');
+    line.appendChild(starsEl(mac.stars));
+    line.appendChild(el('span', 'crostem-status ' + statusClass(mac.status), mac.status || 'Unrated'));
+    sec.appendChild(line);
+    if (mac.lastTested) {
+      sec.appendChild(el('div', 'crostem-muted crostem-small',
+        'Last Tested: ' + mac.lastTested +
+        (mac.reportCount ? ` (${mac.reportCount} reports)` : '')));
     }
-    body.appendChild(table);
+    const macVersions = (data.cw?.versions ?? []).filter((v) => v.platform === 'macOS').slice(0, 3);
+    if (macVersions.length > 0) {
+      const table = el('div', 'crostem-versions');
+      for (const v of macVersions) {
+        const row = el('div', 'crostem-version-row' +
+          (v.version.startsWith('26.') ? ' crostem-version-current' : ''));
+        row.appendChild(el('span', 'crostem-version-label', v.version));
+        row.appendChild(starsEl(v.stars));
+        table.appendChild(row);
+      }
+      sec.appendChild(table);
+    }
+    const foot = el('div', 'crostem-small');
+    foot.appendChild(linkEl(appUrl(data.cwSlug), 'View on CodeWeavers ↗', 'crostem-link crostem-small'));
+    if (opts.approximate && opts.cwName) {
+      foot.appendChild(el('span', 'crostem-muted crostem-small', ` · approximate match: “${opts.cwName}”`));
+    }
+    if (opts.onChangeMatch) {
+      const change = el('a', 'crostem-link crostem-small', ' · Wrong match?') as HTMLAnchorElement;
+      change.href = '#';
+      change.addEventListener('click', (e) => {
+        e.preventDefault();
+        opts.onChangeMatch!();
+      });
+      foot.appendChild(change);
+    }
+    sec.appendChild(foot);
+  } else {
+    const sec = section(body, 'CrossOver — CodeWeavers');
+    sec.appendChild(el('div', 'crostem-muted crostem-small', 'No data.'));
+    sec.appendChild(linkEl(searchUrl(opts.gameName), 'Search CodeWeavers ↗', 'crostem-link crostem-small'));
   }
 
+  // AppleGamingWiki
+  if (data.agw) {
+    const sec = section(body, 'AppleGamingWiki');
+    const rows: Array<[string, string]> = [
+      ['CrossOver', data.agw.crossover],
+      ['Parallels', data.agw.parallels],
+      ['Rosetta 2', data.agw.rosetta2],
+    ];
+    for (const [label, status] of rows) {
+      if (status === 'na' || status === 'unknown') continue;
+      const row = el('div', 'crostem-version-row');
+      row.appendChild(el('span', 'crostem-version-label', label));
+      row.appendChild(el('span', agwStatusClass(status), status));
+      sec.appendChild(row);
+    }
+    sec.appendChild(linkEl(agwPageUrl(data.agw.page), 'View on AppleGamingWiki ↗', 'crostem-link crostem-small'));
+  }
+
+  // Anticheat
+  if (data.ac) {
+    const sec = section(body, 'Anticheat');
+    const blocked = data.ac.status === 'Denied' || data.ac.status === 'Broken';
+    const line = el('div', blocked ? 'crostem-status-bad' : 'crostem-small');
+    line.textContent = `${blocked ? '⚠ ' : ''}${data.ac.anticheats.join(', ') || 'Anticheat'}: ${data.ac.status}`;
+    sec.appendChild(line);
+    const note = el('div', 'crostem-muted crostem-small');
+    note.textContent = 'Linux/Proton data — indicative for CrossOver. ';
+    note.appendChild(linkEl(AWACY_SITE, 'AreWeAntiCheatYet ↗', 'crostem-link crostem-small'));
+    sec.appendChild(note);
+  }
+
+  // Pie: refresh + atribución
   const footer = el('div', 'crostem-footer');
-  footer.appendChild(linkEl(appUrl(opts.slug), 'View on CodeWeavers ↗'));
-  if (opts.approximate && opts.cwName) {
-    footer.appendChild(el('div', 'crostem-muted crostem-small',
-      `Approximate match: “${opts.cwName}”`));
-  }
-  if (opts.onChangeMatch) {
-    const change = el('a', 'crostem-link crostem-small', 'Wrong match?') as HTMLAnchorElement;
-    change.href = '#';
-    change.addEventListener('click', (e) => {
+  if (opts.onRefresh) {
+    const refresh = el('a', 'crostem-link crostem-small', '↻ Refresh data') as HTMLAnchorElement;
+    refresh.href = '#';
+    refresh.title = 'Clear cached data for this game and re-check all sources';
+    refresh.addEventListener('click', (e) => {
       e.preventDefault();
-      opts.onChangeMatch!();
+      opts.onRefresh!();
     });
-    footer.appendChild(change);
+    footer.appendChild(refresh);
   }
+  footer.appendChild(el('div', 'crostem-muted crostem-small',
+    'Data: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Not affiliated.'));
   body.appendChild(footer);
+
   root.appendChild(body);
   return root;
 }
@@ -145,7 +226,7 @@ export function renderCandidateList(
   gameName: string,
   onPick: (picked: RankedResult) => void,
 ): HTMLElement {
-  const root = box('CrossOver · macOS');
+  const root = box('Runs on Mac?');
   const body = el('div', 'crostem-body');
   body.appendChild(el('div', 'crostem-muted crostem-small',
     'Several possible matches on CodeWeavers — pick the right one:'));

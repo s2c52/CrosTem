@@ -29,14 +29,28 @@ export async function set<T>(key: string, value: T, ttlMs: number = TTL_RESULT):
   await chrome.storage.local.set({ ['cache:' + key]: entry });
 }
 
-export async function getSlugChoice(appid: string): Promise<string | undefined> {
-  return storageGet<string>('choice:' + appid);
+/** Invalida entradas concretas (botón refresh del widget). */
+export async function remove(...keys: string[]): Promise<void> {
+  await chrome.storage.local.remove(keys.map((k) => 'cache:' + k));
 }
 
-export async function setSlugChoice(appid: string, slug: string): Promise<void> {
-  await chrome.storage.local.set({ ['choice:' + appid]: slug });
+// Correcciones de matching confirmadas por el usuario, por fuente de datos
+// ('cw' → slug de CodeWeavers, 'agw' → página de AppleGamingWiki).
+export type MatchSource = 'cw' | 'agw';
+
+export async function getSourceChoice(source: MatchSource, appid: string): Promise<string | undefined> {
+  const v = await storageGet<string>(`choice:${source}:${appid}`);
+  if (v !== undefined) return v;
+  // Clave heredada de v0.2/v0.3 (solo existía la elección de CodeWeavers).
+  if (source === 'cw') return storageGet<string>('choice:' + appid);
+  return undefined;
 }
 
-export async function clearSlugChoice(appid: string): Promise<void> {
-  await chrome.storage.local.remove('choice:' + appid);
+export async function setSourceChoice(source: MatchSource, appid: string, value: string): Promise<void> {
+  await chrome.storage.local.set({ [`choice:${source}:${appid}`]: value });
+}
+
+export async function clearSourceChoice(source: MatchSource, appid: string): Promise<void> {
+  await chrome.storage.local.remove(`choice:${source}:${appid}`);
+  if (source === 'cw') await chrome.storage.local.remove('choice:' + appid);
 }
