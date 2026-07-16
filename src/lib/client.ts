@@ -5,6 +5,7 @@
 // worker, which avoids CORS), parsing and caching of CodeWeavers and Steam data.
 import * as cache from './cache';
 import { MAX_CONCURRENT_FETCHES } from './constants';
+import { asString, isRecord } from './guards';
 import { baseName } from './matcher';
 import { parseAppPage, parseSearchResults } from './parser';
 import { createFetchQueue } from './queue';
@@ -101,26 +102,25 @@ function stripHtml(s: string): string {
     .trim();
 }
 
-/** Pure parsing of the appdetails response (testable with fixtures). */
+/** Pure parsing of the appdetails response (testable with fixtures).
+ * The response is untrusted input: every field is validated, never cast. */
 export function parseSteamDetails(json: unknown, appid: string): SteamDetails | null {
-  const entry = (
-    json as Record<string, { success?: boolean; data?: Record<string, unknown> } | undefined>
-  )?.[appid];
-  if (!entry?.success || !entry.data) return null;
+  if (!isRecord(json)) return null;
+  const entry = json[appid];
+  if (!isRecord(entry) || entry.success !== true || !isRecord(entry.data)) return null;
   const data = entry.data;
-  const mac = !!(data.platforms as { mac?: boolean } | undefined)?.mac;
+  const mac = isRecord(data.platforms) && data.platforms.mac === true;
   // mac_requirements comes with the basic filter; Steam sends [] when empty.
-  const mr = data.mac_requirements as
-    { minimum?: string; recommended?: string } | unknown[] | undefined;
-  const macRequirements =
-    mac && mr && !Array.isArray(mr)
-      ? stripHtml([mr.minimum, mr.recommended].filter(Boolean).join(' ')) || null
-      : null;
-  const yearMatch = String((data.release_date as { date?: string } | undefined)?.date ?? '').match(
-    /\b(19|20)\d{2}\b/,
-  );
+  const mr = data.mac_requirements;
+  let macRequirements: string | null = null;
+  if (mac && isRecord(mr)) {
+    const joined = [asString(mr.minimum), asString(mr.recommended)].filter(Boolean).join(' ');
+    macRequirements = stripHtml(joined) || null;
+  }
+  const releaseDate = isRecord(data.release_date) ? asString(data.release_date.date) : undefined;
+  const yearMatch = (releaseDate ?? '').match(/\b(19|20)\d{2}\b/);
   return {
-    name: (data.name as string | undefined) ?? null,
+    name: asString(data.name) ?? null,
     mac,
     macRequirements,
     releaseYear: yearMatch ? Number(yearMatch[0]) : null,

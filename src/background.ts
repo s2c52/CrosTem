@@ -7,8 +7,9 @@
 // script (DOMParser does not exist in service workers; JSON.parse works anywhere).
 import { isAllowedUrl } from './lib/allowlist';
 import { MAX_CONCURRENT_FETCHES } from './lib/constants';
+import { isExtFetchRequest } from './lib/guards';
 import { createFetchQueue } from './lib/queue';
-import type { ExtFetchRequest, ExtFetchResponse } from './types';
+import type { ExtFetchResponse } from './types';
 
 // Queue state is module-level and therefore ephemeral: MV3 may kill the
 // service worker at any time. That is fine — pending sendMessage calls
@@ -30,10 +31,8 @@ function enqueueFetch(url: string): Promise<ExtFetchResponse> {
   return queue.run(url, () => doFetch(url));
 }
 
-chrome.runtime.onMessage.addListener((msg: ExtFetchRequest, _sender, sendResponse) => {
-  if (msg?.type === 'extFetch' && typeof msg.url === 'string') {
-    void enqueueFetch(msg.url).then(sendResponse);
-    return true; // asynchronous response
-  }
-  return false;
+chrome.runtime.onMessage.addListener((msg: unknown, _sender, sendResponse) => {
+  if (!isExtFetchRequest(msg)) return false;
+  void enqueueFetch(msg.url).then(sendResponse);
+  return true; // asynchronous response
 });

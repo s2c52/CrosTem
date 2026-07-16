@@ -128,11 +128,17 @@ export interface CwSignal {
   status?: string;
 }
 
-// Content script ⇄ service worker messaging.
+// Content script ⇄ service worker messaging: a discriminated union so
+// both ends stay type-checked when new message kinds appear. The service
+// worker validates payloads at runtime (guards.isExtFetchRequest) —
+// message shape is a trust boundary, not a type annotation.
 export interface ExtFetchRequest {
   type: 'extFetch';
   url: string;
 }
+
+/** Every message a content script may send to the service worker. */
+export type ExtMessage = ExtFetchRequest;
 
 export type ExtFetchResponse =
   { ok: true; body: string; finalUrl: string } | { ok: false; error: string };
