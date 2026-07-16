@@ -122,7 +122,8 @@ if (appidFromPath && nameFromDom) {
     try {
       // The three sources in parallel (can be disabled in options); AGW and
       // anticheat must not break anything.
-      const sources = (await getSettings()).sources;
+      const settings = await getSettings();
+      const sources = settings.sources;
       const [cw, agw, ac] = await Promise.all([
         sources.cw
           ? resolveCw(forcePicker)
@@ -139,7 +140,6 @@ if (appidFromPath && nameFromDom) {
       }
 
       const verdict = computeVerdict(cw.app?.mac ?? null, agw, ac);
-      const settings = await getSettings();
       show(
         renderAppWidget(
           { cw: cw.app, cwSlug: cw.slug, agw, ac, verdict },

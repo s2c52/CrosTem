@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 // User settings. Stored in chrome.storage.sync (travels with the browser
-// account); content scripts read them once at startup —
-// changes require reloading the Steam tabs.
+// account); memoized per context and refreshed via storage.onChanged.
 
 export interface Settings {
   surfaces: {
@@ -50,6 +49,18 @@ export function mergeSettings(stored: unknown): Settings {
 }
 
 let cached: Settings | null = null;
+
+// Settings changes propagate without reloading Steam tabs: the memo is
+// refreshed on every chrome.storage.sync change. Already-rendered badges
+// keep their DOM; new resolutions pick up the new values.
+// (typeof guard: this module is also imported by unit tests without chrome.)
+if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && KEY in changes) {
+      cached = mergeSettings(changes[KEY]?.newValue);
+    }
+  });
+}
 
 export async function getSettings(): Promise<Settings> {
   if (cached) return cached;
