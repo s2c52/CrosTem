@@ -6,3 +6,4 @@ dist/
 .worktrees/
 .backups/
 .higinio/run/
+e2e-results/

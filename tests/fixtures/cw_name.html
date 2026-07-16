@@ -1,0 +1,805 @@
+<!doctype html>
+<html id="top" lang="en">
+<!--
+ _____ _____ ____  _____
+|     |     |    \|   __|_ _ _ ___ ___ _ _ ___ ___ ___
+|  -_-|  |  |  |  |   __| | | | -_| .'| | | -_|  _|_ -|
+|_____|_____|____/|_____|_____|___|__,|\_/|___|_| |___| v8.0
+
+-->
+<head>
+    <title>Compatibility | CrossOver Mac and Linux | CodeWeavers</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=4">
+    <meta name="google-site-verification" content="yRISRgRSVpqTuG6HWKMCeOXQkCbVEzjj2AoMM3R3uO8">
+    <meta name="facebook-domain-verification" content="z8ap0lkw5dq6hn4c0g9ujimbih5fk2">
+    <meta name="keywords" content="crossover mac, crossover linux, windows compatibility, codeweavers ">
+    <meta name="description" content="Does the Windows software you need to run on Mac or Linux run with CrossOver? CrossOver for Mac and Linux runs thousands of Windows programs, search now!">
+    <meta property="fb:admins" content="544706703">
+    <meta property="fb:app_id" content="137983292939967">
+    <meta property="fb:pages" content="142527800089">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="CrossOver Runs Thousands of Windows Programs. Does it Run Yours?">
+    <meta property="og:description" content="We’re constantly testing and rating CrossOver’s compatibility with Windows software. From business and office to education and reference software, CrossOver runs thousands of Windows programs on Mac and Linux.">
+    <meta property="og:image" content="https://media.codeweavers.com/pub/crossover/website/images/og-images/compatibility_og_1200x630.png">
+    <meta property="og:url" content="https://www.codeweavers.com/compatibility">
+    <meta property="og:site_name" content="CodeWeavers">
+
+    <link rel="canonical" href="https://www.codeweavers.com/compatibility">
+    <link rel="stylesheet" href="https://media.codeweavers.com/pub/crossover/website/css/jquery-ui.min.css?v=1.13.2"
+        integrity="sha384-l1kDk0p6IL5xF2Si2lJ43sizHk9pvbZmtScevg9CUi44uF4VApJM3+7WveNz9QTh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://media.codeweavers.com/pub/crossover/website/css/bootstrap.min.css?v=5.3.3"
+        integrity="sha384-rr7sV2Jz3xKwVk5CjRHAZomf7cUixQthjtK+M+Vhto1cMVpe7SB+gZ9osLyGW9ZJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://media.codeweavers.com/pub/crossover/website/css/main.css?v=1783358106"
+      integrity="sha384-eYsnoIXYG8wJoujXbImT6Fsa2E13oOwALhee/Ou1UiCD1Nk2ezIESU2FKgcul9MO"
+      crossorigin="anonymous" media="screen, print">
+    <link rel="stylesheet" href="https://media.codeweavers.com/pub/crossover/website/css/print.css?v=1716408237"
+      integrity="sha384-EkAkOrugnyfuleIrGIENaMDNlZDd5uDJHCrtW2XYgV4O0fBEp9K1HE7gC1jQwd7g"
+      crossorigin="anonymous" media="print">
+    <link rel="stylesheet" href="https://media.codeweavers.com/pub/crossover/website/css/compatibility.css?v=1759342050"
+      integrity="sha384-d/k0TF78PpT3+ZV4OV3iYRIqNRR9AJO0QxTM7LW7Hf81mFPseTwl/2WPmbjveMs6"
+      crossorigin="anonymous" media="screen, print">
+    <link rel="stylesheet" href="https://media.codeweavers.com/pub/crossover/website/css/footable.standalone.min.css?v=1716408237"
+      integrity="sha384-l3yJ5Qk7/gNasW7QOgiMkEnEWy/OqfSZfIdtpJkw0MI7JlFqXmnG79PpN5es79Mk"
+      crossorigin="anonymous" media="screen, print">
+
+    <script nonce="9cbe516afd7f0a177d742efa19aec2ab43cbc9290c977147e79f21c80c6baf06">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NJJWNVF2');</script>
+    
+    <script src="https://media.codeweavers.com/pub/crossover/website/js/jquery.min.js?v=3.7.1"
+        integrity="sha384-MnTx5+eP/OUWPb9SjwMXShfMET3B3r3gx6HJWG+7Lj6kag+yreDUSG5FDWWG/SHA" crossorigin="anonymous"></script>
+    <script src="https://media.codeweavers.com/pub/crossover/website/js/jquery-ui.min.js?v=1.13.2"
+        integrity="sha384-4D3G3GikQs6hLlLZGdz5wLFzuqE9v4yVGAcOH86y23JqBDPzj9viv0EqyfIa6YUL" crossorigin="anonymous"></script>
+    <script src="https://media.codeweavers.com/pub/crossover/website/js/popper.min.js?v=2.11.8"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://media.codeweavers.com/pub/crossover/website/js/bootstrap.min.js?v=5.3.3"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/30534beb51.js" crossorigin="anonymous"></script>
+    <script src="https://media.codeweavers.com/pub/crossover/website/js/utils.js?v=1784050678&amp;web_root="
+        integrity="sha384-N38lCyZGqKBO9VM871o73HWB/IbBepU9N7j5cNqYJFYRmJvkik25c6ZYfTUGwWVB"
+        crossorigin="anonymous"></script>
+    <script src="https://media.codeweavers.com/pub/crossover/website/js/tableEditor.js?v=1724723577"
+        integrity="sha384-kXFkePxwGAmZ5Mk62MojOJUAE/ml7RLjQUKd1DsTVZ1vy4wBwL9ZEGrLdy3h6Y4g"
+        crossorigin="anonymous"></script>
+    <script src="https://media.codeweavers.com/pub/crossover/website/js/footable.min.js?v=1716408237"
+        integrity="sha384-umg0kJ97ZaNEwBizTW5SB3WjjlIUhbLykfqDKlqpUTFetIsHTcnx/n0CcZhhYqAt"
+        crossorigin="anonymous"></script>
+
+    
+    <link rel="shortcut icon" type="image/png" href="https://media.codeweavers.com/pub/crossover/website/images/cw_logo_128.png">
+    
+</head>
+
+<body class="page-compatibility-template subpage-compatibility-template " data-google_analytics="UA-2371050-1">
+
+<div id="back-to-top"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark navbar-cw navbar-cw-dark">
+    <div class="container-fluid g-0">
+        <a href="https://www.codeweavers.com">
+            <img class="ani-pulse-twitch navbar-cw-logo" src="https://media.codeweavers.com/pub/crossover/website/images/CodeWeavers-logo.png">
+            <img class="ani-pulse-twitch navbar-cw-logo-icon" src="https://media.codeweavers.com/pub/crossover/website/images/CodeWeavers-logo-symbol-white.png">
+        </a>
+        <div class="utility-links">
+            
+            <a class="header-navlink brandnav-pj" href="/portjump"><i class="fa-kit fa-cw-portjump"></i><span>PortJump</span></a>
+            <a class="header-navlink brandnav-em" href="/execmode"><i class="fa-kit fa-cw-execmode"></i><span>ExecMode</span></a>
+            
+            <form id="nav-menu-search" class="compatibility-search-form d-inline m-0 p-0" action="/search" method="get">
+                <span id="nav-search-form" class="noshow">
+                    <input type="text" name="q" value="" placeholder="search">
+                    <button class="btn bg-transparent" type="submit"><i class="fa-solid fa-search"></i></button>
+                </span>
+                <a id="nav-search-link" href="/search" title="Search App Compatibility (for website search hit enter)"><i class="fa-solid fa-search fa-sm"></i></a>
+            </form>
+            <span id="nav-menu-cart" class="cw-cart-container noshow">
+                <a href="/store/checkout"><i class="fa-solid fa-shopping-cart fa-sm"></i></a>
+            </span>
+            
+            
+            
+            
+            
+            
+            
+            <div class="nav-dropdown dropdown login-container">
+                <a id="header-login-lnk" class="login-text" href="/login?referer=" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa-solid fa-sign-in-alt fa-fw"></i> Login
+                </a>
+                <span id="header-login-popup" class="dropdown-menu dropdown-menu-end" aria-labelledby="header-login-lnk"></span>
+            </div>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span><i class="fa-solid fa-bars fa-1x"></i></span></button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item showmobile">
+                    <a class="nav-link" href="/crossover">CrossOver®<span class="visually-hidden">(current)</span></a>
+                </li>
+                <li class="nav-item hidemobile">
+                    <a class="nav-link nav-logo" href="/crossover"><img src="https://media.codeweavers.com/pub/crossover/website/images/CrossOver-logo-wht.png" alt="CrossOver Platform Liberator Logo" class="cw-zoom-fade"></a>
+                    <span class="nav-desc">Run your favorite Windows Apps on Mac and Linux</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/crossover/download"><i class="fa-solid fa-download fa-fw"></i> Free CrossOver Trial</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/store"><i class="fa-solid fa-shopping-cart fa-fw"></i> Buy CrossOver</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/compatibility"><i class="fa-solid fa-database fa-fw"></i> App Compatibility</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://support.codeweavers.com/"><i class="fa-solid fa-question-circle fa-fw"></i> Support</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/support/forums"><i class="fa-solid fa-comments fa-fw"></i> Forums</a>
+                </li>
+                <li class="nav-item showmobile">
+                    <a class="nav-link" href="/portjump">PortJump®</a>
+                </li>
+                <li class="nav-item hidemobile">
+                    <a class="nav-link nav-logo" href="/portjump"><img src="https://media.codeweavers.com/pub/crossover/website/images/PortJump-logo-wht.png" alt="PortJump" class="cw-zoom-fade"></a>
+                    <span class="nav-desc">Port your App or Game to Mac and Linux</span>
+                </li>
+                <li class="nav-item showmobile">
+                    <a class="nav-link" href="/execmode">ExecMode®</a>
+                </li>
+                <li class="nav-item hidemobile nav-item-border-bottom-blue">
+                    <a class="nav-link nav-logo" href="/execmode"><img src="https://media.codeweavers.com/pub/crossover/website/images/ExecMode-logo-wht.png" alt="ExecMode" class="cw-zoom-fade"></a>
+                    <span class="nav-desc">Technical consulting services</span>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navBarAbout" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-solid fa-eye fa-fw"></i> About Us
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navBarAbout">
+                        <a class="dropdown-item" href="/about"><i class="fa-duotone fa-book fa-fw"></i> Our Company</a>
+                        <a class="dropdown-item" href="/about/news"><i class="fa-duotone fa-newspaper fa-fw"></i> News</a>
+                        <a class="dropdown-item" href="/blog"><i class="fa-solid fa-comment-alt fa-fw"></i> Blog</a>
+                        <a class="dropdown-item" href="/jobs"><i class="fa-duotone fa-user-astronaut fa-fw"></i> Employment</a>
+                        <a class="dropdown-item" href="/open-source"><i class="fa-solid fa-code fa-fw"></i> Open Source</a>
+                        <a class="dropdown-item" href="/wine"><i class="fa-solid fa-wine-glass-alt fa-fw"></i> The Wine Project</a>
+                    </div>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link minor" href="/contact-us"><i class="fa-solid fa-envelope fa-fw"></i> Contact Us</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- END NAVBAR -->
+
+<!-- ALERT -->
+
+<!-- END ALERT -->
+
+<!-- MASTHEAD -->
+<div id="masthead" class="masthead compatibility-banner">
+
+    <!-- PAGE MASTHEAD -->
+    
+<div class="container-fluid">
+    <div class="row g-0">
+        <div class="col-md-8 rotate-3deg">
+            <h1 class="banner-hd">
+                <span class="txt_yellow">Run</span>
+                 thousands of Windows programs on Mac and Linux
+            </h1>
+        </div>
+        <div class="col-md-4">
+            <div class="sub-brand-wrapper">
+                <a href="/crossover"><img src="https://media.codeweavers.com/pub/crossover/website/images/CrossOver-logo-wht.png" class="fill-width cw-zoom-fade" alt="CrossOver Platform Liberator Logo"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- END PAGE MASTHEAD -->
+
+</div>
+<!-- END MASTHEAD -->
+
+<!-- CONTENT WELL (BODY FROM TEMPLATE) -->
+<div id="page" class="page-compatibility">
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form name="appSearch" action="/compatibility#results" method="get">
+<div class="container-fluid secondary-navbar">
+    <nav class="navbar navbar-appdb navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span><i class="fa-solid fa-bars fa-1x"></i></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link nav-dropdown-link hideShow" data-hideShow="appdb-search-menu">
+                            <i class="fa-solid fa-bars"></i>
+                        </a>
+                        <div id="appdb-search-menu" class="bg-dark border border-dark">
+
+                            <div class="form-group row mt-0">
+                                <label class="col-sm-3 text-muted">Browse</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="dropdown dropdown-select">
+                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="appdb-browse-mode"
+                                                data-bs-toggle="dropdown" data-field="input[name=browse]">
+                                                <span class="dropdown-choice"><i class="fa fa-sort-alpha-asc fa-fw"></i> Alphabetically</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a href="#" class="dropdown-item" data-option=""><i class="fa fa-compass fa-fw"></i> By Relevance</a>
+                                                <a href="#" class="dropdown-item" data-option="name"><i class="fa fa-sort-alpha-asc fa-fw"></i> Alphabetically</a>
+                                                <a href="#" class="dropdown-item" data-option="c4p"><i class="fa-solid fa-list-ul fa-fw"></i> By CrossTie</a>
+                                                <a href="#" class="dropdown-item" data-option="votes"><i class="fa-solid fa-check fa-fw"></i> By Votes</a>
+                                                <a href="#" class="dropdown-item" data-option="group"><i class="fa-solid fa-list-alt fa-fw"></i> By Group</a>
+                                                <a href="#" class="dropdown-item" data-option="cat"><i class="fa-solid fa-th-list fa-fw"></i> By Category</a>
+                                                <a href="#" class="dropdown-item" data-option="company"><i class="fa-regular fa-building fa-fw"></i> By Company</a>
+                                                <a href="#" class="dropdown-item" data-option="preview"><i class="fa-regular fa-magnifying-glass-play fa-fw"></i> CrossOver Preview Apps</a>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="browse" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-3 text-muted">Description</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-solid fa-info fa-fw"></i></span>
+                                        <input type="text" name="app_desc" value="" class="form-control" placeholder="search by software description">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-3 text-muted">Company</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-regular fa-building fa-fw"></i></span>
+                                        <input type="text" name="company" value="" class="form-control" placeholder="search by software company">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="rating" class="col-sm-3 text-muted">Rating</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <ul class="star-rating" data-field="input[name=rating]">
+                                            <li data-option="1"><i class="fa-regular fa-star"></i></li>
+                                            <li data-option="2"><i class="fa-regular fa-star"></i></li>
+                                            <li data-option="3"><i class="fa-regular fa-star"></i></li>
+                                            <li data-option="4"><i class="fa-regular fa-star"></i></li>
+                                            <li data-option="5"><i class="fa-regular fa-star"></i></li>
+                                        </ul>
+                                        <input type="hidden" name="rating" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="medal" class="col-sm-3 text-muted">Rating Platform</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="dropdown dropdown-select">
+                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="appdb-browse-platform"
+                                                data-bs-toggle="dropdown" data-field="input[name=platform]">
+                                                <span class="dropdown-choice"><i class="fa-solid fa-sort fa-fw"></i> Show All </span>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a href="#" class="dropdown-item" data-option=""><i class="fa-solid fa-sort fa-fw"></i> Show All </a>
+                                                <a href="#" class="dropdown-item" data-option="mac"><i class="fa-brands fa-apple fa-fw"></i> Mac</a>
+                                                <a href="#" class="dropdown-item" data-option="linux"><i class="fa-brands fa-linux fa-fw"></i> Linux</a>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="platform" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-3 text-muted">Last Modified</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><span class="fa-regular fa-calendar-alt fa-fw"></span></span>
+                                        <span class="input-group-text">From</span>
+                                        <input type="datetime-local" id="date_start" name="date_start" value="" class="date-picker form-control"
+                                            placeholder="yyyy-mm-dd hh:mm">
+                                        <span class="input-group-text">To</span>
+                                        <input type="datetime-local" id="date_end" name="date_end" value="" class="date-picker form-control"
+                                            placeholder="yyyy-mm-dd hh:mm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-3"></label>
+                                <div class="col-9">
+                                    <div class="input-group">
+                                        <a href="/compatibility/" class="btn btn-outline-secondary"><i class="fa-solid fa-sync"></i> Reset Search</a> &nbsp;
+                                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> <span class="hidden-xs">Submit Search</span></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li class="nav-item nav-item-stretch">
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text"><i class="fa fa-search"></i></span>
+                            <input type="text" name="name" value="elden" class="form-control" placeholder="search for your Windows software by name">
+                            <button type="submit" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<input type="hidden" name="search" value="app">
+</form>
+
+
+<div class="container-fluid steelwall">
+<div class="logo-symbol-top">
+    <div class="container py-5">
+
+        <h2 class="text-uppercase mt-4 mb-3 bold">Search Before You Purchase</h2>
+
+        <i class="fa-duotone fa-search fa-5x d-inline-block txt_magenta float-end my-2 ms-5"></i>
+
+        <p class="justify">We test hundreds and hundreds of Windows programs for CrossOver compatibility every month. Our team diligently tests and rates Windows software adding to our compatibility database daily.  Search thousands of CrossOver tested Windows programs to see if the Windows software you want to run on Mac and Linux will run with CrossOver.</p>
+
+        <p>If you cannot find your application in our database. Feel free to <a href="/compatibility/submit">submit</a> it.</p>
+
+        <p class="mb-5">
+            <a href="#stats" class="btn btn-cw-outline"><i class="fa-duotone fa-chart-pie"></i> Stats</a>
+            <a href="#top10" class="btn btn-cw-outline"><i class="fa-duotone fa-medal"></i> Top Lists</a>
+            <a href="/compatibility/submit" class="btn btn-cw-outline"><i class="fa-regular fa-share-alt-square"></i> Submit App</a>
+            <a href="#bettertesters" class="btn btn-cw-outline"><i class="fa-duotone fa-users-crown"></i> BetterTesters</a>
+            <a href="#try" class="btn btn-cw-outline"><i class="fa-duotone fa-info-circle"></i> Try CrossOver</a>
+        </p>
+
+    </div>
+</div>
+</div>
+
+
+<div id="results" class="container-fluid">
+<div class="logo-symbol-bottom py-5">
+    <div class="container">
+
+<table id="teTable-app" class="teTable footable table table-striped table-hover">
+<thead class="table-dark">
+<tr>
+
+
+<th scope="col"><span>Application</span></th>
+<th scope="col" data-hide="phone"><span>Company</span></th>
+<th scope="col" data-hide="phone"><span>Last Updated</span></th>
+<th scope="col"><span> Rating <i class="fa fa-apple"></i> </span></th>
+
+</tr>
+</thead>
+<tbody>
+<tr id="key_18041">
+<td style="width:50%"><a href="/compatibility/crossover/elden-ring">Elden Ring</a></td>
+<td>FromSoftware Inc.</td>
+<td style="white-space:nowrap;">2026-06-30 11:48</td>
+<td><ul class="star-rating-table"><li class="active"><i class="fa-solid fa-star"></i></li><li class="active"><i class="fa-solid fa-star"></i></li><li class="active"><i class="fa-solid fa-star"></i></li><li class="active"><i class="fa-solid fa-star"></i></li><li class="active"><i class="fa-solid fa-star"></i></li></ul></td>
+
+</tr>
+<tr id="key_21857">
+<td style="width:50%"><a href="/compatibility/crossover/elden-ring-nightreign">ELDEN RING NIGHTREIGN</a></td>
+<td>FromSoftware Inc.</td>
+<td style="white-space:nowrap;">2026-07-09 13:27</td>
+<td><ul class="star-rating-table"><li class="active"><i class="fa-solid fa-star"></i></li><li class="active"><i class="fa-solid fa-star"></i></li><li class="active"><i class="fa-solid fa-star"></i></li><li class="active"><i class="fa-solid fa-star"></i></li><li><i class="fa-regular fa-star"></i></li></ul></td>
+
+</tr>
+</tbody>
+</table>
+
+
+    </div>
+</div>
+</div>
+
+
+
+
+
+<!-- begin section container - Stats -->
+<div id="stats" class="container-fluid steelwall py-5">
+    <div class="container">
+
+        <div class="float-start m-5"><i class="fa-duotone fa-database text-muted rotate-3deg" style="font-size:250px;"></i></div>
+
+        <h2 class="txt_magenta m-0">Compatibility Database Statistics</h2>
+
+        <div class="m-5">
+        
+<p><b>22,540</b> applications in database.</p>
+<p><b>4,572</b> gold medal applications in database.</p>
+<p><b>4,036</b> 1-click install via CrossTie applications in database.</p>
+<p><b>593,716</b> total CrossTie downloads to date.</p>
+<p><a href="/compatibility/crossover/steam"><b>Steam</b></a> is the top downloaded CrossTie with <b>12,177</b> downloads.</p>
+<p><a href="/compatibility/crossover/helldivers-2"><b>HELLDIVERS 2</b></a> is the top voted application with <b>84</b> votes.</p>
+
+        </div>
+
+    </div>
+</div>
+<!-- end section container -->
+
+
+<!-- begin section container - Top Apps -->
+<div id="top10" class="container-fluid bg-hex py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+
+                <h2 class="txt_magenta mb-3 big"><i class="fa-duotone fa-medal"></i> Top 10 Applications</h2>
+
+                <p>
+                    These are the applications that our users have contributed ranks and votes for. We use this data to help us determine which applications we will focus our development effort toward.
+                </p>
+
+                <div class="m-5">
+                    <form name="catp" id="catp" action="/compatibility/#top10" method="get" style="display:inline-block">
+<select name="cat" size="1" class="form-control form-select form-control-inline onChangeFormSubmit">
+<option value="0">Show All</option>
+<option value="82">Educational</option>
+<option value="2">Games</option>
+<option value="29">Multimedia</option>
+<option value="5">Networking &amp; Communication</option>
+<option value="4">Productivity</option>
+<option value="6">Programming &amp; Development Tools</option>
+<option value="47">Reference, Documentation &amp; Informational</option>
+<option value="8">Scientific, Technical &amp; Math</option>
+<option value="105">Special Purpose</option>
+<option value="7">Utilities</option>
+</select>
+</form>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+
+                <h3 class="txt_yellow mb-3">Top 10 Ranked</h3>
+
+                <p>
+                    This list is by the number of submitted ranks, not the medal value of the ranks. To rank an application,
+                    <a href="/compatibility#top">search</a> for the application, then simply click the
+                    <i class="fa fa-star"></i><i>Submit Rating</i> button.
+                </p>
+
+                <ol>
+                    <li class="roomy"><small>42,307</small> &middot; <a href="/compatibility/crossover/steam">Steam</a></li><li class="roomy"><small>2,413</small> &middot; <a href="/compatibility/crossover/battlenet-desktop-app">Battle.net Desktop App</a></li><li class="roomy"><small>2,342</small> &middot; <a href="/compatibility/crossover/epic-games-store">Epic Games Store</a></li><li class="roomy"><small>1,852</small> &middot; <a href="/compatibility/crossover/diablo-iv">Diablo IV</a></li><li class="roomy"><small>1,462</small> &middot; <a href="/compatibility/crossover/diablo-ii-resurrected">Diablo II: Resurrected</a></li><li class="roomy"><small>1,201</small> &middot; <a href="/compatibility/crossover/grand-theft-auto-v">Grand Theft Auto V Legacy Edition</a></li><li class="roomy"><small>1,144</small> &middot; <a href="/compatibility/crossover/guild-wars-2">Guild Wars 2</a></li><li class="roomy"><small>1,117</small> &middot; <a href="/compatibility/crossover/Ubisoft-Connect-Installer">Ubisoft Connect</a></li><li class="roomy"><small>1,086</small> &middot; <a href="/compatibility/crossover/counter-strike-global-offensive">Counter-Strike 2</a></li><li class="roomy"><small>1,082</small> &middot; <a href="/compatibility/crossover/lord-of-the-rings-online">Lord of the Rings Online</a></li>
+                </ol>
+
+            </div>
+            <div class="col-md-6">
+
+                <h3 class="txt_yellow mb-3">Top 10 Voted</h3>
+
+                <p>
+                    To vote for an application, <a href="/compatibility#top">search</a> for the application,
+                    then simply click the <i class="fa fa-check"></i><i>Vote</i> button.
+                </p>
+
+                <ol>
+                <li class="roomy"><small>84</small> &middot; <a href="/compatibility/crossover/helldivers-2">HELLDIVERS 2</a></li><li class="roomy"><small>47</small> &middot; <a href="/compatibility/crossover/death-stranding-2-on-the-beach">DEATH STRANDING 2: ON THE BEACH</a></li><li class="roomy"><small>44</small> &middot; <a href="/compatibility/crossover/overwatch-2">Overwatch</a></li><li class="roomy"><small>41</small> &middot; <a href="/compatibility/crossover/cities-skylines-ii">Cities: Skylines II</a></li><li class="roomy"><small>37</small> &middot; <a href="/compatibility/crossover/age-of-empires-iv">Age of Empires IV: Anniversary Edition</a></li><li class="roomy"><small>36</small> &middot; <a href="/compatibility/crossover/arc-raiders">ARC Raiders</a></li><li class="roomy"><small>36</small> &middot; <a href="/compatibility/crossover/kingdom-come-deliverance-ii">Kingdom Come: Deliverance II</a></li><li class="roomy"><small>33</small> &middot; <a href="/compatibility/crossover/anno-117-pax-romana">Anno 117: Pax Romana</a></li><li class="roomy"><small>30</small> &middot; <a href="/compatibility/crossover/diablo-iv">Diablo IV</a></li><li class="roomy"><small>28</small> &middot; <a href="/compatibility/crossover/anno-117-pax-romana-demo">Anno 117: Pax Romana Demo</a></li>
+                </ol>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end section container -->
+
+
+
+
+
+
+
+
+<!-- begin section container - Top BetterTesters -->
+<div id="bettertesters" class="container-fluid bg-triangles">
+    <div class="tire-tracks-blue">
+    <div class="container py-5">
+
+        <div class="float-end m-5"><i class="fa-duotone fa-users-crown text-muted rotate-3deg" style="font-size:250px;"></i></div>
+
+        <h2 class="txt_magenta mb-3 big">BetterTesters</h2>
+
+        <p>
+            We <i class="fa-duotone fa-heart txt_red"></i> our users. So much so in fact that we have created our BetterTester program. Users in this program help us make CrossOver a better experience and earn epic loot. Check out our <a href="/bettertester">BetterTester</a> page if you are interested in signing up.</p>
+        </p>
+
+        <h3 class="text-muted mb-3">Top 10 BetterTesters</h3>
+
+        <table class="table table-dark table-striped mx-5" style="width:auto;min-width:50%;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Rank</th>
+                    <th class="text_right">XP</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=862833">Dadu042</a></span></td>
+                <td><span class="user-level user-level-24 cw-tooltip" title="User Level: 230"><i class="fa-duotone fa-fw fa-narwhal fa-flip-horizontal"></i><span class="user-level-rank">230</span></span></td>
+                <td class="monospace text_right">230,175</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=361668">Kieran Kenderessy</a></span></td>
+                <td><span class="user-level user-level-13 cw-tooltip" title="User Level: 124"><i class="fa-duotone fa-fw fa-dog fa-flip-horizontal"></i><span class="user-level-rank">124</span></span></td>
+                <td class="monospace text_right">124,020</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=993413">Humang</a></span></td>
+                <td><span class="user-level user-level-10 cw-tooltip" title="User Level: 92"><i class="fa-duotone fa-fw fa-dove fa-flip-horizontal"></i><span class="user-level-rank">92</span></span></td>
+                <td class="monospace text_right">92,730</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=1088443">Mark Rode</a></span></td>
+                <td><span class="user-level user-level-8 cw-tooltip" title="User Level: 79"><i class="fa-duotone fa-fw fa-rabbit fa-flip-horizontal"></i><span class="user-level-rank">79</span></span></td>
+                <td class="monospace text_right">79,055</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=419805">Arnauld de La Grandiere</a></span></td>
+                <td><span class="user-level user-level-8 cw-tooltip" title="User Level: 74"><i class="fa-duotone fa-fw fa-rabbit fa-flip-horizontal"></i><span class="user-level-rank">74</span></span></td>
+                <td class="monospace text_right">74,500</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=1000854">Mario Muñoz</a></span></td>
+                <td><span class="user-level user-level-6 cw-tooltip" title="User Level: 55"><i class="fa-duotone fa-fw fa-turtle fa-flip-horizontal"></i><span class="user-level-rank">55</span></span></td>
+                <td class="monospace text_right">55,680</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=314052">Pierre</a></span></td>
+                <td><span class="user-level user-level-5 cw-tooltip" title="User Level: 45"><i class="fa-duotone fa-fw fa-duck fa-flip-horizontal"></i><span class="user-level-rank">45</span></span></td>
+                <td class="monospace text_right">45,245</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=328137">Paulthetall</a></span></td>
+                <td><span class="user-level user-level-5 cw-tooltip" title="User Level: 43"><i class="fa-duotone fa-fw fa-duck fa-flip-horizontal"></i><span class="user-level-rank">43</span></span></td>
+                <td class="monospace text_right">43,905</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=942724">Dogmatix</a></span></td>
+                <td><span class="user-level user-level-5 cw-tooltip" title="User Level: 43"><i class="fa-duotone fa-fw fa-duck fa-flip-horizontal"></i><span class="user-level-rank">43</span></span></td>
+                <td class="monospace text_right">43,548</td>
+            </tr>
+
+            <tr>
+                <td><span class="userProfileView"><a href="/profile?id=116732">David.</a></span></td>
+                <td><span class="user-level user-level-5 cw-tooltip" title="User Level: 42"><i class="fa-duotone fa-fw fa-duck fa-flip-horizontal"></i><span class="user-level-rank">42</span></span></td>
+                <td class="monospace text_right">42,295</td>
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+    </div>
+</div>
+<!-- end section container -->
+
+
+<!-- begin section container - Before you buy -->
+<div id="try" class="container-fluid black tire-tracks py-5 pe-5">
+    <div class="container pe-5">
+        <div class="row pe-5">
+            <div class="col pe-5">
+
+                <h2 class="big">Why try CrossOver <span class="txt_yellow">before you buy?</span></h2>
+
+                <p class="justify">Unlike an emulator that requires a full copy of the Window OS, CrossOver translates the commands your Windows application wants to use to your installed OS and back. This translation system means you don't need to spend hours setting up Windows OS first, you can just install your Windows application directly into CrossOver and run it.</p>
+
+                <p class="justify">But it's a big process to try and recreate all the Windows OS commands, and CrossOver isn't complete yet. Many Windows applications work great, but some might have reduced functionality, or possibly not run at all. That's why we encourage everyone to try their favorite Windows applications first in our 14-day, completely functional trial of CrossOver and see for before purchasing.<br>
+                We also maintain a large Compatibility Center database of user reports, documenting how various Windows applications run in CrossOver. If your program runs under CrossOver you're good to go with the easiest, least expensive, and friendliest Windows compatibility software out there. And even if it doesn't, you've only spent a few minutes to potentially save yourself several hundred dollars and all the hassles that come with Windows.</p>
+
+                <p class="justify">So before you go plunking down your hard-earned money for an emulator AND a copy of Windows AND spend an entire afternoon setting it all up, give us a try!</p>
+
+                <p>
+                    <a href="/store" class="btn btn-cw-outline-wht">BUY NOW</a>
+                    <a href="/crossover/download" class="btn btn-cw-outline-wht">TRY NOW</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end section container -->
+
+
+</div>
+<!-- END CONTENT WELL -->
+
+<!-- FOOTER -->
+<div id="footer" class="container-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-6">
+                <h5 class="mb-2 bold">Getting Around</h5>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/store">Store</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact-us">Contact Us</a></li>
+                    <li><a href="/store/promotions/subscribe">Subscribe</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-6">
+                <ul class="osSwitch">
+                    <li><a href="https://support.codeweavers.com/">Support</a></li>
+                    <li class="os_Mac"><a href="https://support.codeweavers.com/en_US/mac-knowledge-base">FAQs</a></li>
+                    <li class="os_Mac"><a href="https://support.codeweavers.com/en_US/getting-started/installing-crossover">Tutorials</a></li>
+                    <li class="os_Linux"><a href="https://support.codeweavers.com/en_US/linux-knowledge-base">FAQs</a></li>
+                    <li class="os_Linux"><a href="https://support.codeweavers.com/en_US/2-getting-started/installing-crossover-linux">Tutorials</a></li>
+                    <li><a href="/compatibility">Compatibility</a></li>
+                    <li><a href="/support/forums">Forums</a></li>
+                    <li><a href="/bettertester">BetterTesters</a></li>
+                    <li><a href="/affiliate">Affiliates/Resellers</a></li>
+                </ul>
+
+            </div>
+            <div class="col-md-6">
+                <h4 class="bold">CodeWeavers</h4>
+                <p class="justify">We're rebels. We're misfits. But mostly, we're software liberators. And we're very, very good at what we do. We have to be. Lots of developers work with open source, but only a tiny fraction of those are good enough to get software that was designed for one platform to work on another one. We invented CrossOver software - a unique approach to cross-platform compatibility that does not require dual-boot or another OS license. We launched PortJump to help app and game developers broaden their market beyond Windows® users. And we launched ExecMode to help organizations solve really ugly technical challenges.</p>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-6">
+                <span class="bold">Your OS Preference</span> &nbsp;
+                <span class="osSwitch">
+                    <span class="os_Mac">
+                        <span class="btn-group dropup cursor">
+                            <span class="dropdown-toggle" id="osSwitchBotMac" data-bs-toggle="dropdown">
+                                <i class="fa-brands fa-apple"></i> Mac
+                            </span>
+                            <span class="dropdown-menu" aria-labelledby="osSwitchBotMac">
+                                <a href="#cxlinux" class="dropdown-item"><i class="fa-brands fa-linux"></i> Linux</a>
+                            </span>
+                        </span>
+                    </span>
+                    <span class="os_Linux noshow">
+                        <span class="btn-group dropup cursor">
+                            <span class="dropdown-toggle cursor" id="osSwitchBotLin" data-bs-toggle="dropdown">
+                                <i class="fa-brands fa-linux"></i> Linux
+                            </span>
+                            <span class="dropdown-menu" aria-labelledby="osSwitchBotLin">
+                                <a href="#cxmac" class="dropdown-item"><i class="fa-brands fa-apple"></i> Mac</a>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </div>
+            <div class="col-6 text-end">
+                <span class="btn-group dropup cursor">
+                    <span class="dropdown-toggle" id="langSwitch" data-bs-toggle="dropdown">
+                        <i class="fa-duotone fa-language"></i> <span class="bold">Language</span>
+                    </span>
+                    <span class="dropdown-menu" aria-labelledby="langSwitch">
+                        <a href="#" class="dropdown-item btn-gourl" data-gourl="?__setLang=en"><i class="fa-duotone fa-globe"></i> English</a>
+                        <a href="#" class="dropdown-item btn-gourl" data-gourl="?__setLang=zh-cn"><i class="fa-duotone fa-globe"></i> 简体中文</a>
+                        <a href="#" class="dropdown-item btn-gourl" data-gourl="?__setLang=zh-tw"><i class="fa-duotone fa-globe"></i> 正體中文</a>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="social-container" class="container-fluid">
+    <div class="row">
+        <div class="text-center col-12">
+            <a rel="me" href="https://bsky.app/profile/codeweavers.com" target="_blank" title="BlueSky"><i class="fa-brands fa-bluesky fa-fw"></i></a>
+            <a rel="me" href="https://mas.to/@codeweavers" target="_blank" title="Mastodon"><i class="fa-brands fa-mastodon fa-fw"></i></a>
+            <a rel="me" href="https://www.linkedin.com/company/codeweavers" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin fa-fw"></i></a>
+            <a rel="me" href="https://www.facebook.com/codeweavers" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-square fa-fw"></i></a>
+            <a rel="me" href="https://x.com/codeweavers" target="_blank" title="X (Twitter)"><i class="fa-brands fa-square-x-twitter fa-fw"></i></a>
+            <a rel="me" href="https://www.instagram.com/codeweavers/" target="_blank" title="Instagram"><i class="fa-brands fa-instagram fa-fw"></i></a>
+            <a href="https://www.youtube.com/user/codeweavers?feature=mhee" target="_blank" title="YouTube"><i class="fa-brands fa-youtube-square fa-fw"></i></a>
+            <a href="https://discord.gg/BSdCNQhs9u" target="_blank" title="Discord"><i class="fa-brands fa-discord fa-fw"></i></a>
+        </div>
+    </div>
+</div>
+<div id="copyright" class="container-fluid">
+    <div class="row">
+        <div class="text-center col-12">
+            Copyright &copy; 1999-2026 All Rights Reserved &middot;
+            <a href="/privacy-policy">Privacy Policy</a> &middot;
+            <a href="/code-of-conduct">Code of Conduct</a>
+        </div>
+    </div>
+</div>
+<!-- END FOOTER -->
+
+<!-- START GDPR/ePR ALERT -->
+<div id="GDPR-alert">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6 col-md-8 py-4 ps-3">
+            <i class="fa-duotone fa-info-circle"></i> CodeWeavers or its third-party tools process personal data (e.g. browsing data or IP addresses) and use cookies or other identifiers, which are necessary for its functioning and required to achieve the purposes illustrated in our <a href="/privacy-policy">Privacy Policy</a>. <b>Last Updated:</b> June 16, 2026<br>
+            You can accept the use of cookies or other identifiers by clicking the <b>Accept</b> button. By clicking <b>Reject</b>, this disables 3rd party tracking.
+        </div>
+        <div class="col-sm-6 col-md-4 pt-3 pb-2 text-center">
+            <a href="#" class="GDPR-set btn btn-cw-outline" data-mode="accept"><i class="fa-duotone fa-thumbs-up"></i> Accept</a>
+            <a href="#" class="GDPR-set btn btn-cw-outline" data-mode="reject"><i class="fa-duotone fa-thumbs-down"></i> Reject</a>
+        </div>
+    </div>
+</div>
+</div>
+<!-- END GDPR/ePR ALERT -->
+
+<!-- Require JS -->
+<noscript><div id="nojsalert">
+    <span class="bold text-danger">Missing JavaScript:</span>
+    Sorry, to use our website properly it is necessary to enable JavaScript. <a href="http://www.enable-javascript.com/" target="_blank" class="btn btn-outline-secondary btn-skinny">Enable JavaScript</a>
+</div></noscript>
+<!-- End Require JS -->
+
+<!--[if lt IE 10]>
+      <div id="oldIEalert"><big class="huge bold error">You are using an outdated browser.</big>
+      <p>Please <a href="http://browsehappy.com/">upgrade your browser</a> to use our website.</p></div>
+<![endif]-->
+
+<!-- INTERNAL -->
+<div id="please_wait"><i class="fa-solid fa-spinner fa-pulse"></i> Please Wait...</div>
+<div id="dialog"></div>
+<div id="userdata">eyJjb3VudHJ5IjoiQ0wiLCJsYW5nIjoiZW4iLCJjYXJ0IjowLCJ0enMiOi01LCJjZG4iOiJodHRwczpcL1wvbWVkaWEuY29kZXdlYXZlcnMuY29tXC9wdWJcL2Nyb3Nzb3Zlclwvd2Vic2l0ZSIsImNkbnRzIjoxNzg0MDUwNjc4LCJjc3JmX3Rva2VuIjoiU1IyOHVzZ0h2VzVoZTdzeiIsImdkcHIiOm51bGx9</div>
+<!-- END INTERNAL -->
+
+
+
+<!-- Debug -->
+
+
+<!-- End Debug -->
+
+<!-- Google Tag Manager -->
+
+<!-- End Google Tag Manager -->
+
+</body>
+</html>
