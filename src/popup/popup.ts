@@ -1,5 +1,5 @@
-// Popup del toolbar: buscador manual contra CodeWeavers (útil fuera de
-// Steam) + acceso a los ajustes. Usa el mismo cliente/caché que el resto.
+// Toolbar popup: manual search against CodeWeavers (useful outside
+// Steam) + access to settings. Uses the same client/cache as the rest.
 import { appUrl, search } from '../lib/client';
 import { t } from '../lib/i18n';
 
@@ -43,7 +43,7 @@ async function runSearch(q: string): Promise<void> {
   resultsEl.appendChild(loading);
   try {
     const results = await search(q);
-    if (lastQuery !== q) return; // llegó tarde: hay una búsqueda más nueva
+    if (lastQuery !== q) return; // arrived late: there is a newer search
     resultsEl.textContent = '';
     if (results.length === 0) {
       const none = document.createElement('div');

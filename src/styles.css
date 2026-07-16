@@ -168,7 +168,7 @@
   font-size: 12px;
 }
 
-/* Mini-etiqueta de arquitectura (M / Intel) junto a las estrellas nativas */
+/* Mini architecture tag (M / Intel) next to the native stars */
 .crostem-arch-tag {
   color: #a3cf06;
   font-size: 10px;
@@ -177,14 +177,14 @@
   vertical-align: middle;
 }
 
-/* Línea de arquitectura en el widget de la ficha */
+/* Architecture line in the app page widget */
 .crostem-arch-line {
   color: #a3cf06;
   font-size: 12px;
   margin-bottom: 2px;
 }
 
-/* El badge nativo dentro del headline ya no necesita su propio margen */
+/* The native badge inside the headline no longer needs its own margin */
 .crostem-headline .crostem-native-badge {
   margin-bottom: 0;
 }
@@ -247,7 +247,7 @@
   font-size: 9px;
 }
 
-/* Semáforo del veredicto (F2) */
+/* Verdict traffic light (F2) */
 
 .crostem-dot {
   border-radius: 50%;

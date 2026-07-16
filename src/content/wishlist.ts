@@ -1,7 +1,7 @@
-// Wishlist de Steam: badge automático de CrossOver por fila. La wishlist es
-// una SPA de React con clases ofuscadas, así que en vez de depender de clases
-// buscamos enlaces a /app/<id> que lleven el título como texto. El flag de
-// Mac nativo llega vía la API appdetails de Steam (resuelto en lib/auto).
+// Steam wishlist: automatic CrossOver badge per row. The wishlist is
+// a React SPA with obfuscated classes, so instead of relying on classes
+// we look for links to /app/<id> that carry the title as text. The native
+// Mac flag arrives via Steam's appdetails API (resolved in lib/auto).
 import { attach } from '../lib/auto';
 import { getSettings } from '../lib/settings';
 import '../styles.css';
@@ -14,7 +14,7 @@ function looksLikeTitleLink(a: HTMLAnchorElement): boolean {
   const href = a.getAttribute('href') ?? '';
   if (!APP_LINK.test(href)) return false;
   const text = a.textContent?.trim() ?? '';
-  // Descarta enlaces de solo icono/imagen y contenedores enormes.
+  // Discards icon/image-only links and huge containers.
   return text.length >= 2 && text.length <= 150;
 }
 

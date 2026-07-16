@@ -1,8 +1,8 @@
-// Cliente de AreWeAntiCheatYet: games.json (publicado en GitHub) con el
-// estado del anticheat por juego, incluyendo el appid de Steam. Los datos son
-// de Linux/Proton — para CrossOver son orientativos, y así se presenta.
-// El dataset (~460KB) se descarga entero, se reduce a un índice compacto
-// (appid y nombre normalizado) y se cachea 7 días.
+// AreWeAntiCheatYet client: games.json (published on GitHub) with the
+// anticheat status per game, including the Steam appid. The data is for
+// Linux/Proton — for CrossOver it is indicative, and presented as such.
+// The dataset (~460KB) is downloaded whole, reduced to a compact index
+// (appid and normalized name) and cached for 7 days.
 import * as cache from './cache';
 import { fetchExt } from './client';
 import { normalizeName } from './matcher';
@@ -48,16 +48,16 @@ async function getIndex(): Promise<AwacyIndex | null> {
     await cache.set('awacy:index', index, await cache.ttlResult());
     return index;
   } catch {
-    // AWACY caído: sin datos de anticheat, el veredicto sigue funcionando.
+    // AWACY down: no anticheat data, the verdict keeps working.
     await cache.set('awacy:index', null, cache.TTL_NEGATIVE);
     return null;
   }
 }
 
 /**
- * Estado del anticheat de un juego, por appid de Steam con fallback por
- * nombre. null = el juego no está en AWACY (sin anticheat problemático
- * conocido) o el dataset no está disponible.
+ * A game's anticheat status, by Steam appid with a fallback by name.
+ * null = the game is not in AWACY (no known problematic anticheat)
+ * or the dataset is unavailable.
  */
 export async function anticheatLookup(appid: string | null | undefined, name: string | null | undefined): Promise<AnticheatInfo | null> {
   const index = await getIndex();

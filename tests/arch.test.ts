@@ -1,5 +1,5 @@
-// Detección de arquitectura del binario nativo Mac: mapeo AGW, inferencia
-// por requisitos de Steam y heurística por año, más su precedencia.
+// Native Mac binary architecture detection: AGW mapping, inference
+// from Steam requirements and year heuristic, plus their precedence.
 import { describe, expect, it } from 'vitest';
 import { archFromAgw, archFromReleaseYear, archFromSteamReqs, detectArch } from '../src/lib/arch';
 import type { AgwCompat, AgwStatus } from '../src/types';
@@ -35,7 +35,7 @@ describe('archFromSteamReqs', () => {
       'Requires an Apple Silicon Mac',
       'Processor: M1 or later',
       'CPU: arm64',
-      'Intel or Apple Silicon', // universal cuenta como M Series
+      'Intel or Apple Silicon', // universal counts as M Series
     ]) {
       expect(archFromSteamReqs(reqs)).toEqual({ arch: 'm-series', approximate: true, source: 'steam-reqs' });
     }

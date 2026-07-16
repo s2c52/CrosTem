@@ -1,5 +1,5 @@
-// Resultados de búsqueda de Steam: badge automático de CrossOver por fila
-// (carga cuando la fila se hace visible, vía el observer de lib/auto).
+// Steam search results: automatic CrossOver badge per row
+// (loads when the row becomes visible, via the lib/auto observer).
 import { attach } from '../lib/auto';
 import { getSettings } from '../lib/settings';
 import '../styles.css';
@@ -16,8 +16,8 @@ function processRow(row: HTMLElement): void {
   badge.className = 'crostem-badge';
   titleEl.insertAdjacentElement('afterend', badge);
 
-  // Las filas de búsqueda siempre muestran iconos de plataforma: la ausencia
-  // del icono Mac es señal fiable de "no nativo".
+  // Search rows always show platform icons: the absence of the
+  // Mac icon is a reliable "not native" signal.
   attach(badge, {
     appid: row.getAttribute('data-ds-appid'),
     name,
@@ -34,7 +34,7 @@ void (async () => {
   if (!(await getSettings()).surfaces.search) return;
   scan();
 
-  // Steam carga más filas por AJAX (scroll infinito / paginación).
+  // Steam loads more rows via AJAX (infinite scroll / pagination).
   const resultsContainer = document.getElementById('search_resultsRows') ??
     document.getElementById('search_results') ?? document.body;
   new MutationObserver(() => scan(resultsContainer))

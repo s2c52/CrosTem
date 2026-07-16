@@ -1,10 +1,10 @@
-// Service worker: hace los fetch externos en nombre de los content scripts
-// (que no pueden hacer fetch cross-origin por CORS; con host_permissions el
-// service worker sí). El cuerpo vuelve como texto y se parsea en el content
-// script (DOMParser no existe en service workers; JSON.parse da igual dónde).
+// Service worker: performs external fetches on behalf of the content scripts
+// (which cannot do cross-origin fetches due to CORS; with host_permissions the
+// service worker can). The body comes back as text and is parsed in the content
+// script (DOMParser does not exist in service workers; JSON.parse works anywhere).
 import type { ExtFetchRequest, ExtFetchResponse } from './types';
 
-// Allowlist estricta de recursos externos consultables.
+// Strict allowlist of queryable external resources.
 const ALLOWED: Array<{ host: string; pathPrefix: string }> = [
   { host: 'www.codeweavers.com', pathPrefix: '/compatibility' },
   { host: 'www.applegamingwiki.com', pathPrefix: '/w/api.php' },
@@ -66,7 +66,7 @@ function enqueueFetch(url: string): Promise<ExtFetchResponse> {
 chrome.runtime.onMessage.addListener((msg: ExtFetchRequest, _sender, sendResponse) => {
   if (msg?.type === 'extFetch' && typeof msg.url === 'string') {
     void enqueueFetch(msg.url).then(sendResponse);
-    return true; // respuesta asíncrona
+    return true; // asynchronous response
   }
   return false;
 });

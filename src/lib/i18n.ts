@@ -1,8 +1,8 @@
-// Helper de i18n. Los estados que reportan las fuentes ("Runs Great",
-// "playable"…) NO se traducen — son citas de la fuente (decisión de producto);
-// se traduce el chrome de la UI (etiquetas, veredictos, botones).
+// i18n helper. Statuses reported by the sources ("Runs Great",
+// "playable"…) are NOT translated — they are quotes from the source (product
+// decision); the UI chrome (labels, verdicts, buttons) is translated.
 
-/** chrome.i18n.getMessage con fallback a la clave (útil en tests/harness). */
+/** chrome.i18n.getMessage with fallback to the key (useful in tests/harness). */
 export function t(key: string, substitutions?: string | string[]): string {
   try {
     const msg = chrome.i18n.getMessage(key, substitutions);
