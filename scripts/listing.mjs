@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Generates the Chrome Web Store listing screenshots (exactly 1280×800)
 // with the extension loaded from dist/. Output: store-assets/*.png.
 // Usage: npm run build && npm run listing

@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Detection of the native Mac binary architecture (M Series vs Intel).
 // Signal chain: AppleGamingWiki (native/rosetta2, explicit) →
 // Steam Mac requirements (text, inferred) → release year (heuristic).

@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Name matching between Steam titles and CodeWeavers entries.
 // CodeWeavers does not know the Steam appid, so we normalize both names
 // and score candidates; ambiguous cases are resolved by the user (the

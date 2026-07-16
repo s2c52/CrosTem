@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Steam wishlist: automatic CrossOver badge per row. The wishlist is
 // a React SPA with obfuscated classes, so instead of relying on classes
 // we look for links to /app/<id> that carry the title as text. The native

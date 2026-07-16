@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Automatic badge resolution shared by capsules, search and wishlist.
 // Elements are registered with attach(); a shared IntersectionObserver
 // only resolves the ones that become visible, minimizing requests

@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Service worker: performs external fetches on behalf of the content scripts
 // (which cannot do cross-origin fetches due to CORS; with host_permissions the
 // service worker can). The body comes back as text and is parsed in the content

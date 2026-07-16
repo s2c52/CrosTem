@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Combined verdict engine (traffic light). Pure, tested function: takes
 // the signals from the three sources and produces level + label + reasons.
 //

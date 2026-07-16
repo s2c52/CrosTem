@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Parsers for CodeWeavers HTML. All scraping lives here so that a site
 // redesign only requires touching this file.
 import type { CwAppPage, CwRatingBox, CwSearchResult, CwVersionRating } from '../types';

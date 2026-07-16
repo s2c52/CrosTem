@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // High-level client used by the content scripts: fetch (via the service
 // worker, which avoids CORS), parsing and caching of CodeWeavers and Steam data.
 import * as cache from './cache';

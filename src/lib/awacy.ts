@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // AreWeAntiCheatYet client: games.json (published on GitHub) with the
 // anticheat status per game, including the Steam appid. The data is for
 // Linux/Proton — for CrossOver it is indicative, and presented as such.

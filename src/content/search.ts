@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Steam search results: automatic CrossOver badge per row
 // (loads when the row becomes visible, via the lib/auto observer).
 import { attach } from '../lib/auto';

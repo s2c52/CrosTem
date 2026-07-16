@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Pure parsing of Steam's appdetails response (representative fixture:
 // native game with HTML requirements, non-native with mac_requirements=[] and
 // unknown appid with success=false).

@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Generates the icon PNGs (16/32/48/128) from public/icons/icon.svg
 // by rendering it in the browser via Playwright (no native dependencies).
 import { chromium } from 'playwright-core';

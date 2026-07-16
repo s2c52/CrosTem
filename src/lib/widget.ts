@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // DOM builders for the app-page widget and common elements. The UI chrome
 // is translated via i18n; statuses reported by the sources ("Runs
 // Great", "playable"…) are kept as-is, as a quote from the source.

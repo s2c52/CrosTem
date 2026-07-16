@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright (C) 2026 Sacha Gennari
+# SPDX-License-Identifier: GPL-3.0-or-later
 # CrosTem verification gate (used by higinio verify/finish).
 # TypeScript + Vite: typecheck + unit tests + build.
 set -euo pipefail

@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // CrosTem domain types.
 
 /** Row of the CodeWeavers search results table. */

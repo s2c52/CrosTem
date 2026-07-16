@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Manual e2e suite (pre-release): loads dist/ into Brave with a temporary
 // profile and checks the real Steam surfaces. Does not run in CI (real Steam
 // is flaky there); it runs locally via `npm run e2e` and the screenshots land

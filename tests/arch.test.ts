@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Native Mac binary architecture detection: AGW mapping, inference
 // from Steam requirements and year heuristic, plus their precedence.
 import { describe, expect, it } from 'vitest';

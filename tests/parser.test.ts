@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Parser tests against real CodeWeavers HTML (fixtures captured
 // 2026-07-16). If CodeWeavers redesigns their site, recapture the fixtures:
 //   curl -A "Mozilla/5.0" "https://www.codeweavers.com/compatibility?name=elden" > tests/fixtures/cw_name.html

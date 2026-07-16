@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Tests for parsing the AppleGamingWiki cargoquery API against a real
 // captured response (fixture captured 2026-07-16).
 import { readFileSync } from 'node:fs';

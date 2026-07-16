@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Star overlay on game capsules (images) across the whole
 // Steam store: front page, deals, categories, "more like this", etc.
 import { attach } from '../lib/auto';

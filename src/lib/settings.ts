@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // User settings. Stored in chrome.storage.sync (travels with the browser
 // account); content scripts read them once at startup —
 // changes require reloading the Steam tabs.

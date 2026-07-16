@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Steam game page: "Runs on Mac?" widget with combined verdict
 // (CodeWeavers + AppleGamingWiki + anticheat) and per-source breakdown.
 import { agwCacheKey, agwLookup } from '../lib/agw';

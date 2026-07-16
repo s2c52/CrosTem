@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Toolbar popup: manual search against CodeWeavers (useful outside
 // Steam) + access to settings. Uses the same client/cache as the rest.
 import { appUrl, search } from '../lib/client';

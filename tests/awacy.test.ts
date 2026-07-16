@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Tests for the AreWeAntiCheatYet index against a real games.json excerpt
 // (fixture with Elden Ring + one entry per status in the dataset).
 import { readFileSync } from 'node:fs';

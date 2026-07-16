@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Cache in chrome.storage.local with TTL, plus the persistent map of
 // user-confirmed matches (steam appid -> CodeWeavers slug).
 
