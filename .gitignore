@@ -2,10 +2,15 @@
 node_modules/
 dist/
 *.zip
-.higinio/local*
 .worktrees/
 .backups/
-.higinio/run/
 e2e-results/
 store-assets/.profile/
 crostem-v*.zip
+
+# Internal development files (kept local, not published)
+.higinio/
+HANDOFF.md
+HANDOFF-archive.md
+ROADMAP.md
+docs/store-checklist.md
