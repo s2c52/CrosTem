@@ -1,0 +1,214 @@
+/* CrosTem — Steam-themed widget styles */
+
+.crostem-box {
+  background: linear-gradient(135deg, #1b2838 0%, #16202d 100%);
+  border: 1px solid #2a3f5a;
+  border-radius: 4px;
+  color: #c6d4df;
+  font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.crostem-header {
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid #2a3f5a;
+  color: #66c0f4;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+  text-transform: uppercase;
+}
+
+.crostem-body {
+  padding: 10px;
+}
+
+.crostem-headline {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.crostem-stars {
+  font-size: 14px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.crostem-stars-filled { color: #ffc82c; }
+.crostem-stars-empty { color: #4b5b6c; }
+
+.crostem-status { font-weight: bold; }
+.crostem-status-great { color: #a3cf06; }
+.crostem-status-well { color: #6fa720; }
+.crostem-status-mid { color: #e5b567; }
+.crostem-status-bad { color: #d94126; }
+
+.crostem-muted { color: #8f98a0; }
+.crostem-small { font-size: 11px; }
+
+.crostem-versions {
+  border-top: 1px solid #2a3f5a;
+  margin-top: 8px;
+  padding-top: 6px;
+}
+
+.crostem-version-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.crostem-version-current .crostem-version-label {
+  color: #66c0f4;
+  font-weight: bold;
+}
+
+.crostem-version-label {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+}
+
+.crostem-footer {
+  border-top: 1px solid #2a3f5a;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+.crostem-link,
+.crostem-link:visited {
+  color: #66c0f4;
+  text-decoration: none;
+}
+
+.crostem-link:hover {
+  color: #a4d7f5;
+  text-decoration: underline;
+}
+
+.crostem-native-badge {
+  background: #5c7e10;
+  border-radius: 2px;
+  color: #d2efa9;
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 6px;
+  padding: 3px 8px;
+}
+
+.crostem-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.crostem-candidate {
+  background: #2a3f5a;
+  border: 1px solid #3d5a80;
+  border-radius: 3px;
+  color: #c6d4df;
+  cursor: pointer;
+  padding: 6px 8px;
+  text-align: left;
+  width: 100%;
+}
+
+.crostem-candidate:hover {
+  background: #3d5a80;
+}
+
+.crostem-candidate-name {
+  color: #fff;
+  font-weight: bold;
+}
+
+/* On-demand badges (search results / wishlist) */
+
+.crostem-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.crostem-badge-btn {
+  background: #2a3f5a;
+  border: 1px solid #3d5a80;
+  border-radius: 2px;
+  color: #66c0f4;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 2px 5px;
+}
+
+.crostem-badge-btn:hover {
+  background: #3d5a80;
+  color: #fff;
+}
+
+.crostem-badge-native {
+  color: #a3cf06;
+  font-weight: bold;
+}
+
+.crostem-badge-result,
+.crostem-badge-result:visited {
+  color: #66c0f4;
+  text-decoration: none;
+}
+
+.crostem-badge-result .crostem-stars {
+  font-size: 12px;
+}
+
+/* Star overlay on store capsules */
+
+.crostem-capsule-host {
+  position: relative;
+}
+
+.crostem-overlay {
+  background: rgba(0, 0, 0, 0.78);
+  border-radius: 3px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 5px;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  z-index: 20;
+}
+
+/* Hidden while unresolved — visibility (not display) so the element keeps
+   its box and the IntersectionObserver in lib/auto.js can still see it. */
+.crostem-overlay:empty {
+  visibility: hidden;
+}
+
+.crostem-overlay .crostem-stars {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.crostem-overlay .crostem-badge-result {
+  text-decoration: none;
+}
+
+.crostem-overlay .crostem-badge-native {
+  color: #a3cf06;
+  font-size: 12px;
+}
