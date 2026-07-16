@@ -49,11 +49,24 @@ export interface RankOutcome {
 export interface SteamDetails {
   name: string | null;
   mac: boolean;
+  /** Texto plano de mac_requirements (min + rec, sin HTML). Solo si mac. */
+  macRequirements?: string | null;
+  releaseYear?: number | null;
+}
+
+export type MacArch = 'm-series' | 'intel';
+
+/** Arquitectura del binario nativo Mac y de dónde salió el dato. */
+export interface ArchInfo {
+  arch: MacArch;
+  /** true = inferido (se marca con "~", como el matching aproximado). */
+  approximate: boolean;
+  source: 'agw' | 'steam-reqs' | 'date';
 }
 
 /** Resultado de la resolución automática de un badge/overlay. */
 export type ResolveResult =
-  | { kind: 'native' }
+  | { kind: 'native'; arch: ArchInfo | null }
   | { kind: 'stars'; stars: number | null; slug: string; cwName: string; approximate: boolean; level: VerdictLevel }
   | { kind: 'ambiguous'; count: number; query: string; level: VerdictLevel }
   | { kind: 'dot'; level: VerdictLevel; title: string }

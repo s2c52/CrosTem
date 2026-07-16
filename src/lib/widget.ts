@@ -5,7 +5,7 @@ import { agwPageUrl } from './agw';
 import { AWACY_SITE } from './awacy';
 import { appUrl, searchUrl } from './client';
 import { t } from './i18n';
-import type { AgwCompat, AnticheatInfo, CwAppPage, RankedResult, Verdict, VerdictLevel } from '../types';
+import type { AgwCompat, AnticheatInfo, ArchInfo, CwAppPage, RankedResult, Verdict, VerdictLevel } from '../types';
 
 function el(tag: string, className?: string, text?: string): HTMLElement {
   const node = document.createElement(tag);
@@ -66,10 +66,25 @@ function box(): HTMLElement {
   return root;
 }
 
-export function renderNativeBadge(): HTMLElement {
+const ARCH_SOURCE_KEYS = {
+  agw: 'archSourceAgw',
+  'steam-reqs': 'archSourceSteam',
+  date: 'archSourceDate',
+} as const;
+
+export function renderNativeBadge(arch: ArchInfo | null = null): HTMLElement {
   const root = box();
   const body = el('div', 'crostem-body');
-  body.appendChild(el('span', 'crostem-native-badge', t('nativeBadge')));
+  const line = el('div', 'crostem-headline');
+  line.appendChild(starsEl(5));
+  line.appendChild(el('span', 'crostem-native-badge', t('nativeBadge')));
+  body.appendChild(line);
+  if (arch) {
+    const label = t(arch.arch === 'm-series' ? 'archM' : 'archIntel') +
+      (arch.approximate ? ' ~' : '');
+    body.appendChild(el('div', 'crostem-arch-line', label));
+    body.appendChild(el('div', 'crostem-muted crostem-small', t(ARCH_SOURCE_KEYS[arch.source])));
+  }
   body.appendChild(el('div', 'crostem-muted crostem-small', t('nativeNote')));
   root.appendChild(body);
   return root;

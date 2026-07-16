@@ -164,6 +164,31 @@
   font-weight: bold;
 }
 
+.crostem-badge-native .crostem-stars {
+  font-size: 12px;
+}
+
+/* Mini-etiqueta de arquitectura (M / Intel) junto a las estrellas nativas */
+.crostem-arch-tag {
+  color: #a3cf06;
+  font-size: 10px;
+  font-weight: bold;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* Línea de arquitectura en el widget de la ficha */
+.crostem-arch-line {
+  color: #a3cf06;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+/* El badge nativo dentro del headline ya no necesita su propio margen */
+.crostem-headline .crostem-native-badge {
+  margin-bottom: 0;
+}
+
 .crostem-badge-result,
 .crostem-badge-result:visited {
   color: #66c0f4;
@@ -211,6 +236,15 @@
 .crostem-overlay .crostem-badge-native {
   color: #a3cf06;
   font-size: 12px;
+}
+
+.crostem-overlay .crostem-badge-native .crostem-stars {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.crostem-overlay .crostem-arch-tag {
+  font-size: 9px;
 }
 
 /* Semáforo del veredicto (F2) */
