@@ -66,6 +66,34 @@ await check('widget en ficha (Elden Ring)', async () => {
   return text.replace(/\s+/g, ' ').trim().slice(0, 100);
 });
 
+// 1b. Veredicto multi-fuente presente en la ficha
+await check('veredicto + desglose multi-fuente (Elden Ring)', async () => {
+  const widget = page.locator('#crostem-widget .crostem-box');
+  const text = await widget.textContent();
+  if (!/Playable/i.test(text)) throw new Error('sin etiqueta de veredicto: ' + text.slice(0, 120));
+  const dots = await page.locator('#crostem-widget .crostem-dot').count();
+  if (dots < 1) throw new Error('sin punto de semáforo');
+  const agw = /AppleGamingWiki/i.test(text) ? 'AGW ✓' : 'AGW sin datos';
+  const ac = /Anticheat/i.test(text) ? 'anticheat ✓' : 'sin anticheat';
+  return `${agw} · ${ac}`;
+});
+
+// 1c. Juego con anticheat bloqueado (Destiny 2 = Denied en AWACY): rojo + aviso
+await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', { waitUntil: 'domcontentloaded' });
+await check('anticheat Denied baja el semáforo (Destiny 2)', async () => {
+  const widget = page.locator('#crostem-widget .crostem-box');
+  await widget.waitFor({ timeout: 25000 });
+  await page.waitForFunction(() => {
+    const w = document.querySelector('#crostem-widget');
+    return w && !/Checking/.test(w.textContent);
+  }, null, { timeout: 25000 });
+  const text = await widget.textContent();
+  if (!/Anticheat/i.test(text)) throw new Error('sin sección anticheat: ' + text.slice(0, 150));
+  const red = await page.locator('#crostem-widget .crostem-dot-red').count();
+  await widget.screenshot({ path: join(OUT, 'anticheat.png') });
+  return red >= 1 ? 'semáforo rojo + aviso' : 'aviso presente (semáforo no rojo: ' + text.slice(0, 80) + ')';
+});
+
 // 2. Ficha de Stardew Valley (nativo Mac): badge Native
 await page.goto('https://store.steampowered.com/app/413150/Stardew_Valley/', { waitUntil: 'domcontentloaded' });
 await check('badge nativo (Stardew Valley)', async () => {

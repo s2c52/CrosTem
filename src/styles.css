@@ -212,3 +212,40 @@
   color: #a3cf06;
   font-size: 12px;
 }
+
+/* Semáforo del veredicto (F2) */
+
+.crostem-dot {
+  border-radius: 50%;
+  display: inline-block;
+  height: 9px;
+  margin-right: 5px;
+  vertical-align: middle;
+  width: 9px;
+}
+
+.crostem-dot-green { background: #7bc144; box-shadow: 0 0 4px #7bc14488; }
+.crostem-dot-yellow { background: #e5b567; box-shadow: 0 0 4px #e5b56788; }
+.crostem-dot-red { background: #d94126; box-shadow: 0 0 4px #d9412688; }
+.crostem-dot-unknown { background: #6b7a8a; }
+
+.crostem-verdict-label { font-weight: bold; }
+.crostem-verdict-green { color: #a3cf06; }
+.crostem-verdict-yellow { color: #e5b567; }
+.crostem-verdict-red { color: #d94126; }
+.crostem-verdict-unknown { color: #8f98a0; }
+
+.crostem-section {
+  border-top: 1px solid #2a3f5a;
+  margin-top: 8px;
+  padding-top: 6px;
+}
+
+.crostem-section-title {
+  color: #66c0f4;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}

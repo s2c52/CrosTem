@@ -54,8 +54,9 @@ export interface SteamDetails {
 /** Resultado de la resolución automática de un badge/overlay. */
 export type ResolveResult =
   | { kind: 'native' }
-  | { kind: 'stars'; stars: number | null; slug: string; cwName: string; approximate: boolean }
-  | { kind: 'ambiguous'; count: number; query: string }
+  | { kind: 'stars'; stars: number | null; slug: string; cwName: string; approximate: boolean; level: VerdictLevel }
+  | { kind: 'ambiguous'; count: number; query: string; level: VerdictLevel }
+  | { kind: 'dot'; level: VerdictLevel; title: string }
   | { kind: 'none' };
 
 export interface AutoAttachOpts {
@@ -66,12 +67,51 @@ export interface AutoAttachOpts {
   mode: 'overlay' | 'inline';
 }
 
+// --- Fuentes adicionales (F2) ---
+
+/** Estados de compatibilidad que publica AppleGamingWiki (tabla Compatibility_macOS). */
+export type AgwStatus =
+  | 'perfect' | 'playable' | 'runs' | 'menu'
+  | 'unplayable' | "doesn't work" | 'na' | 'unknown';
+
+export interface AgwCompat {
+  page: string;
+  crossover: AgwStatus;
+  parallels: AgwStatus;
+  native: AgwStatus;
+  rosetta2: AgwStatus;
+}
+
+/** Estados de AreWeAntiCheatYet (datos de Linux/Proton, orientativos para CrossOver). */
+export type AnticheatStatus = 'Supported' | 'Running' | 'Planned' | 'Broken' | 'Denied';
+
+export interface AnticheatInfo {
+  name: string;
+  status: AnticheatStatus;
+  anticheats: string[];
+}
+
+export type VerdictLevel = 'green' | 'yellow' | 'red' | 'unknown';
+
+export interface Verdict {
+  level: VerdictLevel;
+  label: string;
+  reasons: string[];
+}
+
+/** Señal de CodeWeavers para el veredicto: la ficha completa o solo las
+ * estrellas de la fila de búsqueda (caso overlays). */
+export interface CwSignal {
+  stars: number | null;
+  status?: string;
+}
+
 // Mensajería content script ⇄ service worker.
-export interface CwFetchRequest {
-  type: 'cwFetch';
+export interface ExtFetchRequest {
+  type: 'extFetch';
   url: string;
 }
 
-export type CwFetchResponse =
-  | { ok: true; html: string; finalUrl: string }
+export type ExtFetchResponse =
+  | { ok: true; body: string; finalUrl: string }
   | { ok: false; error: string };

@@ -3,24 +3,27 @@
 import * as cache from './cache';
 import { baseName } from './matcher';
 import { parseAppPage, parseSearchResults } from './parser';
-import type { CwAppPage, CwFetchRequest, CwFetchResponse, CwSearchResult, SteamDetails } from '../types';
+import type { CwAppPage, CwSearchResult, ExtFetchRequest, ExtFetchResponse, SteamDetails } from '../types';
 
 const CW_BASE = 'https://www.codeweavers.com';
 
-function fetchHtml(url: string): Promise<string> {
+/** Fetch de un recurso externo a través del service worker (evita CORS). */
+export function fetchExt(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const msg: CwFetchRequest = { type: 'cwFetch', url };
-    chrome.runtime.sendMessage(msg, (res: CwFetchResponse | undefined) => {
+    const msg: ExtFetchRequest = { type: 'extFetch', url };
+    chrome.runtime.sendMessage(msg, (res: ExtFetchResponse | undefined) => {
       if (chrome.runtime.lastError) {
         reject(new Error(chrome.runtime.lastError.message));
       } else if (!res || !res.ok) {
         reject(new Error(res && !res.ok ? res.error : 'fetch failed'));
       } else {
-        resolve(res.html);
+        resolve(res.body);
       }
     });
   });
 }
+
+const fetchHtml = fetchExt;
 
 export function searchUrl(query: string): string {
   return CW_BASE + '/compatibility?name=' + encodeURIComponent(query);
@@ -28,6 +31,19 @@ export function searchUrl(query: string): string {
 
 export function appUrl(slug: string): string {
   return CW_BASE + '/compatibility/crossover/' + encodeURIComponent(slug);
+}
+
+// Claves de caché expuestas para invalidación selectiva (botón refresh).
+export function searchCacheKey(name: string): string {
+  return 'search:' + baseName(name);
+}
+
+export function appCacheKey(slug: string): string {
+  return 'app:' + slug;
+}
+
+export function steamCacheKey(appid: string): string {
+  return 'steam:' + appid;
 }
 
 /** Busca en CodeWeavers por nombre (simplificado) de juego. */

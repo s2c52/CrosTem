@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CrosTem — Mac compatibility for Steam",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Shows CodeWeavers CrossOver (macOS) compatibility ratings on Steam store pages, capsules, search results and wishlist.",
   "author": {
     "email": "s2c52@users.noreply.github.com"
@@ -10,7 +10,9 @@
     "storage"
   ],
   "host_permissions": [
-    "https://www.codeweavers.com/*"
+    "https://www.codeweavers.com/*",
+    "https://www.applegamingwiki.com/*",
+    "https://raw.githubusercontent.com/*"
   ],
   "background": {
     "service_worker": "src/background.ts",

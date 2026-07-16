@@ -1,12 +1,16 @@
 // Resolución automática de badges compartida por cápsulas, búsqueda y
 // wishlist. Los elementos se registran con attach(); un IntersectionObserver
 // compartido solo resuelve los que se hacen visibles, minimizando peticiones
-// a CodeWeavers y Steam (además de las cachés de 7/30 días).
+// (además de las cachés de 7/30 días). Desde F2 el resultado incluye el
+// semáforo del veredicto combinado (CodeWeavers + AGW + anticheat).
+import { agwLookup } from './agw';
+import { anticheatLookup } from './awacy';
 import * as cache from './cache';
 import { appUrl, getApp, search, searchUrl, steamDetails } from './client';
 import { rank } from './matcher';
-import { starsEl } from './widget';
-import type { AutoAttachOpts, ResolveResult } from '../types';
+import { computeVerdict } from './verdict';
+import { dotEl, starsEl } from './widget';
+import type { AutoAttachOpts, CwSignal, ResolveResult } from '../types';
 
 const registry = new WeakMap<Element, AutoAttachOpts>();
 
@@ -56,36 +60,56 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   if (native === true) return { kind: 'native' };
   if (!name) return { kind: 'none' };
 
-  // Una coincidencia confirmada por el usuario gana al matching por nombre.
-  if (opts.appid) {
-    const savedSlug = await cache.getSlugChoice(opts.appid);
-    if (savedSlug) {
-      const app = await getApp(savedSlug);
-      if (app?.mac) {
-        return { kind: 'stars', stars: app.mac.stars, slug: savedSlug, cwName: name, approximate: false };
-      }
+  // Fuentes secundarias en paralelo con la resolución de CodeWeavers.
+  const agwPromise = agwLookup(name, opts.appid).catch(() => null);
+  const acPromise = anticheatLookup(opts.appid, name).catch(() => null);
+
+  // CodeWeavers: elección del usuario > matching por nombre.
+  let cwSignal: CwSignal | null = null;
+  let cwOutcome:
+    | { type: 'hit'; stars: number | null; slug: string; cwName: string; approximate: boolean }
+    | { type: 'ambiguous'; count: number }
+    | { type: 'none' } = { type: 'none' };
+
+  const savedSlug = opts.appid ? await cache.getSourceChoice('cw', opts.appid) : undefined;
+  if (savedSlug) {
+    const app = await getApp(savedSlug);
+    if (app?.mac) {
+      cwSignal = { stars: app.mac.stars, status: app.mac.status };
+      cwOutcome = { type: 'hit', stars: app.mac.stars, slug: savedSlug, cwName: name, approximate: false };
+    }
+  }
+  if (cwOutcome.type === 'none') {
+    const results = await search(name);
+    const ranked = rank(name, results);
+    const pick = ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
+    if (pick) {
+      cwSignal = { stars: pick.stars };
+      cwOutcome = { type: 'hit', stars: pick.stars, slug: pick.slug, cwName: pick.name, approximate: pick.score < 1 };
+    } else if (ranked.candidates.length > 1) {
+      cwOutcome = { type: 'ambiguous', count: ranked.candidates.length };
     }
   }
 
-  const results = await search(name);
-  const ranked = rank(name, results);
-  if (ranked.confident) {
+  const [agw, ac] = await Promise.all([agwPromise, acPromise]);
+  const verdict = computeVerdict(cwSignal, agw, ac);
+
+  if (cwOutcome.type === 'hit') {
     return {
       kind: 'stars',
-      stars: ranked.confident.stars,
-      slug: ranked.confident.slug,
-      cwName: ranked.confident.name,
-      approximate: ranked.confident.score < 1,
+      stars: cwOutcome.stars,
+      slug: cwOutcome.slug,
+      cwName: cwOutcome.cwName,
+      approximate: cwOutcome.approximate,
+      level: verdict.level,
     };
   }
-  // Un único candidato plausible merece mostrarse como aproximado; solo los
-  // casos genuinamente ambiguos (2+) derivan a CodeWeavers.
-  if (ranked.candidates.length === 1) {
-    const only = ranked.candidates[0];
-    return { kind: 'stars', stars: only.stars, slug: only.slug, cwName: only.name, approximate: true };
+  if (cwOutcome.type === 'ambiguous') {
+    return { kind: 'ambiguous', count: cwOutcome.count, query: name, level: verdict.level };
   }
-  if (ranked.candidates.length > 1) {
-    return { kind: 'ambiguous', count: ranked.candidates.length, query: name };
+  // Sin CodeWeavers pero con señal de AGW/anticheat: el semáforo solo.
+  if (verdict.level !== 'unknown') {
+    return { kind: 'dot', level: verdict.level, title: verdict.label };
   }
   return { kind: 'none' };
 }
@@ -119,6 +143,7 @@ function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): v
       const a = cwLink(appUrl(result.slug),
         `${result.cwName} — CrossOver rating on CodeWeavers` +
         (result.approximate ? ' (approximate match)' : ''));
+      a.appendChild(dotEl(result.level));
       a.appendChild(starsEl(result.stars));
       if (result.approximate) {
         const tilde = document.createElement('span');
@@ -131,8 +156,13 @@ function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): v
     }
     case 'ambiguous': {
       const a = cwLink(searchUrl(result.query), `${result.count} possible matches on CodeWeavers`);
-      a.textContent = overlay ? '?' : `${result.count} matches ↗`;
+      if (result.level !== 'unknown') a.appendChild(dotEl(result.level));
+      a.appendChild(document.createTextNode(overlay ? '?' : `${result.count} matches ↗`));
       el.appendChild(a);
+      break;
+    }
+    case 'dot': {
+      el.appendChild(dotEl(result.level, result.title));
       break;
     }
     default: {

@@ -1,12 +1,15 @@
-// Ficha del juego en Steam: widget completo de compatibilidad CrossOver.
+// Ficha del juego en Steam: widget "Runs on Mac?" con veredicto combinado
+// (CodeWeavers + AppleGamingWiki + anticheat) y desglose por fuente.
+import { agwCacheKey, agwLookup } from '../lib/agw';
+import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
-import { getApp, search } from '../lib/client';
+import { appCacheKey, getApp, search, searchCacheKey, steamCacheKey } from '../lib/client';
 import { rank } from '../lib/matcher';
+import { computeVerdict } from '../lib/verdict';
 import {
-  renderAppWidget, renderCandidateList, renderError, renderLoading,
-  renderNativeBadge, renderNoData,
+  renderAppWidget, renderCandidateList, renderError, renderLoading, renderNativeBadge,
 } from '../lib/widget';
-import type { RankedResult } from '../types';
+import type { CwAppPage, RankedResult } from '../types';
 import '../styles.css';
 
 const appidMatch = location.pathname.match(/\/app\/(\d+)/);
@@ -44,52 +47,87 @@ if (appidMatch && nameEl?.textContent?.trim()) {
     '.sysreq_tabs .sysreq_tab[data-os="mac"]',
   );
 
-  const showApp = async (slug: string, opts: { cwName?: string; approximate: boolean }): Promise<void> => {
-    show(renderLoading());
-    try {
-      const data = await getApp(slug);
-      if (!data) {
-        show(renderNoData(gameName));
-        return;
+  interface CwResolution {
+    app: CwAppPage | null;
+    slug: string | null;
+    cwName?: string;
+    approximate: boolean;
+    candidates?: RankedResult[];
+  }
+
+  // Resuelve la parte de CodeWeavers: elección guardada → ficha directa;
+  // si no, búsqueda + ranking (candidatos si es ambiguo).
+  const resolveCw = async (forcePicker: boolean): Promise<CwResolution> => {
+    if (!forcePicker) {
+      const savedSlug = await cache.getSourceChoice('cw', appid);
+      if (savedSlug) {
+        return { app: await getApp(savedSlug), slug: savedSlug, approximate: false };
       }
-      show(renderAppWidget(data, {
-        slug,
-        cwName: opts.cwName,
-        approximate: opts.approximate,
-        onChangeMatch: async () => {
-          await cache.clearSlugChoice(appid);
-          void resolveByName(true);
-        },
-      }));
-    } catch (e) {
-      show(renderError(`Couldn't load CodeWeavers data (${(e as Error).message})`));
     }
+    const results = await search(gameName);
+    const ranked = rank(gameName, results);
+    const pick = (!forcePicker && ranked.confident) ||
+      (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
+    if (pick) {
+      return {
+        app: await getApp(pick.slug),
+        slug: pick.slug,
+        cwName: pick.name,
+        approximate: pick.score < 1,
+      };
+    }
+    if (ranked.candidates.length > 1) {
+      return { app: null, slug: null, approximate: false, candidates: ranked.candidates };
+    }
+    return { app: null, slug: null, approximate: false };
+  };
+
+  const refresh = async (): Promise<void> => {
+    const savedSlug = await cache.getSourceChoice('cw', appid);
+    const keys = [searchCacheKey(gameName), agwCacheKey(gameName), steamCacheKey(appid), 'awacy:index'];
+    if (savedSlug) keys.push(appCacheKey(savedSlug));
+    await cache.remove(...keys);
+    void resolveAll(false);
   };
 
   const showCandidates = (candidates: RankedResult[]): void => {
     show(renderCandidateList(candidates, gameName, async (picked) => {
-      await cache.setSlugChoice(appid, picked.slug);
-      void showApp(picked.slug, { cwName: picked.name, approximate: picked.score < 1 });
+      await cache.setSourceChoice('cw', appid, picked.slug);
+      void resolveAll(false);
     }));
   };
 
-  const resolveByName = async (forcePicker: boolean): Promise<void> => {
+  const resolveAll = async (forcePicker: boolean): Promise<void> => {
     show(renderLoading());
     try {
-      const results = await search(gameName);
-      const ranked = rank(gameName, results);
-      if (!forcePicker && ranked.confident) {
-        void showApp(ranked.confident.slug, {
-          cwName: ranked.confident.name,
-          approximate: ranked.confident.score < 1,
-        });
-      } else if (ranked.candidates.length > 0) {
-        showCandidates(ranked.candidates);
-      } else {
-        show(renderNoData(gameName));
+      // Las tres fuentes en paralelo; AGW y anticheat no deben romper nada.
+      const [cw, agw, ac] = await Promise.all([
+        resolveCw(forcePicker),
+        agwLookup(gameName, appid).catch(() => null),
+        anticheatLookup(appid, gameName).catch(() => null),
+      ]);
+
+      if (cw.candidates) {
+        showCandidates(cw.candidates);
+        return;
       }
+
+      const verdict = computeVerdict(cw.app?.mac ?? null, agw, ac);
+      show(renderAppWidget(
+        { cw: cw.app, cwSlug: cw.slug, agw, ac, verdict },
+        {
+          gameName,
+          cwName: cw.cwName,
+          approximate: cw.approximate,
+          onChangeMatch: async () => {
+            await cache.clearSourceChoice('cw', appid);
+            void resolveAll(true);
+          },
+          onRefresh: () => void refresh(),
+        },
+      ));
     } catch (e) {
-      show(renderError(`Couldn't reach CodeWeavers (${(e as Error).message})`));
+      show(renderError(`Couldn't load compatibility data (${(e as Error).message})`));
     }
   };
 
@@ -99,11 +137,6 @@ if (appidMatch && nameEl?.textContent?.trim()) {
       show(renderNativeBadge());
       return;
     }
-    const savedSlug = await cache.getSlugChoice(appid);
-    if (savedSlug) {
-      void showApp(savedSlug, { approximate: false });
-    } else {
-      void resolveByName(false);
-    }
+    void resolveAll(false);
   })();
 }
