@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Gate de verificación de CrosTem (usado por higinio verify/finish).
-# TypeScript + Vite: typecheck + tests unit + build.
+# CrosTem verification gate (used by higinio verify/finish).
+# TypeScript + Vite: typecheck + unit tests + build.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

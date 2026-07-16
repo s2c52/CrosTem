@@ -1,5 +1,5 @@
-// Página de opciones: superficies, fuentes, versión de CrossOver, caché y
-// export/import de correcciones de matching. Guarda al cambiar (sin botón).
+// Options page: surfaces, sources, CrossOver version, cache and
+// export/import of matching corrections. Saves on change (no button).
 import { t } from '../lib/i18n';
 import { getSettings, saveSettings, type Settings } from '../lib/settings';
 

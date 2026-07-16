@@ -1,11 +1,11 @@
-// Constructores de DOM del widget de ficha y elementos comunes. El chrome de
-// la UI se traduce vía i18n; los estados que reportan las fuentes ("Runs
-// Great", "playable"…) se mantienen tal cual, como cita de la fuente.
+// DOM builders for the app-page widget and common elements. The UI chrome
+// is translated via i18n; statuses reported by the sources ("Runs
+// Great", "playable"…) are kept as-is, as a quote from the source.
 import { agwPageUrl } from './agw';
 import { AWACY_SITE } from './awacy';
 import { appUrl, searchUrl } from './client';
 import { t } from './i18n';
-import type { AgwCompat, AnticheatInfo, CwAppPage, RankedResult, Verdict, VerdictLevel } from '../types';
+import type { AgwCompat, AnticheatInfo, ArchInfo, CwAppPage, RankedResult, Verdict, VerdictLevel } from '../types';
 
 function el(tag: string, className?: string, text?: string): HTMLElement {
   const node = document.createElement(tag);
@@ -25,7 +25,7 @@ export function starsEl(n: number | null, max = 5): HTMLElement {
   return span;
 }
 
-/** Punto de semáforo del veredicto. */
+/** Verdict traffic-light dot. */
 export function dotEl(level: VerdictLevel, title?: string): HTMLElement {
   const dot = el('span', 'crostem-dot crostem-dot-' + level);
   if (title) dot.title = title;
@@ -66,10 +66,25 @@ function box(): HTMLElement {
   return root;
 }
 
-export function renderNativeBadge(): HTMLElement {
+const ARCH_SOURCE_KEYS = {
+  agw: 'archSourceAgw',
+  'steam-reqs': 'archSourceSteam',
+  date: 'archSourceDate',
+} as const;
+
+export function renderNativeBadge(arch: ArchInfo | null = null): HTMLElement {
   const root = box();
   const body = el('div', 'crostem-body');
-  body.appendChild(el('span', 'crostem-native-badge', t('nativeBadge')));
+  const line = el('div', 'crostem-headline');
+  line.appendChild(starsEl(5));
+  line.appendChild(el('span', 'crostem-native-badge', t('nativeBadge')));
+  body.appendChild(line);
+  if (arch) {
+    const label = t(arch.arch === 'm-series' ? 'archM' : 'archIntel') +
+      (arch.approximate ? ' ~' : '');
+    body.appendChild(el('div', 'crostem-arch-line', label));
+    body.appendChild(el('div', 'crostem-muted crostem-small', t(ARCH_SOURCE_KEYS[arch.source])));
+  }
   body.appendChild(el('div', 'crostem-muted crostem-small', t('nativeNote')));
   root.appendChild(body);
   return root;
@@ -101,7 +116,7 @@ export interface AppWidgetOpts {
   gameName: string;
   cwName?: string;
   approximate: boolean;
-  /** Rama de CrossOver del usuario a destacar (ej. "26"). */
+  /** User's CrossOver branch to highlight (e.g. "26"). */
   cxVersion?: string;
   onChangeMatch?: () => void;
   onRefresh?: () => void;
@@ -119,12 +134,12 @@ function isUserVersion(version: string, cxVersion?: string): boolean {
   return version === cxVersion || version.startsWith(cxVersion + '.');
 }
 
-/** Widget completo para la ficha del juego: veredicto + desglose por fuente. */
+/** Full widget for the game page: verdict + per-source breakdown. */
 export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElement {
   const root = box();
   const body = el('div', 'crostem-body');
 
-  // Veredicto sintetizado
+  // Synthesized verdict
   const headline = el('div', 'crostem-headline');
   headline.appendChild(dotEl(data.verdict.level));
   headline.appendChild(el('span', 'crostem-verdict-label crostem-verdict-' + data.verdict.level,
@@ -210,7 +225,7 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
     sec.appendChild(note);
   }
 
-  // Pie: refresh + atribución
+  // Footer: refresh + attribution
   const footer = el('div', 'crostem-footer');
   if (opts.onRefresh) {
     const refresh = el('a', 'crostem-link crostem-small', t('refresh')) as HTMLAnchorElement;
@@ -229,7 +244,7 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
   return root;
 }
 
-/** Selector de candidatos cuando el matching por nombre es ambiguo. */
+/** Candidate picker when name matching is ambiguous. */
 export function renderCandidateList(
   candidates: RankedResult[],
   gameName: string,

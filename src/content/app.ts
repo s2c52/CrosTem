@@ -1,6 +1,7 @@
-// Ficha del juego en Steam: widget "Runs on Mac?" con veredicto combinado
-// (CodeWeavers + AppleGamingWiki + anticheat) y desglose por fuente.
+// Steam game page: "Runs on Mac?" widget with combined verdict
+// (CodeWeavers + AppleGamingWiki + anticheat) and per-source breakdown.
 import { agwCacheKey, agwLookup } from '../lib/agw';
+import { resolveNativeArch } from '../lib/arch';
 import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
 import { appCacheKey, getApp, search, searchCacheKey, steamCacheKey } from '../lib/client';
@@ -56,8 +57,8 @@ if (appidMatch && nameEl?.textContent?.trim()) {
     candidates?: RankedResult[];
   }
 
-  // Resuelve la parte de CodeWeavers: elección guardada → ficha directa;
-  // si no, búsqueda + ranking (candidatos si es ambiguo).
+  // Resolves the CodeWeavers part: saved choice → direct app page;
+  // otherwise, search + ranking (candidates if ambiguous).
   const resolveCw = async (forcePicker: boolean): Promise<CwResolution> => {
     if (!forcePicker) {
       const savedSlug = await cache.getSourceChoice('cw', appid);
@@ -101,8 +102,8 @@ if (appidMatch && nameEl?.textContent?.trim()) {
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
     show(renderLoading());
     try {
-      // Las tres fuentes en paralelo (desactivables en opciones); AGW y
-      // anticheat no deben romper nada.
+      // The three sources in parallel (can be disabled in options); AGW and
+      // anticheat must not break anything.
       const sources = (await getSettings()).sources;
       const [cw, agw, ac] = await Promise.all([
         sources.cw
@@ -142,7 +143,11 @@ if (appidMatch && nameEl?.textContent?.trim()) {
     if (!(await getSettings()).surfaces.app) return;
     if (!mount()) return;
     if (isNativeMac()) {
+      // Immediate badge; the architecture (M Series / Intel) arrives async.
       show(renderNativeBadge());
+      void resolveNativeArch(gameName, appid)
+        .then((arch) => { if (arch) show(renderNativeBadge(arch)); })
+        .catch(() => {});
       return;
     }
     void resolveAll(false);

@@ -1,16 +1,16 @@
-// Tipos de dominio de CrosTem.
+// CrosTem domain types.
 
-/** Fila de la tabla de resultados de búsqueda de CodeWeavers. */
+/** Row of the CodeWeavers search results table. */
 export interface CwSearchResult {
   name: string;
   slug: string;
   company: string;
   lastUpdated: string;
-  /** Estrellas Mac (0-5) o null si la fila no trae rating. */
+  /** Mac stars (0-5) or null if the row has no rating. */
   stars: number | null;
 }
 
-/** Bloque de rating (Mac o Linux) de la ficha de CodeWeavers. */
+/** Rating box (Mac or Linux) from the CodeWeavers app page. */
 export interface CwRatingBox {
   stars: number | null;
   status: string;
@@ -24,12 +24,12 @@ export interface CwVersionRating {
   stars: number | null;
 }
 
-/** Ficha de aplicación de CodeWeavers parseada. */
+/** Parsed CodeWeavers application page. */
 export interface CwAppPage {
   slug: string | null;
   mac: CwRatingBox | null;
   linux: CwRatingBox | null;
-  /** Desglose por versión de CrossOver, la más reciente primero. */
+  /** Breakdown by CrossOver version, most recent first. */
   versions: CwVersionRating[];
   aggregate: { value: number; count: number } | null;
 }
@@ -39,21 +39,34 @@ export interface RankedResult extends CwSearchResult {
 }
 
 export interface RankOutcome {
-  /** Coincidencia única suficientemente clara para usarla sin preguntar. */
+  /** Single match clear enough to use without asking. */
   confident: RankedResult | null;
-  /** Top 5 de candidatos plausibles, ordenados por score. */
+  /** Top 5 plausible candidates, ordered by score. */
   candidates: RankedResult[];
 }
 
-/** Nombre y flag de Mac nativo desde la API appdetails de Steam. */
+/** Name and native Mac flag from Steam's appdetails API. */
 export interface SteamDetails {
   name: string | null;
   mac: boolean;
+  /** Plain text of mac_requirements (min + rec, no HTML). Only if mac. */
+  macRequirements?: string | null;
+  releaseYear?: number | null;
 }
 
-/** Resultado de la resolución automática de un badge/overlay. */
+export type MacArch = 'm-series' | 'intel';
+
+/** Architecture of the native Mac binary and where the data came from. */
+export interface ArchInfo {
+  arch: MacArch;
+  /** true = inferred (marked with "~", like approximate matching). */
+  approximate: boolean;
+  source: 'agw' | 'steam-reqs' | 'date';
+}
+
+/** Result of the automatic resolution of a badge/overlay. */
 export type ResolveResult =
-  | { kind: 'native' }
+  | { kind: 'native'; arch: ArchInfo | null }
   | { kind: 'stars'; stars: number | null; slug: string; cwName: string; approximate: boolean; level: VerdictLevel }
   | { kind: 'ambiguous'; count: number; query: string; level: VerdictLevel }
   | { kind: 'dot'; level: VerdictLevel; title: string }
@@ -62,14 +75,14 @@ export type ResolveResult =
 export interface AutoAttachOpts {
   appid?: string | null;
   name?: string | null;
-  /** true = nativo Mac; false = seguro que no; undefined = desconocido. */
+  /** true = native Mac; false = definitely not; undefined = unknown. */
   native?: boolean;
   mode: 'overlay' | 'inline';
 }
 
-// --- Fuentes adicionales (F2) ---
+// --- Additional sources (F2) ---
 
-/** Estados de compatibilidad que publica AppleGamingWiki (tabla Compatibility_macOS). */
+/** Compatibility statuses published by AppleGamingWiki (Compatibility_macOS table). */
 export type AgwStatus =
   | 'perfect' | 'playable' | 'runs' | 'menu'
   | 'unplayable' | "doesn't work" | 'na' | 'unknown';
@@ -82,7 +95,7 @@ export interface AgwCompat {
   rosetta2: AgwStatus;
 }
 
-/** Estados de AreWeAntiCheatYet (datos de Linux/Proton, orientativos para CrossOver). */
+/** AreWeAntiCheatYet statuses (Linux/Proton data, indicative for CrossOver). */
 export type AnticheatStatus = 'Supported' | 'Running' | 'Planned' | 'Broken' | 'Denied';
 
 export interface AnticheatInfo {
@@ -99,14 +112,14 @@ export interface Verdict {
   reasons: string[];
 }
 
-/** Señal de CodeWeavers para el veredicto: la ficha completa o solo las
- * estrellas de la fila de búsqueda (caso overlays). */
+/** CodeWeavers signal for the verdict: the full app page or just the
+ * stars from the search row (overlays case). */
 export interface CwSignal {
   stars: number | null;
   status?: string;
 }
 
-// Mensajería content script ⇄ service worker.
+// Content script ⇄ service worker messaging.
 export interface ExtFetchRequest {
   type: 'extFetch';
   url: string;

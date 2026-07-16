@@ -1,5 +1,5 @@
-// Test del parseo de la API cargoquery de AppleGamingWiki contra una
-// respuesta real capturada (fixture del 2026-07-16).
+// Tests for parsing the AppleGamingWiki cargoquery API against a real
+// captured response (fixture captured 2026-07-16).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';

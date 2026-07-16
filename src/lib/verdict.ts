@@ -1,11 +1,11 @@
-// Motor de veredicto combinado (semáforo). Función pura y testeada: recibe
-// las señales de las tres fuentes y produce nivel + etiqueta + razones.
+// Combined verdict engine (traffic light). Pure, tested function: takes
+// the signals from the three sources and produces level + label + reasons.
 //
-// Política CONSERVADORA (decisión de producto, ver ROADMAP.md):
-// - 🟢 solo si CodeWeavers ≥ "Runs Well" o AGW ≥ playable, sin señal mala de
-//   la otra fuente y sin anticheat bloqueado.
-// - Anticheat Denied/Broken (dato de Linux/Proton, orientativo) baja a 🔴.
-// - Señales mixtas o intermedias → 🟡. Sin datos → ⚪ unknown.
+// CONSERVATIVE policy (product decision, see ROADMAP.md):
+// - 🟢 only if CodeWeavers ≥ "Runs Well" or AGW ≥ playable, with no bad signal
+//   from the other source and no blocked anticheat.
+// - Anticheat Denied/Broken (Linux/Proton data, indicative) lowers to 🔴.
+// - Mixed or intermediate signals → 🟡. No data → ⚪ unknown.
 import type { AgwCompat, AnticheatInfo, CwSignal, Verdict, VerdictLevel } from '../types';
 
 function cwGood(cw: CwSignal | null): boolean {
@@ -63,8 +63,8 @@ export function computeVerdict(
 
   let level: VerdictLevel;
   if (!hasCw && !hasAgwSignal) {
-    // Sin datos de compatibilidad: el anticheat solo no afirma jugabilidad,
-    // pero un bloqueo sí la niega.
+    // No compatibility data: anticheat alone does not assert playability,
+    // but a block does deny it.
     level = acBlocked(ac) ? 'red' : 'unknown';
   } else if (acBlocked(ac)) {
     level = 'red';
@@ -73,7 +73,7 @@ export function computeVerdict(
     const bad = cwBad(cw) || agwBad(agw);
     if (good && !bad && !acUncertain(ac)) level = 'green';
     else if (!good && bad) level = 'red';
-    else level = 'yellow'; // mixto, intermedio o anticheat incierto
+    else level = 'yellow'; // mixed, intermediate or uncertain anticheat
   }
 
   if (level === 'yellow' && (cwGood(cw) || agwGood(agw)) && (cwBad(cw) || agwBad(agw))) {

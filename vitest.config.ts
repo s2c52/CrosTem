@@ -2,11 +2,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    // happy-dom aporta DOMParser/DOM para los tests del parser.
+    // happy-dom provides DOMParser/DOM for the parser tests.
     environment: 'happy-dom',
     environmentOptions: {
       happyDOM: {
-        // Los fixtures HTML enlazan CSS/JS externos; no hay que descargarlos.
+        // The HTML fixtures link external CSS/JS; they must not be downloaded.
         settings: {
           disableCSSFileLoading: true,
           disableJavaScriptFileLoading: true,

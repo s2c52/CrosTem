@@ -1,7 +1,7 @@
-// Matching de nombres entre títulos de Steam y entradas de CodeWeavers.
-// CodeWeavers no conoce el appid de Steam, así que normalizamos ambos nombres
-// y puntuamos candidatos; los casos ambiguos los resuelve el usuario (la
-// elección se persiste).
+// Name matching between Steam titles and CodeWeavers entries.
+// CodeWeavers does not know the Steam appid, so we normalize both names
+// and score candidates; ambiguous cases are resolved by the user (the
+// choice is persisted).
 import type { CwSearchResult, RankedResult, RankOutcome } from '../types';
 
 const EDITION_WORDS = [
@@ -12,14 +12,14 @@ const EDITION_WORDS = [
 
 export function normalizeName(name: string): string {
   let s = (name || '').toLowerCase();
-  s = s.normalize('NFKD').replace(/[\u0300-\u036f]/g, ''); // diacríticos
+  s = s.normalize('NFKD').replace(/[\u0300-\u036f]/g, ''); // diacritics
   s = s.replace(/[™®©]/g, ' ');
   s = s.replace(/&/g, ' and ');
   s = s.replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
   return s;
 }
 
-// Nombre normalizado sin calificadores de edición al final
+// Normalized name without trailing edition qualifiers
 // ("elden ring deluxe edition" -> "elden ring").
 export function baseName(name: string): string {
   let s = normalizeName(name);
@@ -71,8 +71,8 @@ export function rank(steamName: string, searchResults: CwSearchResult[]): RankOu
   let confident: RankedResult | null = null;
   if (scored.length > 0) {
     const top = scored[0];
-    // Una coincidencia exacta única gana directamente; si no, exigimos una
-    // casi-exacta sin rival al mismo nivel.
+    // A single exact match wins outright; otherwise we require a
+    // near-exact one with no rival at the same level.
     if (top.score === 1 && scored.filter((r) => r.score === 1).length === 1) {
       confident = top;
     } else if (top.score >= 0.95 && scored.filter((r) => r.score >= 0.95).length === 1) {

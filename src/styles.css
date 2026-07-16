@@ -164,6 +164,31 @@
   font-weight: bold;
 }
 
+.crostem-badge-native .crostem-stars {
+  font-size: 12px;
+}
+
+/* Mini architecture tag (M / Intel) next to the native stars */
+.crostem-arch-tag {
+  color: #a3cf06;
+  font-size: 10px;
+  font-weight: bold;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* Architecture line in the app page widget */
+.crostem-arch-line {
+  color: #a3cf06;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+/* The native badge inside the headline no longer needs its own margin */
+.crostem-headline .crostem-native-badge {
+  margin-bottom: 0;
+}
+
 .crostem-badge-result,
 .crostem-badge-result:visited {
   color: #66c0f4;
@@ -213,7 +238,16 @@
   font-size: 12px;
 }
 
-/* Semáforo del veredicto (F2) */
+.crostem-overlay .crostem-badge-native .crostem-stars {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.crostem-overlay .crostem-arch-tag {
+  font-size: 9px;
+}
+
+/* Verdict traffic light (F2) */
 
 .crostem-dot {
   border-radius: 50%;
