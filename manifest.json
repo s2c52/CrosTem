@@ -1,69 +1,56 @@
 {
   "manifest_version": 3,
-  "name": "CrosTem — CrossOver Compatibility for Steam",
-  "version": "0.2.0",
+  "name": "CrosTem — Mac compatibility for Steam",
+  "version": "0.3.0",
   "description": "Shows CodeWeavers CrossOver (macOS) compatibility ratings on Steam store pages, capsules, search results and wishlist.",
-  "author": "Sacha Gennari (s2c52)",
-  "permissions": ["storage"],
-  "host_permissions": ["https://www.codeweavers.com/*"],
+  "author": {
+    "email": "s2c52@users.noreply.github.com"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.codeweavers.com/*"
+  ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.ts",
+    "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["https://store.steampowered.com/app/*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-app.js"
+      "matches": [
+        "https://store.steampowered.com/app/*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/app.ts"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://store.steampowered.com/search*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-search.js"
+      "matches": [
+        "https://store.steampowered.com/search*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/search.ts"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://store.steampowered.com/wishlist*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-wishlist.js"
+      "matches": [
+        "https://store.steampowered.com/wishlist*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/wishlist.ts"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://store.steampowered.com/*"],
-      "js": [
-        "lib/parser.js",
-        "lib/matcher.js",
-        "lib/cache.js",
-        "lib/client.js",
-        "lib/widget.js",
-        "lib/auto.js",
-        "content-capsules.js"
+      "matches": [
+        "https://store.steampowered.com/*"
       ],
-      "css": ["styles.css"],
+      "js": [
+        "src/content/capsules.ts"
+      ],
       "run_at": "document_idle"
     }
   ]
