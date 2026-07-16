@@ -1,12 +1,12 @@
-// Caché en chrome.storage.local con TTL, más el mapa persistente de
-// coincidencias confirmadas por el usuario (steam appid -> slug CodeWeavers).
+// Cache in chrome.storage.local with TTL, plus the persistent map of
+// user-confirmed matches (steam appid -> CodeWeavers slug).
 
 import { getSettings } from './settings';
 
-export const TTL_RESULT = 7 * 24 * 60 * 60 * 1000; // fallback si no hay settings
-export const TTL_NEGATIVE = 24 * 60 * 60 * 1000; // respuestas "sin datos": 24 horas
+export const TTL_RESULT = 7 * 24 * 60 * 60 * 1000; // fallback when there are no settings
+export const TTL_NEGATIVE = 24 * 60 * 60 * 1000; // "no data" responses: 24 hours
 
-/** TTL de resultados según la configuración del usuario (días → ms). */
+/** Result TTL according to the user's settings (days → ms). */
 export async function ttlResult(): Promise<number> {
   try {
     return (await getSettings()).cacheTtlDays * 24 * 60 * 60 * 1000;
@@ -40,19 +40,19 @@ export async function set<T>(key: string, value: T, ttlMs: number = TTL_RESULT):
   await chrome.storage.local.set({ ['cache:' + key]: entry });
 }
 
-/** Invalida entradas concretas (botón refresh del widget). */
+/** Invalidates specific entries (widget refresh button). */
 export async function remove(...keys: string[]): Promise<void> {
   await chrome.storage.local.remove(keys.map((k) => 'cache:' + k));
 }
 
-// Correcciones de matching confirmadas por el usuario, por fuente de datos
-// ('cw' → slug de CodeWeavers, 'agw' → página de AppleGamingWiki).
+// User-confirmed matching corrections, per data source
+// ('cw' → CodeWeavers slug, 'agw' → AppleGamingWiki page).
 export type MatchSource = 'cw' | 'agw';
 
 export async function getSourceChoice(source: MatchSource, appid: string): Promise<string | undefined> {
   const v = await storageGet<string>(`choice:${source}:${appid}`);
   if (v !== undefined) return v;
-  // Clave heredada de v0.2/v0.3 (solo existía la elección de CodeWeavers).
+  // Legacy key from v0.2/v0.3 (only the CodeWeavers choice existed).
   if (source === 'cw') return storageGet<string>('choice:' + appid);
   return undefined;
 }

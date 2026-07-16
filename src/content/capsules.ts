@@ -1,5 +1,5 @@
-// Overlay de estrellas sobre las cápsulas (imágenes) de juego en toda la
-// tienda de Steam: portada, ofertas, categorías, "more like this", etc.
+// Star overlay on game capsules (images) across the whole
+// Steam store: front page, deals, categories, "more like this", etc.
 import { attach } from '../lib/auto';
 import { getSettings } from '../lib/settings';
 import '../styles.css';
@@ -18,12 +18,12 @@ function nameHint(a: HTMLAnchorElement): string | null {
 
 function processAnchor(a: HTMLAnchorElement): void {
   if (a.dataset.crostemCapsule) return;
-  if (a.classList.contains('search_result_row')) return; // ya lleva badge inline
+  if (a.classList.contains('search_result_row')) return; // already has an inline badge
   if (a.closest('.crostem-box, .crostem-badge, .crostem-overlay')) return;
 
   const m = (a.getAttribute('href') ?? '').match(APP_LINK);
   if (!m) return;
-  if (!a.querySelector('img, picture')) return; // solo cápsulas con imagen
+  if (!a.querySelector('img, picture')) return; // only capsules with an image
 
   a.dataset.crostemCapsule = '1';
   a.classList.add('crostem-capsule-host');
@@ -49,8 +49,8 @@ function scheduleScan(): void {
   }, 300);
 }
 
-// Las filas de la wishlist llevan su propio badge inline (content/wishlist.ts);
-// superponer también sus cápsulas duplicaría la información.
+// Wishlist rows carry their own inline badge (content/wishlist.ts);
+// overlaying their capsules too would duplicate the information.
 if (!location.pathname.startsWith('/wishlist')) {
   void (async () => {
     if (!(await getSettings()).surfaces.capsules) return;

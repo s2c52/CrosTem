@@ -1,5 +1,5 @@
-// Tests del parser contra HTML real de CodeWeavers (fixtures capturados el
-// 2026-07-16). Si CodeWeavers rediseña su web, recapturar los fixtures:
+// Parser tests against real CodeWeavers HTML (fixtures captured
+// 2026-07-16). If CodeWeavers redesigns their site, recapture the fixtures:
 //   curl -A "Mozilla/5.0" "https://www.codeweavers.com/compatibility?name=elden" > tests/fixtures/cw_name.html
 //   curl -A "Mozilla/5.0" "https://www.codeweavers.com/compatibility/crossover/elden-ring" > tests/fixtures/cw_elden.html
 import { readFileSync } from 'node:fs';
@@ -7,8 +7,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseAppPage, parseSearchResults } from '../src/lib/parser';
 
-// Los <link> se eliminan porque happy-dom intenta descargarlos (ruido de red
-// en los tests) y no aportan nada al parseo.
+// <link> tags are stripped because happy-dom tries to download them (network
+// noise in the tests) and they contribute nothing to the parsing.
 const fixture = (name: string): string =>
   readFileSync(join(__dirname, 'fixtures', name), 'utf8').replace(/<link[^>]*>/g, '');
 

@@ -1,22 +1,22 @@
-// Configuración de usuario. Se guarda en chrome.storage.sync (viaja con la
-// cuenta del navegador); los content scripts la leen una vez al arrancar —
-// los cambios piden recargar las pestañas de Steam.
+// User settings. Stored in chrome.storage.sync (travels with the browser
+// account); content scripts read them once at startup —
+// changes require reloading the Steam tabs.
 
 export interface Settings {
   surfaces: {
-    app: boolean;      // widget en la ficha del juego
-    capsules: boolean; // overlays sobre cápsulas
-    search: boolean;   // badges en resultados de búsqueda
-    wishlist: boolean; // badges en la wishlist
+    app: boolean;      // widget on the game page
+    capsules: boolean; // overlays on capsules
+    search: boolean;   // badges in search results
+    wishlist: boolean; // badges on the wishlist
   };
   sources: {
     cw: boolean;        // CodeWeavers
     agw: boolean;       // AppleGamingWiki
     anticheat: boolean; // AreWeAntiCheatYet
   };
-  /** Rama de CrossOver del usuario (se destaca en el widget), ej. "26". */
+  /** User's CrossOver branch (highlighted in the widget), e.g. "26". */
   crossoverVersion: string;
-  /** TTL de la caché de resultados, en días (1-30). */
+  /** Result cache TTL, in days (1-30). */
   cacheTtlDays: number;
 }
 
@@ -29,7 +29,7 @@ export const DEFAULTS: Settings = {
 
 const KEY = 'settings';
 
-/** Mezcla lo guardado con los defaults (campos nuevos quedan cubiertos). */
+/** Merges stored values with the defaults (new fields stay covered). */
 export function mergeSettings(stored: unknown): Settings {
   const s = (stored ?? {}) as Partial<Settings>;
   return {

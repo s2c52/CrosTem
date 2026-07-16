@@ -1,5 +1,5 @@
-// Empaqueta dist/ en un zip listo para subir a la Chrome Web Store.
-// Uso: npm run package  →  crostem-v<version>.zip en la raíz del repo.
+// Packages dist/ into a zip ready to upload to the Chrome Web Store.
+// Usage: npm run package  →  crostem-v<version>.zip at the repo root.
 import { execFileSync } from 'node:child_process';
 import { readFileSync, rmSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

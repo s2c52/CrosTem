@@ -1,6 +1,6 @@
-// Genera las capturas del listing de la Chrome Web Store (1280×800 exactos)
-// con la extensión cargada desde dist/. Salida: store-assets/*.png.
-// Uso: npm run build && npm run listing
+// Generates the Chrome Web Store listing screenshots (exactly 1280×800)
+// with the extension loaded from dist/. Output: store-assets/*.png.
+// Usage: npm run build && npm run listing
 import { chromium } from 'playwright-core';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -41,7 +41,7 @@ async function shoot(name) {
   console.log(name);
 }
 
-// 1. Ficha con veredicto (el widget a la vista)
+// 1. Game page with verdict (widget in view)
 await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', { waitUntil: 'domcontentloaded' });
 await page.waitForFunction(() => {
   const w = document.querySelector('#crostem-widget');
@@ -51,7 +51,7 @@ await page.locator('#crostem-widget').scrollIntoViewIfNeeded();
 await page.waitForTimeout(800);
 await shoot('1-game-page-verdict.png');
 
-// 2. Ficha con anticheat bloqueado
+// 2. Game page with blocked anticheat
 await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', { waitUntil: 'domcontentloaded' });
 await page.waitForFunction(() => {
   const w = document.querySelector('#crostem-widget');
@@ -61,7 +61,7 @@ await page.locator('#crostem-widget').scrollIntoViewIfNeeded();
 await page.waitForTimeout(800);
 await shoot('2-anticheat-warning.png');
 
-// 3. Portada con overlays
+// 3. Front page with overlays
 await page.goto('https://store.steampowered.com/', { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(4000);
 await page.evaluate(() => window.scrollTo(0, 700));
@@ -69,13 +69,13 @@ await page.waitForSelector('.crostem-overlay:not(:empty)', { timeout: 30000 }).c
 await page.waitForTimeout(4000);
 await shoot('3-store-overlays.png');
 
-// 4. Búsqueda con badges
+// 4. Search with badges
 await page.goto('https://store.steampowered.com/search/?term=dark+souls', { waitUntil: 'domcontentloaded' });
 await page.waitForSelector('.crostem-badge:not(:empty)', { timeout: 30000 }).catch(() => {});
 await page.waitForTimeout(5000);
 await shoot('4-search-badges.png');
 
-// 5. Página de opciones
+// 5. Options page
 let sw = ctx.serviceWorkers()[0];
 if (!sw) sw = await ctx.waitForEvent('serviceworker', { timeout: 15000 }).catch(() => null);
 if (sw) {

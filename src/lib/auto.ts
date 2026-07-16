@@ -1,8 +1,8 @@
-// Resolución automática de badges compartida por cápsulas, búsqueda y
-// wishlist. Los elementos se registran con attach(); un IntersectionObserver
-// compartido solo resuelve los que se hacen visibles, minimizando peticiones
-// (además de las cachés de 7/30 días). Desde F2 el resultado incluye el
-// semáforo del veredicto combinado (CodeWeavers + AGW + anticheat).
+// Automatic badge resolution shared by capsules, search and wishlist.
+// Elements are registered with attach(); a shared IntersectionObserver
+// only resolves the ones that become visible, minimizing requests
+// (on top of the 7/30-day caches). Since F2 the result includes the
+// combined verdict traffic light (CodeWeavers + AGW + anticheat).
 import { agwLookup } from './agw';
 import { resolveNativeArch } from './arch';
 import { anticheatLookup } from './awacy';
@@ -29,8 +29,8 @@ const io = new IntersectionObserver((entries) => {
 
 export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
   if (opts.native === true) {
-    // Badge provisional inmediato (5★ sin arquitectura); la arquitectura se
-    // resuelve lazy vía el observer si hay señas para consultar las fuentes.
+    // Immediate provisional badge (5★ without architecture); the architecture
+    // is resolved lazily via the observer if there are hints to query the sources.
     render(el, { kind: 'native', arch: null }, opts);
     if (!opts.appid && !opts.name) return;
   }
@@ -42,14 +42,14 @@ async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<
   try {
     render(el, await resolve(opts), opts);
   } catch {
-    // Nunca borrar el badge nativo provisional por un fallo de red.
+    // Never remove the provisional native badge because of a network failure.
     render(el, opts.native === true ? { kind: 'native', arch: null } : { kind: 'none' }, opts);
   }
 }
 
 async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   let name = opts.name ?? null;
-  let native = opts.native; // undefined = desconocido
+  let native = opts.native; // undefined = unknown
   let details: SteamDetailsT | null = null;
 
   if ((name == null || native == null) && opts.appid) {
@@ -60,7 +60,7 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
         if (native == null) native = details.mac;
       }
     } catch {
-      // Falló Steam; seguimos con lo que tengamos
+      // Steam failed; carry on with what we have
     }
   }
 
@@ -71,8 +71,8 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
 
   const settings = await getSettings();
 
-  // Fuentes secundarias en paralelo con la resolución de CodeWeavers
-  // (cada una desactivable en las opciones).
+  // Secondary sources in parallel with the CodeWeavers resolution
+  // (each can be disabled in the options).
   const agwPromise = settings.sources.agw
     ? agwLookup(name, opts.appid).catch(() => null)
     : Promise.resolve(null);
@@ -80,7 +80,7 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
     ? anticheatLookup(opts.appid, name).catch(() => null)
     : Promise.resolve(null);
 
-  // CodeWeavers: elección del usuario > matching por nombre.
+  // CodeWeavers: user choice > name matching.
   let cwSignal: CwSignal | null = null;
   let cwOutcome:
     | { type: 'hit'; stars: number | null; slug: string; cwName: string; approximate: boolean }
@@ -125,7 +125,7 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   if (cwOutcome.type === 'ambiguous') {
     return { kind: 'ambiguous', count: cwOutcome.count, query: name, level: verdict.level };
   }
-  // Sin CodeWeavers pero con señal de AGW/anticheat: el semáforo solo.
+  // No CodeWeavers but with an AGW/anticheat signal: the traffic light alone.
   if (verdict.level !== 'unknown') {
     return { kind: 'dot', level: verdict.level, title: verdict.label };
   }
@@ -139,7 +139,7 @@ function cwLink(href: string, title?: string): HTMLAnchorElement {
   a.rel = 'noopener noreferrer';
   a.className = 'crostem-badge-result';
   if (title) a.title = title;
-  // Las cápsulas/filas son a su vez enlaces con handlers JS; este clic es nuestro.
+  // Capsules/rows are themselves links with JS handlers; this click is ours.
   a.addEventListener('click', (e) => e.stopPropagation());
   return a;
 }

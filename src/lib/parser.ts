@@ -1,12 +1,12 @@
-// Parsers del HTML de CodeWeavers. Todo el scraping vive aquí para que un
-// rediseño del sitio solo obligue a tocar este archivo.
+// Parsers for CodeWeavers HTML. All scraping lives here so that a site
+// redesign only requires touching this file.
 import type { CwAppPage, CwRatingBox, CwSearchResult, CwVersionRating } from '../types';
 
 function parseDoc(html: string): Document {
   return new DOMParser().parseFromString(html, 'text/html');
 }
 
-// <ul class="star-rating-table"> con un li.active por estrella llena.
+// <ul class="star-rating-table"> with one li.active per filled star.
 function starsFrom(container: Element | Document | null): number | null {
   const ul = container?.querySelector('ul.star-rating-table');
   if (!ul) return null;
@@ -17,8 +17,8 @@ function textOf(el: Element | null): string {
   return el ? (el.textContent ?? '').replace(/\s+/g, ' ').trim() : '';
 }
 
-// Búsqueda: https://www.codeweavers.com/compatibility?name=<query>
-// Tabla #teTable-app: | Application | Company | Last Updated | Rating (Mac) |
+// Search: https://www.codeweavers.com/compatibility?name=<query>
+// Table #teTable-app: | Application | Company | Last Updated | Rating (Mac) |
 export function parseSearchResults(html: string): CwSearchResult[] {
   const doc = parseDoc(html);
   const rows = doc.querySelectorAll('#teTable-app tbody tr');
@@ -41,8 +41,8 @@ export function parseSearchResults(html: string): CwSearchResult[] {
 
 function parseRatingBox(box: Element | null): CwRatingBox | null {
   if (!box) return null;
-  // span.txt_yellow lleva el texto de estado; el heading de Linux (h3)
-  // también tiene .txt_yellow, así que el selector debe ser específico.
+  // span.txt_yellow carries the status text; the Linux heading (h3)
+  // also has .txt_yellow, so the selector must be specific.
   const status = textOf(box.querySelector('span.txt_yellow'));
   const small = textOf(box.querySelector('.small'));
   const m = small.match(/Last Tested:\s*([\d.]+)\s*(?:\((\d+)\))?/i);
@@ -54,7 +54,7 @@ function parseRatingBox(box: Element | null): CwRatingBox | null {
   };
 }
 
-// Ficha: https://www.codeweavers.com/compatibility/crossover/<slug>
+// App page: https://www.codeweavers.com/compatibility/crossover/<slug>
 export function parseAppPage(html: string): CwAppPage | null {
   const doc = parseDoc(html);
   const ratingRoot = doc.querySelector('#appRating');
@@ -68,7 +68,7 @@ export function parseAppPage(html: string): CwAppPage | null {
     aggregate: null,
   };
 
-  // Desglose por versión de CrossOver (#breakdown), la más reciente primero.
+  // Breakdown by CrossOver version (#breakdown), most recent first.
   doc.querySelectorAll('#breakdown .breakdown-row .card-header').forEach((header) => {
     const text = textOf(header);
     const vm = text.match(/(\d+(?:\.\d+)+)/);
@@ -81,7 +81,7 @@ export function parseAppPage(html: string): CwAppPage | null {
     result.versions.push({ version: vm[1], platform, stars: starsFrom(header) });
   });
 
-  // Rating agregado desde el JSON-LD, si existe.
+  // Aggregate rating from the JSON-LD, if present.
   doc.querySelectorAll('script[type="application/ld+json"]').forEach((s) => {
     if (result.aggregate) return;
     try {
@@ -97,7 +97,7 @@ export function parseAppPage(html: string): CwAppPage | null {
         }
       }
     } catch {
-      // JSON-LD malformado: se ignora
+      // Malformed JSON-LD: ignored
     }
   });
 

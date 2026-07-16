@@ -1,5 +1,5 @@
-// Genera los PNG del icono (16/32/48/128) a partir de public/icons/icon.svg
-// renderizándolo con el navegador vía Playwright (sin dependencias nativas).
+// Generates the icon PNGs (16/32/48/128) from public/icons/icon.svg
+// by rendering it in the browser via Playwright (no native dependencies).
 import { chromium } from 'playwright-core';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

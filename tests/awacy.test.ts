@@ -1,5 +1,5 @@
-// Test del índice de AreWeAntiCheatYet contra un extracto real de games.json
-// (fixture con Elden Ring + una entrada por cada status del dataset).
+// Tests for the AreWeAntiCheatYet index against a real games.json excerpt
+// (fixture with Elden Ring + one entry per status in the dataset).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';

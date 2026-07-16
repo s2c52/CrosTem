@@ -1,5 +1,5 @@
-// Cliente de alto nivel usado por los content scripts: fetch (vía el service
-// worker, que evita CORS), parseo y caché de datos de CodeWeavers y Steam.
+// High-level client used by the content scripts: fetch (via the service
+// worker, which avoids CORS), parsing and caching of CodeWeavers and Steam data.
 import * as cache from './cache';
 import { baseName } from './matcher';
 import { parseAppPage, parseSearchResults } from './parser';
@@ -7,7 +7,7 @@ import type { CwAppPage, CwSearchResult, ExtFetchRequest, ExtFetchResponse, Stea
 
 const CW_BASE = 'https://www.codeweavers.com';
 
-/** Fetch de un recurso externo a través del service worker (evita CORS). */
+/** Fetch of an external resource through the service worker (avoids CORS). */
 export function fetchExt(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const msg: ExtFetchRequest = { type: 'extFetch', url };
@@ -33,7 +33,7 @@ export function appUrl(slug: string): string {
   return CW_BASE + '/compatibility/crossover/' + encodeURIComponent(slug);
 }
 
-// Claves de caché expuestas para invalidación selectiva (botón refresh).
+// Cache keys exposed for selective invalidation (refresh button).
 export function searchCacheKey(name: string): string {
   return 'search:' + baseName(name);
 }
@@ -46,7 +46,7 @@ export function steamCacheKey(appid: string): string {
   return 'steam:' + appid;
 }
 
-/** Busca en CodeWeavers por nombre (simplificado) de juego. */
+/** Searches CodeWeavers by (simplified) game name. */
 export async function search(name: string): Promise<CwSearchResult[]> {
   const query = baseName(name);
   if (!query) return [];
@@ -60,7 +60,7 @@ export async function search(name: string): Promise<CwSearchResult[]> {
   return results;
 }
 
-/** Descarga y parsea una ficha de CodeWeavers por slug. */
+/** Downloads and parses a CodeWeavers app page by slug. */
 export async function getApp(slug: string): Promise<CwAppPage | null> {
   const cacheKey = 'app:' + slug;
   const cached = await cache.get<CwAppPage | null>(cacheKey);
@@ -72,11 +72,11 @@ export async function getApp(slug: string): Promise<CwAppPage | null> {
   return data;
 }
 
-// --- appdetails de Steam (mismo origen desde store.steampowered.com) ---
-// Da el nombre y el flag de Mac nativo para cápsulas que solo llevan imagen.
-// Limitado y cacheado a largo plazo por el rate-limit de Steam.
+// --- Steam appdetails (same origin from store.steampowered.com) ---
+// Provides the name and native Mac flag for capsules that only carry an image.
+// Throttled and cached long-term because of Steam's rate limit.
 
-const STEAM_TTL = 30 * 24 * 60 * 60 * 1000; // 30 días
+const STEAM_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
 const STEAM_MAX_CONCURRENT = 2;
 let steamActive = 0;
 const steamQueue: Array<{
@@ -104,13 +104,13 @@ function stripHtml(s: string): string {
   return s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-/** Parseo puro de la respuesta de appdetails (testeable con fixtures). */
+/** Pure parsing of the appdetails response (testable with fixtures). */
 export function parseSteamDetails(json: unknown, appid: string): SteamDetails | null {
   const entry = (json as Record<string, { success?: boolean; data?: Record<string, unknown> } | undefined>)?.[appid];
   if (!entry?.success || !entry.data) return null;
   const data = entry.data;
   const mac = !!(data.platforms as { mac?: boolean } | undefined)?.mac;
-  // mac_requirements viene con el filtro basic; Steam manda [] cuando está vacío.
+  // mac_requirements comes with the basic filter; Steam sends [] when empty.
   const mr = data.mac_requirements as { minimum?: string; recommended?: string } | unknown[] | undefined;
   const macRequirements = mac && mr && !Array.isArray(mr)
     ? stripHtml([mr.minimum, mr.recommended].filter(Boolean).join(' ')) || null
@@ -135,7 +135,7 @@ async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
   return value;
 }
 
-/** Nombre y flag de Mac nativo, o null si Steam no conoce el appid. */
+/** Name and native Mac flag, or null if Steam does not know the appid. */
 export async function steamDetails(appid: string): Promise<SteamDetails | null> {
   const cached = await cache.get<SteamDetails | null>('steam:' + appid);
   if (cached !== undefined) return cached;

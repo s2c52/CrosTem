@@ -1,6 +1,6 @@
-// Parseo puro de la respuesta appdetails de Steam (fixture representativa:
-// juego nativo con requisitos HTML, no-nativo con mac_requirements=[] y
-// appid desconocido con success=false).
+// Pure parsing of Steam's appdetails response (representative fixture:
+// native game with HTML requirements, non-native with mac_requirements=[] and
+// unknown appid with success=false).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';

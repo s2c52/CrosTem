@@ -1,9 +1,9 @@
-// Suite e2e manual (pre-release): carga dist/ en Brave con un perfil temporal
-// y verifica las superficies reales de Steam. No corre en CI (Steam real es
-// frágil ahí); se ejecuta en local con `npm run e2e` y las capturas quedan en
-// e2e-results/ para entregarlas como evidencia de la verificación.
+// Manual e2e suite (pre-release): loads dist/ into Brave with a temporary
+// profile and checks the real Steam surfaces. Does not run in CI (real Steam
+// is flaky there); it runs locally via `npm run e2e` and the screenshots land
+// in e2e-results/ to be handed over as verification evidence.
 //
-// Requiere: npm run build previo y Brave instalado.
+// Requires: a prior npm run build and Brave installed.
 import { chromium } from 'playwright-core';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -31,7 +31,7 @@ const ctx = await chromium.launchPersistentContext(PROFILE, {
   ],
 });
 
-// Steam muestra age-gate intermitente en perfiles nuevos; la cookie lo evita.
+// Steam shows an intermittent age gate on fresh profiles; the cookie avoids it.
 await ctx.addCookies([
   { name: 'birthtime', value: '568022401', domain: 'store.steampowered.com', path: '/' },
   { name: 'lastagecheckage', value: '1-January-1988', domain: 'store.steampowered.com', path: '/' },
@@ -51,7 +51,7 @@ async function check(label, fn) {
   }
 }
 
-// 1. Ficha de Elden Ring (solo Windows): widget completo
+// 1. Elden Ring game page (Windows-only): full widget
 await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', { waitUntil: 'domcontentloaded' });
 await check('widget en ficha (Elden Ring)', async () => {
   const widget = page.locator('#crostem-widget .crostem-box');
@@ -66,7 +66,7 @@ await check('widget en ficha (Elden Ring)', async () => {
   return text.replace(/\s+/g, ' ').trim().slice(0, 100);
 });
 
-// 1b. Veredicto multi-fuente presente en la ficha
+// 1b. Multi-source verdict present on the game page
 await check('veredicto + desglose multi-fuente (Elden Ring)', async () => {
   const widget = page.locator('#crostem-widget .crostem-box');
   const text = await widget.textContent();
@@ -78,7 +78,7 @@ await check('veredicto + desglose multi-fuente (Elden Ring)', async () => {
   return `${agw} · ${ac}`;
 });
 
-// 1c. Juego con anticheat bloqueado (Destiny 2 = Denied en AWACY): rojo + aviso
+// 1c. Game with blocked anticheat (Destiny 2 = Denied on AWACY): red + warning
 await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', { waitUntil: 'domcontentloaded' });
 await check('anticheat Denied baja el semáforo (Destiny 2)', async () => {
   const widget = page.locator('#crostem-widget .crostem-box');
@@ -94,7 +94,7 @@ await check('anticheat Denied baja el semáforo (Destiny 2)', async () => {
   return red >= 1 ? 'semáforo rojo + aviso' : 'aviso presente (semáforo no rojo: ' + text.slice(0, 80) + ')';
 });
 
-// 2. Ficha de Stardew Valley (nativo Mac): badge Native
+// 2. Stardew Valley game page (Mac native): Native badge
 await page.goto('https://store.steampowered.com/app/413150/Stardew_Valley/', { waitUntil: 'domcontentloaded' });
 await check('badge nativo (Stardew Valley)', async () => {
   const widget = page.locator('#crostem-widget .crostem-box');
@@ -105,14 +105,14 @@ await check('badge nativo (Stardew Valley)', async () => {
   return 'Native on macOS';
 });
 
-// 3. Overlays en cápsulas de la propia ficha ("more like this")
+// 3. Overlays on the game page's own capsules ("more like this")
 await check('overlays en cápsulas (ficha + scroll)', async () => {
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight * 0.7));
   await page.waitForSelector('.crostem-overlay:not(:empty)', { timeout: 30000 });
   return `${await page.locator('.crostem-overlay:not(:empty)').count()} overlays con contenido`;
 });
 
-// 4. Portada de la tienda
+// 4. Store front page
 await page.goto('https://store.steampowered.com/', { waitUntil: 'domcontentloaded' });
 await check('overlays en portada', async () => {
   await page.waitForTimeout(4000);
@@ -123,7 +123,7 @@ await check('overlays en portada', async () => {
   return `${count} overlays con contenido`;
 });
 
-// 5. Búsqueda
+// 5. Search
 await page.goto('https://store.steampowered.com/search/?term=dark+souls', { waitUntil: 'domcontentloaded' });
 await check('badges en búsqueda (dark souls)', async () => {
   await page.waitForSelector('.crostem-badge:not(:empty)', { timeout: 30000 });
@@ -133,12 +133,12 @@ await check('badges en búsqueda (dark souls)', async () => {
   return `${count} badges con contenido`;
 });
 
-// --- F3: popup, options y toggles ---
+// --- F3: popup, options and toggles ---
 let sw = ctx.serviceWorkers()[0];
 if (!sw) sw = await ctx.waitForEvent('serviceworker', { timeout: 15000 }).catch(() => null);
 const extId = sw ? new URL(sw.url()).host : null;
 
-// 6. Popup: buscador manual
+// 6. Popup: manual search box
 await check('popup con buscador (baldur)', async () => {
   if (!extId) throw new Error('sin id de extensión (service worker no visible)');
   await page.goto(`chrome-extension://${extId}/src/popup/popup.html`);
@@ -149,14 +149,14 @@ await check('popup con buscador (baldur)', async () => {
   return `${count} resultados`;
 });
 
-// 7. Options: se abre, refleja defaults, y el toggle de cápsulas desactiva overlays
+// 7. Options: opens, reflects defaults, and the capsules toggle disables overlays
 await check('options + toggle de cápsulas', async () => {
   if (!extId) throw new Error('sin id de extensión');
   await page.goto(`chrome-extension://${extId}/src/options/options.html`);
   const appChecked = await page.locator('#surface-app').isChecked();
   if (!appChecked) throw new Error('defaults no aplicados');
   await page.screenshot({ path: join(OUT, 'options.png') });
-  await page.locator('#surface-capsules').uncheck(); // dispara guardado
+  await page.locator('#surface-capsules').uncheck(); // triggers save
   await page.waitForTimeout(500);
   await page.goto('https://store.steampowered.com/', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => window.scrollTo(0, 800));
