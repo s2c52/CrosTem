@@ -6,6 +6,7 @@ import * as cache from '../lib/cache';
 import { appCacheKey, getApp, search, searchCacheKey, steamCacheKey } from '../lib/client';
 import { rank } from '../lib/matcher';
 import { computeVerdict } from '../lib/verdict';
+import { getSettings } from '../lib/settings';
 import {
   renderAppWidget, renderCandidateList, renderError, renderLoading, renderNativeBadge,
 } from '../lib/widget';
@@ -100,11 +101,15 @@ if (appidMatch && nameEl?.textContent?.trim()) {
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
     show(renderLoading());
     try {
-      // Las tres fuentes en paralelo; AGW y anticheat no deben romper nada.
+      // Las tres fuentes en paralelo (desactivables en opciones); AGW y
+      // anticheat no deben romper nada.
+      const sources = (await getSettings()).sources;
       const [cw, agw, ac] = await Promise.all([
-        resolveCw(forcePicker),
-        agwLookup(gameName, appid).catch(() => null),
-        anticheatLookup(appid, gameName).catch(() => null),
+        sources.cw
+          ? resolveCw(forcePicker)
+          : Promise.resolve({ app: null, slug: null, approximate: false } as CwResolution),
+        sources.agw ? agwLookup(gameName, appid).catch(() => null) : Promise.resolve(null),
+        sources.anticheat ? anticheatLookup(appid, gameName).catch(() => null) : Promise.resolve(null),
       ]);
 
       if (cw.candidates) {
@@ -113,12 +118,14 @@ if (appidMatch && nameEl?.textContent?.trim()) {
       }
 
       const verdict = computeVerdict(cw.app?.mac ?? null, agw, ac);
+      const settings = await getSettings();
       show(renderAppWidget(
         { cw: cw.app, cwSlug: cw.slug, agw, ac, verdict },
         {
           gameName,
           cwName: cw.cwName,
           approximate: cw.approximate,
+          cxVersion: settings.crossoverVersion,
           onChangeMatch: async () => {
             await cache.clearSourceChoice('cw', appid);
             void resolveAll(true);
@@ -132,6 +139,7 @@ if (appidMatch && nameEl?.textContent?.trim()) {
   };
 
   void (async () => {
+    if (!(await getSettings()).surfaces.app) return;
     if (!mount()) return;
     if (isNativeMac()) {
       show(renderNativeBadge());

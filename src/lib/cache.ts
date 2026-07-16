@@ -1,8 +1,19 @@
 // Caché en chrome.storage.local con TTL, más el mapa persistente de
 // coincidencias confirmadas por el usuario (steam appid -> slug CodeWeavers).
 
-export const TTL_RESULT = 7 * 24 * 60 * 60 * 1000; // páginas/búsquedas parseadas: 7 días
+import { getSettings } from './settings';
+
+export const TTL_RESULT = 7 * 24 * 60 * 60 * 1000; // fallback si no hay settings
 export const TTL_NEGATIVE = 24 * 60 * 60 * 1000; // respuestas "sin datos": 24 horas
+
+/** TTL de resultados según la configuración del usuario (días → ms). */
+export async function ttlResult(): Promise<number> {
+  try {
+    return (await getSettings()).cacheTtlDays * 24 * 60 * 60 * 1000;
+  } catch {
+    return TTL_RESULT;
+  }
+}
 
 interface CacheEntry<T> {
   value: T;

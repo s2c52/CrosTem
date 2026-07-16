@@ -104,7 +104,7 @@ export async function agwLookup(name: string, appid?: string | null): Promise<Ag
     result = null; // AGW caído no debe romper el widget
   }
 
-  await cache.set(cacheKey, result, result ? cache.TTL_RESULT : cache.TTL_NEGATIVE);
+  await cache.set(cacheKey, result, result ? await cache.ttlResult() : cache.TTL_NEGATIVE);
   return result;
 }
 

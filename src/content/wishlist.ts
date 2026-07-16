@@ -3,6 +3,7 @@
 // buscamos enlaces a /app/<id> que lleven el título como texto. El flag de
 // Mac nativo llega vía la API appdetails de Steam (resuelto en lib/auto).
 import { attach } from '../lib/auto';
+import { getSettings } from '../lib/settings';
 import '../styles.css';
 
 const APP_LINK = /\/app\/(\d+)/;
@@ -44,5 +45,8 @@ function scheduleScan(): void {
   }, 300);
 }
 
-scan();
-new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });
+void (async () => {
+  if (!(await getSettings()).surfaces.wishlist) return;
+  scan();
+  new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });
+})();

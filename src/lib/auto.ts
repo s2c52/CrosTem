@@ -9,6 +9,8 @@ import * as cache from './cache';
 import { appUrl, getApp, search, searchUrl, steamDetails } from './client';
 import { rank } from './matcher';
 import { computeVerdict } from './verdict';
+import { getSettings } from './settings';
+import { t } from './i18n';
 import { dotEl, starsEl } from './widget';
 import type { AutoAttachOpts, CwSignal, ResolveResult } from '../types';
 
@@ -60,9 +62,16 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   if (native === true) return { kind: 'native' };
   if (!name) return { kind: 'none' };
 
-  // Fuentes secundarias en paralelo con la resolución de CodeWeavers.
-  const agwPromise = agwLookup(name, opts.appid).catch(() => null);
-  const acPromise = anticheatLookup(opts.appid, name).catch(() => null);
+  const settings = await getSettings();
+
+  // Fuentes secundarias en paralelo con la resolución de CodeWeavers
+  // (cada una desactivable en las opciones).
+  const agwPromise = settings.sources.agw
+    ? agwLookup(name, opts.appid).catch(() => null)
+    : Promise.resolve(null);
+  const acPromise = settings.sources.anticheat
+    ? anticheatLookup(opts.appid, name).catch(() => null)
+    : Promise.resolve(null);
 
   // CodeWeavers: elección del usuario > matching por nombre.
   let cwSignal: CwSignal | null = null;
@@ -71,23 +80,25 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
     | { type: 'ambiguous'; count: number }
     | { type: 'none' } = { type: 'none' };
 
-  const savedSlug = opts.appid ? await cache.getSourceChoice('cw', opts.appid) : undefined;
-  if (savedSlug) {
-    const app = await getApp(savedSlug);
-    if (app?.mac) {
-      cwSignal = { stars: app.mac.stars, status: app.mac.status };
-      cwOutcome = { type: 'hit', stars: app.mac.stars, slug: savedSlug, cwName: name, approximate: false };
+  if (settings.sources.cw) {
+    const savedSlug = opts.appid ? await cache.getSourceChoice('cw', opts.appid) : undefined;
+    if (savedSlug) {
+      const app = await getApp(savedSlug);
+      if (app?.mac) {
+        cwSignal = { stars: app.mac.stars, status: app.mac.status };
+        cwOutcome = { type: 'hit', stars: app.mac.stars, slug: savedSlug, cwName: name, approximate: false };
+      }
     }
-  }
-  if (cwOutcome.type === 'none') {
-    const results = await search(name);
-    const ranked = rank(name, results);
-    const pick = ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
-    if (pick) {
-      cwSignal = { stars: pick.stars };
-      cwOutcome = { type: 'hit', stars: pick.stars, slug: pick.slug, cwName: pick.name, approximate: pick.score < 1 };
-    } else if (ranked.candidates.length > 1) {
-      cwOutcome = { type: 'ambiguous', count: ranked.candidates.length };
+    if (cwOutcome.type === 'none') {
+      const results = await search(name);
+      const ranked = rank(name, results);
+      const pick = ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
+      if (pick) {
+        cwSignal = { stars: pick.stars };
+        cwOutcome = { type: 'hit', stars: pick.stars, slug: pick.slug, cwName: pick.name, approximate: pick.score < 1 };
+      } else if (ranked.candidates.length > 1) {
+        cwOutcome = { type: 'ambiguous', count: ranked.candidates.length };
+      }
     }
   }
 
@@ -157,12 +168,12 @@ function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): v
     case 'ambiguous': {
       const a = cwLink(searchUrl(result.query), `${result.count} possible matches on CodeWeavers`);
       if (result.level !== 'unknown') a.appendChild(dotEl(result.level));
-      a.appendChild(document.createTextNode(overlay ? '?' : `${result.count} matches ↗`));
+      a.appendChild(document.createTextNode(overlay ? '?' : t('matchesN', String(result.count))));
       el.appendChild(a);
       break;
     }
     case 'dot': {
-      el.appendChild(dotEl(result.level, result.title));
+      el.appendChild(dotEl(result.level, t('verdict_' + result.level)));
       break;
     }
     default: {
@@ -171,7 +182,7 @@ function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): v
       } else {
         const span = document.createElement('span');
         span.className = 'crostem-muted crostem-small';
-        span.textContent = 'no data';
+        span.textContent = t('noDataInline');
         el.appendChild(span);
       }
     }

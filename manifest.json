@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "CrosTem — Mac compatibility for Steam",
-  "version": "0.4.0",
-  "description": "Shows CodeWeavers CrossOver (macOS) compatibility ratings on Steam store pages, capsules, search results and wishlist.",
+  "name": "__MSG_appName__",
+  "version": "0.5.0",
+  "description": "__MSG_appDesc__",
   "author": {
     "email": "s2c52@users.noreply.github.com"
   },
@@ -55,5 +55,14 @@
       ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "default_locale": "en",
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "CrosTem"
+  }
 }

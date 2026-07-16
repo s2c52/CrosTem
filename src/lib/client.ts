@@ -56,7 +56,7 @@ export async function search(name: string): Promise<CwSearchResult[]> {
 
   const html = await fetchHtml(searchUrl(query));
   const results = parseSearchResults(html);
-  await cache.set(cacheKey, results, results.length === 0 ? cache.TTL_NEGATIVE : cache.TTL_RESULT);
+  await cache.set(cacheKey, results, results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult());
   return results;
 }
 
@@ -68,7 +68,7 @@ export async function getApp(slug: string): Promise<CwAppPage | null> {
 
   const html = await fetchHtml(appUrl(slug));
   const data = parseAppPage(html);
-  await cache.set(cacheKey, data, data ? cache.TTL_RESULT : cache.TTL_NEGATIVE);
+  await cache.set(cacheKey, data, data ? await cache.ttlResult() : cache.TTL_NEGATIVE);
   return data;
 }
 

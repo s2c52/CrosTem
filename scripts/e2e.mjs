@@ -133,6 +133,39 @@ await check('badges en búsqueda (dark souls)', async () => {
   return `${count} badges con contenido`;
 });
 
+// --- F3: popup, options y toggles ---
+let sw = ctx.serviceWorkers()[0];
+if (!sw) sw = await ctx.waitForEvent('serviceworker', { timeout: 15000 }).catch(() => null);
+const extId = sw ? new URL(sw.url()).host : null;
+
+// 6. Popup: buscador manual
+await check('popup con buscador (baldur)', async () => {
+  if (!extId) throw new Error('sin id de extensión (service worker no visible)');
+  await page.goto(`chrome-extension://${extId}/src/popup/popup.html`);
+  await page.fill('#query', 'baldur');
+  await page.waitForSelector('#results .result', { timeout: 20000 });
+  const count = await page.locator('#results .result').count();
+  await page.screenshot({ path: join(OUT, 'popup.png') });
+  return `${count} resultados`;
+});
+
+// 7. Options: se abre, refleja defaults, y el toggle de cápsulas desactiva overlays
+await check('options + toggle de cápsulas', async () => {
+  if (!extId) throw new Error('sin id de extensión');
+  await page.goto(`chrome-extension://${extId}/src/options/options.html`);
+  const appChecked = await page.locator('#surface-app').isChecked();
+  if (!appChecked) throw new Error('defaults no aplicados');
+  await page.screenshot({ path: join(OUT, 'options.png') });
+  await page.locator('#surface-capsules').uncheck(); // dispara guardado
+  await page.waitForTimeout(500);
+  await page.goto('https://store.steampowered.com/', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.scrollTo(0, 800));
+  await page.waitForTimeout(8000);
+  const overlays = await page.locator('.crostem-overlay').count();
+  if (overlays > 0) throw new Error(`overlays presentes con la superficie desactivada: ${overlays}`);
+  return 'overlays desactivados correctamente';
+});
+
 console.log('\n===== RESULTADOS =====');
 for (const r of results) console.log(r);
 console.log(`Capturas en: ${OUT}`);
