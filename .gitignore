@@ -7,3 +7,5 @@ dist/
 .backups/
 .higinio/run/
 e2e-results/
+store-assets/.profile/
+crostem-v*.zip
