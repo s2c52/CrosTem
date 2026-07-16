@@ -20,8 +20,12 @@ describe('mergeSettings', () => {
 
   it('sanea la versión de CrossOver', () => {
     expect(mergeSettings({ crossoverVersion: '  25  ' }).crossoverVersion).toBe('25');
-    expect(mergeSettings({ crossoverVersion: '' }).crossoverVersion).toBe(DEFAULTS.crossoverVersion);
-    expect(mergeSettings({ crossoverVersion: 42 }).crossoverVersion).toBe(DEFAULTS.crossoverVersion);
+    expect(mergeSettings({ crossoverVersion: '' }).crossoverVersion).toBe(
+      DEFAULTS.crossoverVersion,
+    );
+    expect(mergeSettings({ crossoverVersion: 42 }).crossoverVersion).toBe(
+      DEFAULTS.crossoverVersion,
+    );
   });
 
   it('acota el TTL a 1-30 días y redondea', () => {

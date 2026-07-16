@@ -22,7 +22,8 @@ const inflight = new Map<string, Promise<ExtFetchResponse>>();
 
 function pump(): void {
   while (activeCount < MAX_CONCURRENT && queue.length > 0) {
-    const job = queue.shift()!;
+    const job = queue.shift();
+    if (!job) break;
     activeCount++;
     doFetch(job.url)
       .then(job.resolve, job.resolve)
@@ -51,9 +52,9 @@ function enqueueFetch(url: string): Promise<ExtFetchResponse> {
   } catch {
     return Promise.resolve({ ok: false, error: 'Invalid URL' });
   }
-  const allowed = parsed.protocol === 'https:' && ALLOWED.some(
-    (a) => parsed.hostname === a.host && parsed.pathname.startsWith(a.pathPrefix),
-  );
+  const allowed =
+    parsed.protocol === 'https:' &&
+    ALLOWED.some((a) => parsed.hostname === a.host && parsed.pathname.startsWith(a.pathPrefix));
   if (!allowed) return Promise.resolve({ ok: false, error: 'URL not allowed' });
 
   const existing = inflight.get(url);

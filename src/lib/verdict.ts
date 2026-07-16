@@ -30,7 +30,10 @@ function agwGood(agw: AgwCompat | null): boolean {
 }
 
 function agwBad(agw: AgwCompat | null): boolean {
-  return agw != null && (agw.crossover === 'unplayable' || agw.crossover === "doesn't work" || agw.crossover === 'menu');
+  return (
+    agw != null &&
+    (agw.crossover === 'unplayable' || agw.crossover === "doesn't work" || agw.crossover === 'menu')
+  );
 }
 
 function acBlocked(ac: AnticheatInfo | null): boolean {
@@ -61,7 +64,9 @@ export function computeVerdict(
   else if (cw?.stars != null) reasons.push(`CodeWeavers: ${cw.stars}/5 stars`);
   if (hasAgwSignal) reasons.push(`AppleGamingWiki: CrossOver ${agw.crossover}`);
   if (ac) {
-    reasons.push(`Anticheat (${ac.anticheats.join(', ') || 'unknown'}): ${ac.status} on Linux/Proton — indicative for CrossOver`);
+    reasons.push(
+      `Anticheat (${ac.anticheats.join(', ') || 'unknown'}): ${ac.status} on Linux/Proton — indicative for CrossOver`,
+    );
   }
 
   let level: VerdictLevel;

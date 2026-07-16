@@ -52,7 +52,10 @@ export async function remove(...keys: string[]): Promise<void> {
 // ('cw' → CodeWeavers slug, 'agw' → AppleGamingWiki page).
 export type MatchSource = 'cw' | 'agw';
 
-export async function getSourceChoice(source: MatchSource, appid: string): Promise<string | undefined> {
+export async function getSourceChoice(
+  source: MatchSource,
+  appid: string,
+): Promise<string | undefined> {
   const v = await storageGet<string>(`choice:${source}:${appid}`);
   if (v !== undefined) return v;
   // Legacy key from v0.2/v0.3 (only the CodeWeavers choice existed).
@@ -60,7 +63,11 @@ export async function getSourceChoice(source: MatchSource, appid: string): Promi
   return undefined;
 }
 
-export async function setSourceChoice(source: MatchSource, appid: string, value: string): Promise<void> {
+export async function setSourceChoice(
+  source: MatchSource,
+  appid: string,
+  value: string,
+): Promise<void> {
   await chrome.storage.local.set({ [`choice:${source}:${appid}`]: value });
 }
 

@@ -12,7 +12,8 @@ if [ ! -d node_modules ]; then
 fi
 
 npm run typecheck
+npm run lint
 npm test
 npm run build
 
-echo "verify OK: typecheck, tests y build correctos"
+echo "verify OK: typecheck, lint, tests y build correctos"

@@ -6,9 +6,7 @@
   "author": {
     "email": "s2c52@users.noreply.github.com"
   },
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
   "host_permissions": [
     "https://www.codeweavers.com/*",
     "https://www.applegamingwiki.com/*",
@@ -20,39 +18,23 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://store.steampowered.com/app/*"
-      ],
-      "js": [
-        "src/content/app.ts"
-      ],
+      "matches": ["https://store.steampowered.com/app/*"],
+      "js": ["src/content/app.ts"],
       "run_at": "document_idle"
     },
     {
-      "matches": [
-        "https://store.steampowered.com/search*"
-      ],
-      "js": [
-        "src/content/search.ts"
-      ],
+      "matches": ["https://store.steampowered.com/search*"],
+      "js": ["src/content/search.ts"],
       "run_at": "document_idle"
     },
     {
-      "matches": [
-        "https://store.steampowered.com/wishlist*"
-      ],
-      "js": [
-        "src/content/wishlist.ts"
-      ],
+      "matches": ["https://store.steampowered.com/wishlist*"],
+      "js": ["src/content/wishlist.ts"],
       "run_at": "document_idle"
     },
     {
-      "matches": [
-        "https://store.steampowered.com/*"
-      ],
-      "js": [
-        "src/content/capsules.ts"
-      ],
+      "matches": ["https://store.steampowered.com/*"],
+      "js": ["src/content/capsules.ts"],
       "run_at": "document_idle"
     }
   ],

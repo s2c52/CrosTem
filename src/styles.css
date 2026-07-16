@@ -8,7 +8,7 @@
   border: 1px solid #2a3f5a;
   border-radius: 4px;
   color: #c6d4df;
-  font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
+  font-family: 'Motiva Sans', Arial, Helvetica, sans-serif;
   font-size: 13px;
   margin-bottom: 16px;
   overflow: hidden;
@@ -42,17 +42,35 @@
   white-space: nowrap;
 }
 
-.crostem-stars-filled { color: #ffc82c; }
-.crostem-stars-empty { color: #4b5b6c; }
+.crostem-stars-filled {
+  color: #ffc82c;
+}
+.crostem-stars-empty {
+  color: #4b5b6c;
+}
 
-.crostem-status { font-weight: bold; }
-.crostem-status-great { color: #a3cf06; }
-.crostem-status-well { color: #6fa720; }
-.crostem-status-mid { color: #e5b567; }
-.crostem-status-bad { color: #d94126; }
+.crostem-status {
+  font-weight: bold;
+}
+.crostem-status-great {
+  color: #a3cf06;
+}
+.crostem-status-well {
+  color: #6fa720;
+}
+.crostem-status-mid {
+  color: #e5b567;
+}
+.crostem-status-bad {
+  color: #d94126;
+}
 
-.crostem-muted { color: #8f98a0; }
-.crostem-small { font-size: 11px; }
+.crostem-muted {
+  color: #8f98a0;
+}
+.crostem-small {
+  font-size: 11px;
+}
 
 .crostem-versions {
   border-top: 1px solid #2a3f5a;
@@ -73,7 +91,7 @@
 }
 
 .crostem-version-label {
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 12px;
 }
 
@@ -261,16 +279,37 @@
   width: 9px;
 }
 
-.crostem-dot-green { background: #7bc144; box-shadow: 0 0 4px #7bc14488; }
-.crostem-dot-yellow { background: #e5b567; box-shadow: 0 0 4px #e5b56788; }
-.crostem-dot-red { background: #d94126; box-shadow: 0 0 4px #d9412688; }
-.crostem-dot-unknown { background: #6b7a8a; }
+.crostem-dot-green {
+  background: #7bc144;
+  box-shadow: 0 0 4px #7bc14488;
+}
+.crostem-dot-yellow {
+  background: #e5b567;
+  box-shadow: 0 0 4px #e5b56788;
+}
+.crostem-dot-red {
+  background: #d94126;
+  box-shadow: 0 0 4px #d9412688;
+}
+.crostem-dot-unknown {
+  background: #6b7a8a;
+}
 
-.crostem-verdict-label { font-weight: bold; }
-.crostem-verdict-green { color: #a3cf06; }
-.crostem-verdict-yellow { color: #e5b567; }
-.crostem-verdict-red { color: #d94126; }
-.crostem-verdict-unknown { color: #8f98a0; }
+.crostem-verdict-label {
+  font-weight: bold;
+}
+.crostem-verdict-green {
+  color: #a3cf06;
+}
+.crostem-verdict-yellow {
+  color: #e5b567;
+}
+.crostem-verdict-red {
+  color: #d94126;
+}
+.crostem-verdict-unknown {
+  color: #8f98a0;
+}
 
 .crostem-section {
   border-top: 1px solid #2a3f5a;

@@ -7,14 +7,14 @@
 
 export interface Settings {
   surfaces: {
-    app: boolean;      // widget on the game page
+    app: boolean; // widget on the game page
     capsules: boolean; // overlays on capsules
-    search: boolean;   // badges in search results
+    search: boolean; // badges in search results
     wishlist: boolean; // badges on the wishlist
   };
   sources: {
-    cw: boolean;        // CodeWeavers
-    agw: boolean;       // AppleGamingWiki
+    cw: boolean; // CodeWeavers
+    agw: boolean; // AppleGamingWiki
     anticheat: boolean; // AreWeAntiCheatYet
   };
   /** User's CrossOver branch (highlighted in the widget), e.g. "26". */
@@ -38,12 +38,14 @@ export function mergeSettings(stored: unknown): Settings {
   return {
     surfaces: { ...DEFAULTS.surfaces, ...(s.surfaces ?? {}) },
     sources: { ...DEFAULTS.sources, ...(s.sources ?? {}) },
-    crossoverVersion: typeof s.crossoverVersion === 'string' && s.crossoverVersion.trim()
-      ? s.crossoverVersion.trim()
-      : DEFAULTS.crossoverVersion,
-    cacheTtlDays: typeof s.cacheTtlDays === 'number' && s.cacheTtlDays >= 1 && s.cacheTtlDays <= 30
-      ? Math.round(s.cacheTtlDays)
-      : DEFAULTS.cacheTtlDays,
+    crossoverVersion:
+      typeof s.crossoverVersion === 'string' && s.crossoverVersion.trim()
+        ? s.crossoverVersion.trim()
+        : DEFAULTS.crossoverVersion,
+    cacheTtlDays:
+      typeof s.cacheTtlDays === 'number' && s.cacheTtlDays >= 1 && s.cacheTtlDays <= 30
+        ? Math.round(s.cacheTtlDays)
+        : DEFAULTS.cacheTtlDays,
   };
 }
 

@@ -1,6 +1,7 @@
 # Chrome Web Store — Textos del listing
 
 ## Nombre
+
 CrosTem — Mac compatibility for Steam
 
 ## Resumen corto (≤132 caracteres)
@@ -52,6 +53,7 @@ Privacidad: sin telemetría, sin cuentas, sin servidores. Todo queda en tu naveg
 CrosTem no está afiliada a CodeWeavers, AppleGamingWiki, AreWeAntiCheatYet, Valve ni Apple.
 
 ## Categoría
+
 Productivity → Tools (o "Fun" → Entertainment; Tools recomendado)
 
 ## Single purpose (formulario de revisión)

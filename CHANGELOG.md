@@ -5,10 +5,12 @@ All notable changes to CrosTem are documented here. The format follows [Keep a C
 ## [1.0.1] — 2026-07-16
 
 ### Added
+
 - Native binary architecture detection (Intel / Apple Silicon) on the game-page widget.
 - 5-star rating scale.
 
 ### Changed
+
 - Entire codebase (comments and docs) translated to English.
 
 ## [1.0.0] — 2026-07-16

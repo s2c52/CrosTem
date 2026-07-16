@@ -49,9 +49,11 @@ export function archFromReleaseYear(year: number | null | undefined): ArchInfo |
 
 /** Pure signal chain: AGW → Steam requirements → date. */
 export function detectArch(agw: AgwCompat | null, steam: SteamDetails | null): ArchInfo | null {
-  return archFromAgw(agw)
-    ?? archFromSteamReqs(steam?.macRequirements)
-    ?? archFromReleaseYear(steam?.releaseYear);
+  return (
+    archFromAgw(agw) ??
+    archFromSteamReqs(steam?.macRequirements) ??
+    archFromReleaseYear(steam?.releaseYear)
+  );
 }
 
 /**
@@ -65,12 +67,9 @@ export async function resolveNativeArch(
   preloaded?: SteamDetails | null,
 ): Promise<ArchInfo | null> {
   const settings = await getSettings();
-  const agw = settings.sources.agw && name
-    ? await agwLookup(name, appid).catch(() => null)
-    : null;
+  const agw = settings.sources.agw && name ? await agwLookup(name, appid).catch(() => null) : null;
   const fromAgw = archFromAgw(agw);
   if (fromAgw) return fromAgw;
-  const details = preloaded ??
-    (appid ? await steamDetails(appid).catch(() => null) : null);
+  const details = preloaded ?? (appid ? await steamDetails(appid).catch(() => null) : null);
   return archFromSteamReqs(details?.macRequirements) ?? archFromReleaseYear(details?.releaseYear);
 }

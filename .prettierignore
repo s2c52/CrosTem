@@ -1,0 +1,5 @@
+dist/
+e2e-results/
+store-assets/
+tests/fixtures/
+package-lock.json

@@ -8,9 +8,22 @@
 import type { CwSearchResult, RankedResult, RankOutcome } from '../types';
 
 const EDITION_WORDS = [
-  'game of the year', 'goty', 'definitive', 'deluxe', 'ultimate', 'complete',
-  'enhanced', 'standard', 'gold', 'premium', 'anniversary', 'legendary',
-  "director's cut", 'directors cut', 'remastered', 'edition',
+  'game of the year',
+  'goty',
+  'definitive',
+  'deluxe',
+  'ultimate',
+  'complete',
+  'enhanced',
+  'standard',
+  'gold',
+  'premium',
+  'anniversary',
+  'legendary',
+  "director's cut",
+  'directors cut',
+  'remastered',
+  'edition',
 ];
 
 export function normalizeName(name: string): string {
@@ -18,7 +31,10 @@ export function normalizeName(name: string): string {
   s = s.normalize('NFKD').replace(/[\u0300-\u036f]/g, ''); // diacritics
   s = s.replace(/[™®©]/g, ' ');
   s = s.replace(/&/g, ' and ');
-  s = s.replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+  s = s
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   return s;
 }
 
@@ -72,8 +88,8 @@ export function rank(steamName: string, searchResults: CwSearchResult[]): RankOu
     .sort((x, y) => y.score - x.score);
 
   let confident: RankedResult | null = null;
-  if (scored.length > 0) {
-    const top = scored[0];
+  const top = scored[0];
+  if (top) {
     // A single exact match wins outright; otherwise we require a
     // near-exact one with no rival at the same level.
     if (top.score === 1 && scored.filter((r) => r.score === 1).length === 1) {

@@ -8,8 +8,7 @@ import { baseName, normalizeName, rank, score } from '../src/lib/matcher';
 import { parseSearchResults } from '../src/lib/parser';
 
 const baldurResults = parseSearchResults(
-  readFileSync(join(__dirname, 'fixtures', 'cw_baldur.html'), 'utf8')
-    .replace(/<link[^>]*>/g, ''),
+  readFileSync(join(__dirname, 'fixtures', 'cw_baldur.html'), 'utf8').replace(/<link[^>]*>/g, ''),
 );
 
 describe('normalizeName', () => {
@@ -23,7 +22,9 @@ describe('normalizeName', () => {
 
 describe('baseName', () => {
   it('recorta calificadores de edición al final, incluso encadenados', () => {
-    expect(baseName('Divinity: Original Sin 2 — Definitive Edition')).toBe('divinity original sin 2');
+    expect(baseName('Divinity: Original Sin 2 — Definitive Edition')).toBe(
+      'divinity original sin 2',
+    );
     expect(baseName('DARK SOULS™ III Deluxe Edition')).toBe('dark souls iii');
     expect(baseName('Skyrim Legendary Edition')).toBe('skyrim');
   });

@@ -24,8 +24,8 @@ function processAnchor(a: HTMLAnchorElement): void {
   if (a.classList.contains('search_result_row')) return; // already has an inline badge
   if (a.closest('.crostem-box, .crostem-badge, .crostem-overlay')) return;
 
-  const m = (a.getAttribute('href') ?? '').match(APP_LINK);
-  if (!m) return;
+  const appid = (a.getAttribute('href') ?? '').match(APP_LINK)?.[1];
+  if (!appid) return;
   if (!a.querySelector('img, picture')) return; // only capsules with an image
 
   a.dataset.crostemCapsule = '1';
@@ -35,7 +35,7 @@ function processAnchor(a: HTMLAnchorElement): void {
   overlay.className = 'crostem-overlay';
   a.appendChild(overlay);
 
-  attach(overlay, { appid: m[1], name: nameHint(a), mode: 'overlay' });
+  attach(overlay, { appid, name: nameHint(a), mode: 'overlay' });
 }
 
 function scan(): void {

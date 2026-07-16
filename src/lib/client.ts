@@ -6,7 +6,13 @@
 import * as cache from './cache';
 import { baseName } from './matcher';
 import { parseAppPage, parseSearchResults } from './parser';
-import type { CwAppPage, CwSearchResult, ExtFetchRequest, ExtFetchResponse, SteamDetails } from '../types';
+import type {
+  CwAppPage,
+  CwSearchResult,
+  ExtFetchRequest,
+  ExtFetchResponse,
+  SteamDetails,
+} from '../types';
 
 const CW_BASE = 'https://www.codeweavers.com';
 
@@ -59,7 +65,11 @@ export async function search(name: string): Promise<CwSearchResult[]> {
 
   const html = await fetchHtml(searchUrl(query));
   const results = parseSearchResults(html);
-  await cache.set(cacheKey, results, results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult());
+  await cache.set(
+    cacheKey,
+    results,
+    results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult(),
+  );
   return results;
 }
 
@@ -91,7 +101,8 @@ const steamInflight = new Map<string, Promise<SteamDetails | null>>();
 
 function steamPump(): void {
   while (steamActive < STEAM_MAX_CONCURRENT && steamQueue.length > 0) {
-    const job = steamQueue.shift()!;
+    const job = steamQueue.shift();
+    if (!job) break;
     steamActive++;
     fetchSteamDetails(job.appid)
       .then(job.resolve, job.reject)
@@ -104,22 +115,30 @@ function steamPump(): void {
 }
 
 function stripHtml(s: string): string {
-  return s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  return s
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Pure parsing of the appdetails response (testable with fixtures). */
 export function parseSteamDetails(json: unknown, appid: string): SteamDetails | null {
-  const entry = (json as Record<string, { success?: boolean; data?: Record<string, unknown> } | undefined>)?.[appid];
+  const entry = (
+    json as Record<string, { success?: boolean; data?: Record<string, unknown> } | undefined>
+  )?.[appid];
   if (!entry?.success || !entry.data) return null;
   const data = entry.data;
   const mac = !!(data.platforms as { mac?: boolean } | undefined)?.mac;
   // mac_requirements comes with the basic filter; Steam sends [] when empty.
-  const mr = data.mac_requirements as { minimum?: string; recommended?: string } | unknown[] | undefined;
-  const macRequirements = mac && mr && !Array.isArray(mr)
-    ? stripHtml([mr.minimum, mr.recommended].filter(Boolean).join(' ')) || null
-    : null;
-  const yearMatch = String((data.release_date as { date?: string } | undefined)?.date ?? '')
-    .match(/\b(19|20)\d{2}\b/);
+  const mr = data.mac_requirements as
+    { minimum?: string; recommended?: string } | unknown[] | undefined;
+  const macRequirements =
+    mac && mr && !Array.isArray(mr)
+      ? stripHtml([mr.minimum, mr.recommended].filter(Boolean).join(' ')) || null
+      : null;
+  const yearMatch = String((data.release_date as { date?: string } | undefined)?.date ?? '').match(
+    /\b(19|20)\d{2}\b/,
+  );
   return {
     name: (data.name as string | undefined) ?? null,
     mac,
@@ -129,8 +148,10 @@ export function parseSteamDetails(json: unknown, appid: string): SteamDetails | 
 }
 
 async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
-  const url = 'https://store.steampowered.com/api/appdetails?appids=' +
-    encodeURIComponent(appid) + '&filters=platforms,basic,release_date';
+  const url =
+    'https://store.steampowered.com/api/appdetails?appids=' +
+    encodeURIComponent(appid) +
+    '&filters=platforms,basic,release_date';
   const res = await fetch(url, { credentials: 'same-origin' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const value = parseSteamDetails(await res.json(), appid);

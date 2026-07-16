@@ -24,17 +24,16 @@ function looksLikeTitleLink(a: HTMLAnchorElement): boolean {
 function scan(): void {
   document.querySelectorAll<HTMLAnchorElement>('a[href*="/app/"]').forEach((a) => {
     if (!looksLikeTitleLink(a)) return;
+    const appid = (a.getAttribute('href') ?? '').match(APP_LINK)?.[1];
+    const name = a.textContent?.trim();
+    if (!appid || !name) return;
     a.dataset.crostem = '1';
 
     const badge = document.createElement('span');
     badge.className = 'crostem-badge';
     a.insertAdjacentElement('afterend', badge);
 
-    attach(badge, {
-      appid: (a.getAttribute('href') ?? '').match(APP_LINK)![1],
-      name: a.textContent!.trim(),
-      mode: 'inline',
-    });
+    attach(badge, { appid, name, mode: 'inline' });
   });
 }
 

@@ -6,9 +6,16 @@
 import { appUrl, search } from '../lib/client';
 import { t } from '../lib/i18n';
 
-const queryEl = document.getElementById('query') as HTMLInputElement;
-const resultsEl = document.getElementById('results')!;
-const optionsLink = document.getElementById('open-options') as HTMLAnchorElement;
+function mustGet(id: string): HTMLElement {
+  const node = document.getElementById(id);
+  // The popup owns its DOM: a missing id is a programming error.
+  if (!node) throw new Error(`CrosTem popup: missing element #${id}`);
+  return node;
+}
+
+const queryEl = mustGet('query') as HTMLInputElement;
+const resultsEl = mustGet('results');
+const optionsLink = mustGet('open-options') as HTMLAnchorElement;
 
 queryEl.placeholder = t('popupSearchPlaceholder');
 optionsLink.textContent = t('popupOptions');
