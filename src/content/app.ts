@@ -1,6 +1,7 @@
 // Ficha del juego en Steam: widget "Runs on Mac?" con veredicto combinado
 // (CodeWeavers + AppleGamingWiki + anticheat) y desglose por fuente.
 import { agwCacheKey, agwLookup } from '../lib/agw';
+import { resolveNativeArch } from '../lib/arch';
 import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
 import { appCacheKey, getApp, search, searchCacheKey, steamCacheKey } from '../lib/client';
@@ -142,7 +143,11 @@ if (appidMatch && nameEl?.textContent?.trim()) {
     if (!(await getSettings()).surfaces.app) return;
     if (!mount()) return;
     if (isNativeMac()) {
+      // Badge inmediato; la arquitectura (M Series / Intel) llega async.
       show(renderNativeBadge());
+      void resolveNativeArch(gameName, appid)
+        .then((arch) => { if (arch) show(renderNativeBadge(arch)); })
+        .catch(() => {});
       return;
     }
     void resolveAll(false);

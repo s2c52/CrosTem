@@ -20,6 +20,27 @@
  "nativeNote": {
   "message": "This game ships with a native Mac version — no CrossOver needed."
  },
+ "archM": {
+  "message": "M Series (Apple Silicon)"
+ },
+ "archIntel": {
+  "message": "Intel (Rosetta 2 on M)"
+ },
+ "archMShort": {
+  "message": "M"
+ },
+ "archIntelShort": {
+  "message": "Intel"
+ },
+ "archSourceAgw": {
+  "message": "Architecture per AppleGamingWiki."
+ },
+ "archSourceSteam": {
+  "message": "Architecture inferred from Steam system requirements."
+ },
+ "archSourceDate": {
+  "message": "Architecture estimated from release date."
+ },
  "verdict_green": {
   "message": "Playable on Mac via CrossOver"
  },

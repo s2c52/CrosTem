@@ -4,6 +4,7 @@
 // (además de las cachés de 7/30 días). Desde F2 el resultado incluye el
 // semáforo del veredicto combinado (CodeWeavers + AGW + anticheat).
 import { agwLookup } from './agw';
+import { resolveNativeArch } from './arch';
 import { anticheatLookup } from './awacy';
 import * as cache from './cache';
 import { appUrl, getApp, search, searchUrl, steamDetails } from './client';
@@ -12,7 +13,7 @@ import { computeVerdict } from './verdict';
 import { getSettings } from './settings';
 import { t } from './i18n';
 import { dotEl, starsEl } from './widget';
-import type { AutoAttachOpts, CwSignal, ResolveResult } from '../types';
+import type { AutoAttachOpts, CwSignal, ResolveResult, SteamDetails as SteamDetailsT } from '../types';
 
 const registry = new WeakMap<Element, AutoAttachOpts>();
 
@@ -28,8 +29,10 @@ const io = new IntersectionObserver((entries) => {
 
 export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
   if (opts.native === true) {
-    render(el, { kind: 'native' }, opts);
-    return;
+    // Badge provisional inmediato (5★ sin arquitectura); la arquitectura se
+    // resuelve lazy vía el observer si hay señas para consultar las fuentes.
+    render(el, { kind: 'native', arch: null }, opts);
+    if (!opts.appid && !opts.name) return;
   }
   registry.set(el, opts);
   io.observe(el);
@@ -39,17 +42,19 @@ async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<
   try {
     render(el, await resolve(opts), opts);
   } catch {
-    render(el, { kind: 'none' }, opts);
+    // Nunca borrar el badge nativo provisional por un fallo de red.
+    render(el, opts.native === true ? { kind: 'native', arch: null } : { kind: 'none' }, opts);
   }
 }
 
 async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   let name = opts.name ?? null;
   let native = opts.native; // undefined = desconocido
+  let details: SteamDetailsT | null = null;
 
   if ((name == null || native == null) && opts.appid) {
     try {
-      const details = await steamDetails(opts.appid);
+      details = await steamDetails(opts.appid);
       if (details) {
         if (name == null) name = details.name;
         if (native == null) native = details.mac;
@@ -59,7 +64,9 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
     }
   }
 
-  if (native === true) return { kind: 'native' };
+  if (native === true) {
+    return { kind: 'native', arch: await resolveNativeArch(name, opts.appid, details) };
+  }
   if (!name) return { kind: 'none' };
 
   const settings = await getSettings();
@@ -145,8 +152,18 @@ function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): v
     case 'native': {
       const span = document.createElement('span');
       span.className = 'crostem-badge-native';
-      span.textContent = overlay ? '' : ' native';
-      span.title = 'Native on macOS';
+      span.appendChild(starsEl(5));
+      const arch = result.arch;
+      if (arch) {
+        const tag = document.createElement('span');
+        tag.className = 'crostem-arch-tag';
+        tag.textContent = t(arch.arch === 'm-series' ? 'archMShort' : 'archIntelShort') +
+          (arch.approximate ? '~' : '');
+        span.appendChild(tag);
+      }
+      span.title = t('nativeBadge') + (arch
+        ? ' — ' + t(arch.arch === 'm-series' ? 'archM' : 'archIntel') + (arch.approximate ? ' ~' : '')
+        : '');
       el.appendChild(span);
       break;
     }

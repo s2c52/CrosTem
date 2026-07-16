@@ -100,16 +100,37 @@ function steamPump(): void {
   }
 }
 
+function stripHtml(s: string): string {
+  return s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Parseo puro de la respuesta de appdetails (testeable con fixtures). */
+export function parseSteamDetails(json: unknown, appid: string): SteamDetails | null {
+  const entry = (json as Record<string, { success?: boolean; data?: Record<string, unknown> } | undefined>)?.[appid];
+  if (!entry?.success || !entry.data) return null;
+  const data = entry.data;
+  const mac = !!(data.platforms as { mac?: boolean } | undefined)?.mac;
+  // mac_requirements viene con el filtro basic; Steam manda [] cuando está vacío.
+  const mr = data.mac_requirements as { minimum?: string; recommended?: string } | unknown[] | undefined;
+  const macRequirements = mac && mr && !Array.isArray(mr)
+    ? stripHtml([mr.minimum, mr.recommended].filter(Boolean).join(' ')) || null
+    : null;
+  const yearMatch = String((data.release_date as { date?: string } | undefined)?.date ?? '')
+    .match(/\b(19|20)\d{2}\b/);
+  return {
+    name: (data.name as string | undefined) ?? null,
+    mac,
+    macRequirements,
+    releaseYear: yearMatch ? Number(yearMatch[0]) : null,
+  };
+}
+
 async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
   const url = 'https://store.steampowered.com/api/appdetails?appids=' +
-    encodeURIComponent(appid) + '&filters=platforms,basic';
+    encodeURIComponent(appid) + '&filters=platforms,basic,release_date';
   const res = await fetch(url, { credentials: 'same-origin' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
-  const json = await res.json();
-  const entry = json?.[appid];
-  const value: SteamDetails | null = entry?.success && entry.data
-    ? { name: entry.data.name ?? null, mac: !!entry.data.platforms?.mac }
-    : null;
+  const value = parseSteamDetails(await res.json(), appid);
   await cache.set('steam:' + appid, value, value ? STEAM_TTL : cache.TTL_NEGATIVE);
   return value;
 }

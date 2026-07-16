@@ -1,0 +1,26 @@
+{
+  "1086940": {
+    "success": true,
+    "data": {
+      "name": "Baldur's Gate 3",
+      "platforms": { "windows": true, "mac": true, "linux": false },
+      "mac_requirements": {
+        "minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> macOS 13<br></li><li><strong>Processor:</strong> Apple Silicon M1 or Intel Core i7<br></li><li><strong>Memory:</strong> 8 GB RAM</li></ul>",
+        "recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"><li><strong>Processor:</strong> M2 Pro</li></ul>"
+      },
+      "release_date": { "coming_soon": false, "date": "3 Aug, 2023" }
+    }
+  },
+  "440": {
+    "success": true,
+    "data": {
+      "name": "Team Fortress 2",
+      "platforms": { "windows": true, "mac": false, "linux": true },
+      "mac_requirements": [],
+      "release_date": { "coming_soon": false, "date": "10 Oct, 2007" }
+    }
+  },
+  "999999": {
+    "success": false
+  }
+}
