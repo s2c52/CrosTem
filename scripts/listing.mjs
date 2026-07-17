@@ -48,14 +48,8 @@ async function shoot(name) {
 await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', {
   waitUntil: 'domcontentloaded',
 });
-await page.waitForFunction(
-  () => {
-    const w = document.querySelector('#crostem-widget');
-    return w && !/Checking/.test(w.textContent) && w.textContent.trim().length > 0;
-  },
-  null,
-  { timeout: 30000 },
-);
+// The loading skeleton keeps non-empty text, so wait for the rendered verdict banner.
+await page.waitForSelector('#crostem-widget .crostem-banner', { timeout: 30000 });
 await page.locator('#crostem-widget').scrollIntoViewIfNeeded();
 await page.waitForTimeout(800);
 await shoot('1-game-page-verdict.png');
@@ -64,33 +58,28 @@ await shoot('1-game-page-verdict.png');
 await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', {
   waitUntil: 'domcontentloaded',
 });
-await page.waitForFunction(
-  () => {
-    const w = document.querySelector('#crostem-widget');
-    return w && !/Checking/.test(w.textContent);
-  },
-  null,
-  { timeout: 30000 },
-);
+await page.waitForSelector('#crostem-widget .crostem-banner', { timeout: 30000 });
 await page.locator('#crostem-widget').scrollIntoViewIfNeeded();
 await page.waitForTimeout(800);
 await shoot('2-anticheat-warning.png');
+
+// 4. Search with badges — shot before the front page: its capsule flood
+// would otherwise clog the worker's fetch lanes and starve these rows.
+await page.goto('https://store.steampowered.com/search/?term=dark+souls', {
+  waitUntil: 'domcontentloaded',
+});
+await page.waitForSelector('.crostem-badge:not(:empty)', { timeout: 45000 }).catch(() => {});
+await page.waitForTimeout(5000);
+await shoot('4-search-badges.png');
 
 // 3. Front page with overlays
 await page.goto('https://store.steampowered.com/', { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(4000);
 await page.evaluate(() => window.scrollTo(0, 700));
 await page.waitForSelector('.crostem-overlay:not(:empty)', { timeout: 30000 }).catch(() => {});
-await page.waitForTimeout(4000);
+// First overlay ≠ all overlays: give the carousel capsules time to fill in.
+await page.waitForTimeout(10000);
 await shoot('3-store-overlays.png');
-
-// 4. Search with badges
-await page.goto('https://store.steampowered.com/search/?term=dark+souls', {
-  waitUntil: 'domcontentloaded',
-});
-await page.waitForSelector('.crostem-badge:not(:empty)', { timeout: 30000 }).catch(() => {});
-await page.waitForTimeout(5000);
-await shoot('4-search-badges.png');
 
 // 5. Options page
 let sw = ctx.serviceWorkers()[0];
