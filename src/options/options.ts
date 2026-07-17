@@ -4,6 +4,7 @@
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
 import { t } from '../lib/i18n';
+import { ctLogo } from '../lib/logo';
 import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
 
 function $(id: string): HTMLElement {
@@ -80,6 +81,7 @@ async function refreshCounts(): Promise<void> {
 
 async function main(): Promise<void> {
   applyI18n();
+  document.querySelector('.logo')?.replaceWith(ctLogo(22));
   fillForm(await getSettings());
   await refreshCounts();
 

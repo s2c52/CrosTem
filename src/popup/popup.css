@@ -1,10 +1,12 @@
 /* Copyright (C) 2026 Sacha Gennari */
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 
+@import '../theme.css';
+
 body {
-  background: #16202d;
-  color: #c6d4df;
-  font-family: 'Motiva Sans', Arial, Helvetica, sans-serif;
+  background: var(--ct-bg-deep);
+  color: var(--ct-text);
+  font-family: var(--ct-font-ui);
   font-size: 13px;
   margin: 0;
   min-height: 120px;
@@ -13,30 +15,31 @@ body {
 
 header {
   align-items: center;
-  border-bottom: 1px solid #2a3f5a;
-  color: #66c0f4;
+  border-bottom: 1px solid var(--ct-border);
+  color: var(--ct-accent);
   display: flex;
   gap: 6px;
   padding: 10px 12px;
 }
 
 header a {
-  color: #8f98a0;
+  color: var(--ct-text-muted);
   font-size: 11px;
   margin-left: auto;
   text-decoration: none;
+  transition: color var(--ct-dur-fast) var(--ct-ease);
 }
 
 header a:hover {
-  color: #66c0f4;
+  color: var(--ct-accent);
 }
 
 #query {
-  background: #2a3f5a;
-  border: 1px solid #3d5a80;
-  border-radius: 3px;
+  background: var(--ct-bg-raised);
+  border: 1px solid var(--ct-border-hi);
+  border-radius: var(--ct-radius-sm);
   box-sizing: border-box;
-  color: #fff;
+  color: var(--ct-text-bright);
   display: block;
   margin: 10px 12px;
   padding: 6px 10px;
@@ -48,25 +51,26 @@ header a:hover {
 }
 
 .result {
-  border-bottom: 1px solid #22354c;
+  border-bottom: 1px solid var(--ct-border-soft);
   display: block;
   color: inherit;
   padding: 7px 2px;
   text-decoration: none;
+  transition: background var(--ct-dur-fast) var(--ct-ease);
 }
 
 .result:hover {
-  background: #1b2c42;
+  background: var(--ct-bg-row-hover);
 }
 .result .name {
-  color: #fff;
+  color: var(--ct-text-bright);
   font-weight: bold;
 }
 .result .meta {
-  color: #8f98a0;
+  color: var(--ct-text-muted);
   font-size: 11px;
 }
 .muted {
-  color: #8f98a0;
+  color: var(--ct-text-muted);
   padding: 4px 2px;
 }

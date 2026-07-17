@@ -3,26 +3,37 @@
 
 /* CrosTem — Steam-themed widget styles */
 
+@import './theme.css';
+
 .crostem-box {
-  background: linear-gradient(135deg, #1b2838 0%, #16202d 100%);
-  border: 1px solid #2a3f5a;
-  border-radius: 4px;
-  color: #c6d4df;
-  font-family: 'Motiva Sans', Arial, Helvetica, sans-serif;
+  background: var(--ct-bg-gradient);
+  border: 1px solid var(--ct-border);
+  border-radius: var(--ct-radius);
+  color: var(--ct-text);
+  font-family: var(--ct-font-steam);
   font-size: 13px;
   margin-bottom: 16px;
   overflow: hidden;
 }
 
 .crostem-header {
+  align-items: center;
   background: rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid #2a3f5a;
-  color: #66c0f4;
+  border-bottom: 1px solid var(--ct-border);
+  color: var(--ct-accent);
+  display: flex;
   font-size: 12px;
   font-weight: bold;
+  gap: 6px;
   letter-spacing: 0.5px;
   padding: 6px 10px;
   text-transform: uppercase;
+}
+
+.crostem-logo {
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
 }
 
 .crostem-body {
@@ -43,37 +54,37 @@
 }
 
 .crostem-stars-filled {
-  color: #ffc82c;
+  color: var(--ct-star);
 }
 .crostem-stars-empty {
-  color: #4b5b6c;
+  color: var(--ct-star-empty);
 }
 
 .crostem-status {
   font-weight: bold;
 }
 .crostem-status-great {
-  color: #a3cf06;
+  color: var(--ct-green-bright);
 }
 .crostem-status-well {
-  color: #6fa720;
+  color: var(--ct-green-dim);
 }
 .crostem-status-mid {
-  color: #e5b567;
+  color: var(--ct-amber);
 }
 .crostem-status-bad {
-  color: #d94126;
+  color: var(--ct-red);
 }
 
 .crostem-muted {
-  color: #8f98a0;
+  color: var(--ct-text-muted);
 }
 .crostem-small {
   font-size: 11px;
 }
 
 .crostem-versions {
-  border-top: 1px solid #2a3f5a;
+  border-top: 1px solid var(--ct-border);
   margin-top: 8px;
   padding-top: 6px;
 }
@@ -86,17 +97,17 @@
 }
 
 .crostem-version-current .crostem-version-label {
-  color: #66c0f4;
+  color: var(--ct-accent);
   font-weight: bold;
 }
 
 .crostem-version-label {
-  font-family: 'Courier New', monospace;
+  font-family: var(--ct-font-mono);
   font-size: 12px;
 }
 
 .crostem-footer {
-  border-top: 1px solid #2a3f5a;
+  border-top: 1px solid var(--ct-border);
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -106,19 +117,20 @@
 
 .crostem-link,
 .crostem-link:visited {
-  color: #66c0f4;
+  color: var(--ct-accent);
   text-decoration: none;
+  transition: color var(--ct-dur-fast) var(--ct-ease);
 }
 
 .crostem-link:hover {
-  color: #a4d7f5;
+  color: var(--ct-accent-hi);
   text-decoration: underline;
 }
 
 .crostem-native-badge {
-  background: #5c7e10;
+  background: var(--ct-native-bg);
   border-radius: 2px;
-  color: #d2efa9;
+  color: var(--ct-native-text);
   display: inline-block;
   font-weight: bold;
   margin-bottom: 6px;
@@ -133,22 +145,23 @@
 }
 
 .crostem-candidate {
-  background: #2a3f5a;
-  border: 1px solid #3d5a80;
-  border-radius: 3px;
-  color: #c6d4df;
+  background: var(--ct-bg-raised);
+  border: 1px solid var(--ct-border-hi);
+  border-radius: var(--ct-radius-sm);
+  color: var(--ct-text);
   cursor: pointer;
   padding: 6px 8px;
   text-align: left;
+  transition: background var(--ct-dur-fast) var(--ct-ease);
   width: 100%;
 }
 
 .crostem-candidate:hover {
-  background: #3d5a80;
+  background: var(--ct-bg-hover);
 }
 
 .crostem-candidate-name {
-  color: #fff;
+  color: var(--ct-text-bright);
   font-weight: bold;
 }
 
@@ -157,31 +170,34 @@
 .crostem-badge {
   display: inline-flex;
   align-items: center;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--ct-font-steam);
   font-size: 11px;
   margin-left: 6px;
   vertical-align: middle;
 }
 
 .crostem-badge-btn {
-  background: #2a3f5a;
-  border: 1px solid #3d5a80;
+  background: var(--ct-bg-raised);
+  border: 1px solid var(--ct-border-hi);
   border-radius: 2px;
-  color: #66c0f4;
+  color: var(--ct-accent);
   cursor: pointer;
   font-size: 10px;
   font-weight: bold;
   line-height: 1;
   padding: 2px 5px;
+  transition:
+    background var(--ct-dur-fast) var(--ct-ease),
+    color var(--ct-dur-fast) var(--ct-ease);
 }
 
 .crostem-badge-btn:hover {
-  background: #3d5a80;
-  color: #fff;
+  background: var(--ct-bg-hover);
+  color: var(--ct-text-bright);
 }
 
 .crostem-badge-native {
-  color: #a3cf06;
+  color: var(--ct-green-bright);
   font-weight: bold;
 }
 
@@ -191,7 +207,7 @@
 
 /* Mini architecture tag (M / Intel) next to the native stars */
 .crostem-arch-tag {
-  color: #a3cf06;
+  color: var(--ct-green-bright);
   font-size: 10px;
   font-weight: bold;
   margin-left: 4px;
@@ -200,7 +216,7 @@
 
 /* Architecture line in the app page widget */
 .crostem-arch-line {
-  color: #a3cf06;
+  color: var(--ct-green-bright);
   font-size: 12px;
   margin-bottom: 2px;
 }
@@ -212,7 +228,7 @@
 
 .crostem-badge-result,
 .crostem-badge-result:visited {
-  color: #66c0f4;
+  color: var(--ct-accent);
   text-decoration: none;
 }
 
@@ -228,8 +244,8 @@
 
 .crostem-overlay {
   background: rgba(0, 0, 0, 0.78);
-  border-radius: 3px;
-  font-family: Arial, Helvetica, sans-serif;
+  border-radius: var(--ct-radius-sm);
+  font-family: var(--ct-font-steam);
   font-size: 11px;
   line-height: 1;
   padding: 3px 5px;
@@ -255,7 +271,7 @@
 }
 
 .crostem-overlay .crostem-badge-native {
-  color: #a3cf06;
+  color: var(--ct-green-bright);
   font-size: 12px;
 }
 
@@ -280,45 +296,45 @@
 }
 
 .crostem-dot-green {
-  background: #7bc144;
-  box-shadow: 0 0 4px #7bc14488;
+  background: var(--ct-green);
+  box-shadow: 0 0 4px rgba(123, 193, 68, 0.53);
 }
 .crostem-dot-yellow {
-  background: #e5b567;
-  box-shadow: 0 0 4px #e5b56788;
+  background: var(--ct-amber);
+  box-shadow: 0 0 4px rgba(229, 181, 103, 0.53);
 }
 .crostem-dot-red {
-  background: #d94126;
-  box-shadow: 0 0 4px #d9412688;
+  background: var(--ct-red);
+  box-shadow: 0 0 4px rgba(217, 65, 38, 0.53);
 }
 .crostem-dot-unknown {
-  background: #6b7a8a;
+  background: var(--ct-unknown);
 }
 
 .crostem-verdict-label {
   font-weight: bold;
 }
 .crostem-verdict-green {
-  color: #a3cf06;
+  color: var(--ct-green-bright);
 }
 .crostem-verdict-yellow {
-  color: #e5b567;
+  color: var(--ct-amber);
 }
 .crostem-verdict-red {
-  color: #d94126;
+  color: var(--ct-red);
 }
 .crostem-verdict-unknown {
-  color: #8f98a0;
+  color: var(--ct-text-muted);
 }
 
 .crostem-section {
-  border-top: 1px solid #2a3f5a;
+  border-top: 1px solid var(--ct-border);
   margin-top: 8px;
   padding-top: 6px;
 }
 
 .crostem-section-title {
-  color: #66c0f4;
+  color: var(--ct-accent);
   font-size: 10px;
   font-weight: bold;
   letter-spacing: 0.5px;

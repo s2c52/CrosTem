@@ -7,6 +7,7 @@ import { appUrl, search } from '../lib/client';
 import { MAX_POPUP_RESULTS, SEARCH_DEBOUNCE_MS } from '../lib/constants';
 import { debounce } from '../lib/debounce';
 import { t } from '../lib/i18n';
+import { ctLogo } from '../lib/logo';
 import { starsEl } from '../lib/widget';
 import '../styles.css';
 
@@ -21,6 +22,7 @@ const queryEl = mustGet('query') as HTMLInputElement;
 const resultsEl = mustGet('results');
 const optionsLink = mustGet('open-options') as HTMLAnchorElement;
 
+document.querySelector('.logo')?.replaceWith(ctLogo(18));
 queryEl.placeholder = t('popupSearchPlaceholder');
 optionsLink.textContent = t('popupOptions');
 optionsLink.addEventListener('click', (e) => {

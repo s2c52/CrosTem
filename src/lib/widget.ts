@@ -9,6 +9,7 @@ import { AWACY_SITE } from './awacy';
 import { appUrl, searchUrl } from './client';
 import { MAX_VERSION_ROWS } from './constants';
 import { t } from './i18n';
+import { ctLogo } from './logo';
 import type {
   AgwCompat,
   AnticheatInfo,
@@ -72,7 +73,7 @@ function linkEl(href: string, text: string, className = 'crostem-link'): HTMLAnc
 function box(): HTMLElement {
   const root = el('div', 'crostem-box');
   const header = el('div', 'crostem-header');
-  header.appendChild(el('span', 'crostem-logo', ''));
+  header.appendChild(ctLogo(14));
   header.appendChild(el('span', undefined, t('widgetTitle')));
   root.appendChild(header);
   return root;
