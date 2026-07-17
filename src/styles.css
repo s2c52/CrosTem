@@ -283,6 +283,12 @@
   visibility: hidden;
 }
 
+/* Hidden while an open hover card paints over this overlay's area
+   (geometric suppression in content/capsules.ts). */
+.crostem-overlay-suppressed {
+  visibility: hidden !important;
+}
+
 .crostem-overlay .crostem-stars {
   font-size: 11px;
   letter-spacing: 0;
