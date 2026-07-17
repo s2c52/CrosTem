@@ -56,7 +56,7 @@ describe('resolveGame', () => {
     vi.mocked(resolveCw).mockResolvedValue(cwHit(5, 'Runs Great'));
     const r = await resolveGame('Test Game', '10');
     expect(r.cw.kind).toBe('hit');
-    expect(r.verdict.level).toBe('green');
+    expect(r.verdict).toBe('green');
   });
 
   it('passes an ambiguous CodeWeavers resolution through untouched', async () => {
@@ -70,7 +70,7 @@ describe('resolveGame', () => {
     const r = await resolveGame('Test Game', '10');
     expect(r.cw).toEqual(ambiguous);
     // Verdict is computed without CW data (nothing else replied).
-    expect(r.verdict.level).toBe('unknown');
+    expect(r.verdict).toBe('unknown');
   });
 
   it('skips disabled sources entirely', async () => {
@@ -93,13 +93,13 @@ describe('resolveGame', () => {
     const r = await resolveGame('Test Game', '10');
     expect(r.agw).toBeNull();
     expect(r.ac).toBeNull();
-    expect(r.verdict.level).toBe('green');
+    expect(r.verdict).toBe('green');
   });
 
   it('uses AGW data when CodeWeavers has nothing', async () => {
     vi.mocked(agwLookupDetailed).mockResolvedValue({ result: agwPlayable, candidates: [] });
     const r = await resolveGame('Test Game', '10');
-    expect(r.verdict.level).toBe('green');
+    expect(r.verdict).toBe('green');
   });
 
   it('surfaces AGW candidates for the correction picker', async () => {

@@ -1,0 +1,368 @@
+{
+  "widgetTitle": {
+    "message": "Піде на Mac?"
+  },
+  "checking": {
+    "message": "Перевіряємо джерела сумісності…"
+  },
+  "errorReach": {
+    "message": "Не вдалося зв’язатися з джерелами сумісності."
+  },
+  "errorFriendly": {
+    "message": "Наразі не вдалося перевірити джерела сумісності."
+  },
+  "retry": {
+    "message": "Повторити"
+  },
+  "nativeBadge": {
+    "message": "Нативно на macOS"
+  },
+  "nativeNote": {
+    "message": "Гра має нативну версію для Mac — CrossOver не потрібен."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 на M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Архітектура за даними AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Архітектуру визначено за системними вимогами Steam."
+  },
+  "archSourceDate": {
+    "message": "Архітектуру оцінено за датою виходу."
+  },
+  "verdict_green": {
+    "message": "Можна грати на Mac через CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Можна грати із застереженнями"
+  },
+  "verdict_red": {
+    "message": "Імовірно, не запуститься на Mac"
+  },
+  "verdict_unknown": {
+    "message": "Немає даних про сумісність"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Античит"
+  },
+  "lastTested": {
+    "message": "Остання перевірка: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "Звіти: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Відкрити на CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Відкрити на AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Шукати на CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Немає даних."
+  },
+  "yourVersion": {
+    "message": "ваша версія"
+  },
+  "approxMatch": {
+    "message": "приблизний збіг: «$NAME$»",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Хибний збіг?"
+  },
+  "acLinuxNote": {
+    "message": "Дані Linux/Proton — орієнтовні для CrossOver. "
+  },
+  "refresh": {
+    "message": "↻ Оновити дані"
+  },
+  "refreshTitle": {
+    "message": "Очистити кеш цієї гри та повторно опитати всі джерела"
+  },
+  "attribution": {
+    "message": "Дані: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Без афіліації."
+  },
+  "pickMatch": {
+    "message": "Кілька можливих збігів на CodeWeavers — оберіть потрібний:"
+  },
+  "noneOfThese": {
+    "message": "Жоден із цих — шукати на CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Кілька можливих сторінок на AppleGamingWiki — оберіть потрібну:"
+  },
+  "agwNoneOfThese": {
+    "message": "Жодна з цих — шукати на AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Можливі збіги на AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "Збіги: $N$ ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "немає даних"
+  },
+  "starsAria": {
+    "message": "Зірки: $N$ із $MAX$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "без оцінки"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — оцінка CrossOver на CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(приблизний збіг)"
+  },
+  "badgeMatches": {
+    "message": "Можливі збіги на CodeWeavers: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "Налаштування CrosTem"
+  },
+  "optSurfaces": {
+    "message": "Де показувати сумісність"
+  },
+  "optSurfaceApp": {
+    "message": "Віджет на сторінці гри"
+  },
+  "optSurfaceCapsules": {
+    "message": "Зірки на капсулах крамниці"
+  },
+  "optSurfaceSearch": {
+    "message": "Значки в результатах пошуку"
+  },
+  "optSurfaceWishlist": {
+    "message": "Значки у списку бажаного"
+  },
+  "optSources": {
+    "message": "Джерела даних"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (оцінки CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (статус античиту)"
+  },
+  "optCxVersion": {
+    "message": "Ваша версія CrossOver"
+  },
+  "optCxVersionNote": {
+    "message": "Її оцінки підсвічуються у віджеті (напр. 26)."
+  },
+  "optCache": {
+    "message": "Кеш"
+  },
+  "optCacheTtl": {
+    "message": "Зберігати результати в кеші (днів)"
+  },
+  "optCacheClear": {
+    "message": "Очистити кеш"
+  },
+  "optCacheCleared": {
+    "message": "Кеш очищено."
+  },
+  "optCacheCount": {
+    "message": "Записів у кеші: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Виправлення збігів"
+  },
+  "optChoicesCount": {
+    "message": "Збережені виправлення: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Експорт"
+  },
+  "optImport": {
+    "message": "Імпорт"
+  },
+  "optImported": {
+    "message": "Виправлення імпортовано."
+  },
+  "optImportError": {
+    "message": "Некоректний файл."
+  },
+  "optClearChoices": {
+    "message": "Видалити всі виправлення"
+  },
+  "optReloadNote": {
+    "message": "Зміни застосовуються до вкладок Steam після перезавантаження — скористайтеся «Застосувати зараз» нижче."
+  },
+  "optApplyNow": {
+    "message": "Застосувати до відкритих вкладок Steam"
+  },
+  "optApplied": {
+    "message": "Застосовано — перезавантажено вкладок Steam: $N$.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Збережено."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Пошук гри на CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Нічого не знайдено."
+  },
+  "popupOptions": {
+    "message": "Налаштування"
+  },
+  "popupError": {
+    "message": "Пошук не вдався. Спробуйте ще раз."
+  },
+  "popupCurrentTab": {
+    "message": "Ця вкладка"
+  },
+  "popupSurfaces": {
+    "message": "Показувати в Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Сторінка гри"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Капсули"
+  },
+  "popupSurfaceSearch": {
+    "message": "Пошук"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Бажане"
+  },
+  "popupStatusSources": {
+    "message": "Активні джерела: $N$ із 3",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Джерела даних"
+  },
+  "onboardingTitle": {
+    "message": "Вітаємо в CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Дізнайтеся, чи піде гра зі Steam на вашому Mac — ще до покупки."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Вердикт на кожній сторінці гри"
+  },
+  "onboardingWidgetBody": {
+    "message": "Віджет «Піде на Mac?» поєднує оцінки CrossOver, AppleGamingWiki і статус античиту в один зрозумілий вердикт."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Зірки по всій крамниці"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Капсули ігор на головній сторінці отримують накладку із зірками сумісності під час перегляду."
+  },
+  "onboardingSearchTitle": {
+    "message": "Значки в пошуку та списку бажаного"
+  },
+  "onboardingSearchBody": {
+    "message": "Результати пошуку та ваш список бажаного показують компактні значки з оцінкою — наведіть курсор для деталей."
+  },
+  "onboardingNativeTitle": {
+    "message": "Нативні ігри — з позначкою"
+  },
+  "onboardingNativeBody": {
+    "message": "Ігри з нативною версією для Mac отримують 5 зірок і мітку архітектури Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Відкрити налаштування"
+  },
+  "onboardingHint": {
+    "message": "Оберіть, де з’являються значки та які джерела даних використовувати."
+  },
+  "statusUnrated": {
+    "message": "Без оцінки"
+  }
+}

@@ -1,0 +1,368 @@
+{
+  "widgetTitle": {
+    "message": "เล่นบน Mac ได้ไหม?"
+  },
+  "checking": {
+    "message": "กำลังตรวจสอบแหล่งข้อมูลความเข้ากันได้…"
+  },
+  "errorReach": {
+    "message": "ไม่สามารถเชื่อมต่อแหล่งข้อมูลความเข้ากันได้"
+  },
+  "errorFriendly": {
+    "message": "ขณะนี้ไม่สามารถตรวจสอบแหล่งข้อมูลความเข้ากันได้"
+  },
+  "retry": {
+    "message": "ลองอีกครั้ง"
+  },
+  "nativeBadge": {
+    "message": "รองรับ macOS แบบเนทีฟ"
+  },
+  "nativeNote": {
+    "message": "เกมนี้มีเวอร์ชัน Mac แบบเนทีฟ — ไม่ต้องใช้ CrossOver"
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 บน M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "สถาปัตยกรรมอ้างอิงจาก AppleGamingWiki"
+  },
+  "archSourceSteam": {
+    "message": "สถาปัตยกรรมประเมินจากความต้องการระบบของ Steam"
+  },
+  "archSourceDate": {
+    "message": "สถาปัตยกรรมประเมินจากวันที่วางจำหน่าย"
+  },
+  "verdict_green": {
+    "message": "เล่นบน Mac ได้ผ่าน CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "เล่นได้แต่มีข้อควรระวัง"
+  },
+  "verdict_red": {
+    "message": "มีแนวโน้มเล่นบน Mac ไม่ได้"
+  },
+  "verdict_unknown": {
+    "message": "ไม่มีข้อมูลความเข้ากันได้"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "แอนตี้ชีต"
+  },
+  "lastTested": {
+    "message": "ทดสอบล่าสุด: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ รายงาน",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "ดูบน CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "ดูบน AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "ค้นหาบน CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "ไม่มีข้อมูล"
+  },
+  "yourVersion": {
+    "message": "เวอร์ชันของคุณ"
+  },
+  "approxMatch": {
+    "message": "ผลจับคู่โดยประมาณ: “$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "จับคู่ผิดใช่ไหม?"
+  },
+  "acLinuxNote": {
+    "message": "ข้อมูล Linux/Proton — ใช้อ้างอิงสำหรับ CrossOver "
+  },
+  "refresh": {
+    "message": "↻ รีเฟรชข้อมูล"
+  },
+  "refreshTitle": {
+    "message": "ล้างแคชของเกมนี้และตรวจสอบทุกแหล่งข้อมูลใหม่"
+  },
+  "attribution": {
+    "message": "ข้อมูล: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet ไม่มีส่วนเกี่ยวข้องกัน"
+  },
+  "pickMatch": {
+    "message": "พบผลจับคู่ที่เป็นไปได้หลายรายการบน CodeWeavers — เลือกอันที่ถูกต้อง:"
+  },
+  "noneOfThese": {
+    "message": "ไม่ใช่สักอัน — ค้นหาบน CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "พบหน้าที่เป็นไปได้หลายหน้าบน AppleGamingWiki — เลือกอันที่ถูกต้อง:"
+  },
+  "agwNoneOfThese": {
+    "message": "ไม่ใช่สักอัน — ค้นหาบน AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "ผลจับคู่ที่เป็นไปได้บน AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "$N$ ผลจับคู่ ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "ไม่มีข้อมูล"
+  },
+  "starsAria": {
+    "message": "$N$ จาก $MAX$ ดาว",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "ไม่มีคะแนน"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — คะแนน CrossOver บน CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(ผลจับคู่โดยประมาณ)"
+  },
+  "badgeMatches": {
+    "message": "ผลจับคู่ที่เป็นไปได้ $N$ รายการบน CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "การตั้งค่า CrosTem"
+  },
+  "optSurfaces": {
+    "message": "ตำแหน่งที่แสดงความเข้ากันได้"
+  },
+  "optSurfaceApp": {
+    "message": "วิดเจ็ตบนหน้าเกม"
+  },
+  "optSurfaceCapsules": {
+    "message": "ดาวซ้อนทับบนแคปซูลร้านค้า"
+  },
+  "optSurfaceSearch": {
+    "message": "ป้ายในผลการค้นหา"
+  },
+  "optSurfaceWishlist": {
+    "message": "ป้ายในสิ่งที่อยากได้"
+  },
+  "optSources": {
+    "message": "แหล่งข้อมูล"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (คะแนน CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (สถานะแอนตี้ชีต)"
+  },
+  "optCxVersion": {
+    "message": "เวอร์ชัน CrossOver ของคุณ"
+  },
+  "optCxVersionNote": {
+    "message": "คะแนนของเวอร์ชันนี้จะถูกไฮไลต์ในวิดเจ็ต (เช่น 26)"
+  },
+  "optCache": {
+    "message": "แคช"
+  },
+  "optCacheTtl": {
+    "message": "เก็บผลลัพธ์ในแคชเป็นเวลา (วัน)"
+  },
+  "optCacheClear": {
+    "message": "ล้างแคช"
+  },
+  "optCacheCleared": {
+    "message": "ล้างแคชแล้ว"
+  },
+  "optCacheCount": {
+    "message": "$N$ รายการในแคช",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "การแก้ไขการจับคู่"
+  },
+  "optChoicesCount": {
+    "message": "การแก้ไขที่บันทึกไว้ $N$ รายการ",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "ส่งออก"
+  },
+  "optImport": {
+    "message": "นำเข้า"
+  },
+  "optImported": {
+    "message": "นำเข้าการแก้ไขแล้ว"
+  },
+  "optImportError": {
+    "message": "ไฟล์ไม่ถูกต้อง"
+  },
+  "optClearChoices": {
+    "message": "ลบการแก้ไขทั้งหมด"
+  },
+  "optReloadNote": {
+    "message": "การเปลี่ยนแปลงจะมีผลกับแท็บ Steam หลังจากโหลดใหม่ — ใช้ “นำไปใช้ตอนนี้” ด้านล่าง"
+  },
+  "optApplyNow": {
+    "message": "นำไปใช้กับแท็บ Steam ที่เปิดอยู่"
+  },
+  "optApplied": {
+    "message": "นำไปใช้แล้ว — โหลดแท็บ Steam ใหม่ $N$ แท็บ",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ จาก CodeWeavers · $AGW$ จาก AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "บันทึกแล้ว"
+  },
+  "popupSearchPlaceholder": {
+    "message": "ค้นหาเกมบน CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "ไม่พบผลลัพธ์"
+  },
+  "popupOptions": {
+    "message": "การตั้งค่า"
+  },
+  "popupError": {
+    "message": "การค้นหาล้มเหลว ลองอีกครั้ง"
+  },
+  "popupCurrentTab": {
+    "message": "แท็บนี้"
+  },
+  "popupSurfaces": {
+    "message": "แสดงบน Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "หน้าเกม"
+  },
+  "popupSurfaceCapsules": {
+    "message": "แคปซูล"
+  },
+  "popupSurfaceSearch": {
+    "message": "ค้นหา"
+  },
+  "popupSurfaceWishlist": {
+    "message": "สิ่งที่อยากได้"
+  },
+  "popupStatusSources": {
+    "message": "ใช้งานอยู่ $N$ จาก 3 แหล่งข้อมูล",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "แหล่งข้อมูล"
+  },
+  "onboardingTitle": {
+    "message": "ยินดีต้อนรับสู่ CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "รู้ว่าเกม Steam เล่นบน Mac ของคุณได้ไหม — ก่อนตัดสินใจซื้อ"
+  },
+  "onboardingWidgetTitle": {
+    "message": "คำตัดสินบนหน้าเกมทุกหน้า"
+  },
+  "onboardingWidgetBody": {
+    "message": "วิดเจ็ต “เล่นบน Mac ได้ไหม?” รวมคะแนน CrossOver, AppleGamingWiki และสถานะแอนตี้ชีตไว้เป็นคำตัดสินเดียวที่ชัดเจน"
+  },
+  "onboardingCapsulesTitle": {
+    "message": "ดาวทั่วทั้งร้านค้า"
+  },
+  "onboardingCapsulesBody": {
+    "message": "แคปซูลเกมบนหน้าแรกจะมีดาวความเข้ากันได้ซ้อนทับขณะที่คุณเลือกดู"
+  },
+  "onboardingSearchTitle": {
+    "message": "ป้ายในการค้นหาและสิ่งที่อยากได้"
+  },
+  "onboardingSearchBody": {
+    "message": "ผลการค้นหาและสิ่งที่อยากได้ของคุณจะแสดงป้ายคะแนนแบบกะทัดรัด — ชี้เมาส์เพื่อดูรายละเอียด"
+  },
+  "onboardingNativeTitle": {
+    "message": "เกมเนทีฟ มีป้ายกำกับ"
+  },
+  "onboardingNativeBody": {
+    "message": "เกมที่มีเวอร์ชัน Mac แบบเนทีฟจะได้ 5 ดาวพร้อมป้ายสถาปัตยกรรม Intel / M Series"
+  },
+  "onboardingCta": {
+    "message": "เปิดการตั้งค่า"
+  },
+  "onboardingHint": {
+    "message": "เลือกตำแหน่งที่จะแสดงป้ายและแหล่งข้อมูลที่จะใช้"
+  },
+  "statusUnrated": {
+    "message": "ยังไม่มีคะแนน"
+  }
+}

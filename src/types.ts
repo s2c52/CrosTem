@@ -81,7 +81,7 @@ export type ResolveResult =
       level: VerdictLevel;
     }
   | { kind: 'ambiguous'; count: number; query: string; level: VerdictLevel }
-  | { kind: 'dot'; level: VerdictLevel; title: string }
+  | { kind: 'dot'; level: VerdictLevel }
   | { kind: 'none' };
 
 export interface AutoAttachOpts {
@@ -116,12 +116,6 @@ export interface AnticheatInfo {
 }
 
 export type VerdictLevel = 'green' | 'yellow' | 'red' | 'unknown';
-
-export interface Verdict {
-  level: VerdictLevel;
-  label: string;
-  reasons: string[];
-}
 
 /** CodeWeavers signal for the verdict: the full app page or just the
  * stars from the search row (overlays case). */

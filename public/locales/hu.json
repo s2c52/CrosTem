@@ -1,0 +1,368 @@
+{
+  "widgetTitle": {
+    "message": "Fut Macen?"
+  },
+  "checking": {
+    "message": "Kompatibilitási források ellenőrzése…"
+  },
+  "errorReach": {
+    "message": "Nem sikerült elérni a kompatibilitási forrásokat."
+  },
+  "errorFriendly": {
+    "message": "Most nem sikerült ellenőrizni a kompatibilitási forrásokat."
+  },
+  "retry": {
+    "message": "Újra"
+  },
+  "nativeBadge": {
+    "message": "Natív macOS-en"
+  },
+  "nativeNote": {
+    "message": "Ez a játék natív Mac-verzióval érkezik — nincs szükség CrossOverre."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 M-en)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Architektúra az AppleGamingWiki alapján."
+  },
+  "archSourceSteam": {
+    "message": "Architektúra a Steam gépigényből következtetve."
+  },
+  "archSourceDate": {
+    "message": "Architektúra a megjelenési dátum alapján becsülve."
+  },
+  "verdict_green": {
+    "message": "Játszható Macen CrossOverrel"
+  },
+  "verdict_yellow": {
+    "message": "Játszható fenntartásokkal"
+  },
+  "verdict_red": {
+    "message": "Valószínűleg nem játszható Macen"
+  },
+  "verdict_unknown": {
+    "message": "Nincs kompatibilitási adat"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Anticheat"
+  },
+  "lastTested": {
+    "message": "Utoljára tesztelve: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ jelentés",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Megtekintés a CodeWeaversen ↗"
+  },
+  "viewOnAgw": {
+    "message": "Megtekintés az AppleGamingWikin ↗"
+  },
+  "searchCw": {
+    "message": "Keresés a CodeWeaversen ↗"
+  },
+  "noData": {
+    "message": "Nincs adat."
+  },
+  "yourVersion": {
+    "message": "a te verziód"
+  },
+  "approxMatch": {
+    "message": "hozzávetőleges találat: „$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Rossz találat?"
+  },
+  "acLinuxNote": {
+    "message": "Linux/Proton-adatok — CrossOver esetén tájékoztató jellegűek. "
+  },
+  "refresh": {
+    "message": "↻ Adatok frissítése"
+  },
+  "refreshTitle": {
+    "message": "A játék gyorsítótárazott adatainak törlése és az összes forrás újraellenőrzése"
+  },
+  "attribution": {
+    "message": "Adatok: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Nem állunk kapcsolatban velük."
+  },
+  "pickMatch": {
+    "message": "Több lehetséges találat a CodeWeaversen — válaszd ki a megfelelőt:"
+  },
+  "noneOfThese": {
+    "message": "Egyik sem — keresés a CodeWeaversen ↗"
+  },
+  "agwPickMatch": {
+    "message": "Több lehetséges oldal az AppleGamingWikin — válaszd ki a megfelelőt:"
+  },
+  "agwNoneOfThese": {
+    "message": "Egyik sem — keresés az AppleGamingWikin ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Lehetséges találatok az AppleGamingWikin…"
+  },
+  "matchesN": {
+    "message": "$N$ találat ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "nincs adat"
+  },
+  "starsAria": {
+    "message": "$N$/$MAX$ csillag",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "nincs értékelés"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — CrossOver-értékelés a CodeWeaversen",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(hozzávetőleges találat)"
+  },
+  "badgeMatches": {
+    "message": "$N$ lehetséges találat a CodeWeaversen",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "CrosTem-beállítások"
+  },
+  "optSurfaces": {
+    "message": "Hol jelenjen meg a kompatibilitás"
+  },
+  "optSurfaceApp": {
+    "message": "Widget a játék oldalán"
+  },
+  "optSurfaceCapsules": {
+    "message": "Csillag-overlay a bolti kapszulákon"
+  },
+  "optSurfaceSearch": {
+    "message": "Jelvények a keresési találatokon"
+  },
+  "optSurfaceWishlist": {
+    "message": "Jelvények a kívánságlistán"
+  },
+  "optSources": {
+    "message": "Adatforrások"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (CrossOver-értékelések)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (anticheat-állapot)"
+  },
+  "optCxVersion": {
+    "message": "A CrossOver-verziód"
+  },
+  "optCxVersionNote": {
+    "message": "Az ehhez a verzióhoz tartozó értékelések kiemelve jelennek meg a widgetben (pl. 26)."
+  },
+  "optCache": {
+    "message": "Gyorsítótár"
+  },
+  "optCacheTtl": {
+    "message": "Gyorsítótárazott eredmények megőrzése (nap)"
+  },
+  "optCacheClear": {
+    "message": "Gyorsítótár törlése"
+  },
+  "optCacheCleared": {
+    "message": "Gyorsítótár törölve."
+  },
+  "optCacheCount": {
+    "message": "$N$ gyorsítótárazott bejegyzés",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Találat-javítások"
+  },
+  "optChoicesCount": {
+    "message": "$N$ mentett javítás",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Exportálás"
+  },
+  "optImport": {
+    "message": "Importálás"
+  },
+  "optImported": {
+    "message": "Javítások importálva."
+  },
+  "optImportError": {
+    "message": "Érvénytelen fájl."
+  },
+  "optClearChoices": {
+    "message": "Összes javítás törlése"
+  },
+  "optReloadNote": {
+    "message": "A módosítások újratöltés után érvényesek a Steam-lapokon — használd lent az „Alkalmazás most” gombot."
+  },
+  "optApplyNow": {
+    "message": "Alkalmazás a nyitott Steam-lapokon"
+  },
+  "optApplied": {
+    "message": "Alkalmazva — $N$ Steam-lap újratöltve.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Mentve."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Játék keresése a CodeWeaversen…"
+  },
+  "popupNoResults": {
+    "message": "Nincs találat."
+  },
+  "popupOptions": {
+    "message": "Beállítások"
+  },
+  "popupError": {
+    "message": "A keresés nem sikerült. Próbáld újra."
+  },
+  "popupCurrentTab": {
+    "message": "Ez a lap"
+  },
+  "popupSurfaces": {
+    "message": "Megjelenítés a Steamen"
+  },
+  "popupSurfaceApp": {
+    "message": "Játékoldal"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Kapszulák"
+  },
+  "popupSurfaceSearch": {
+    "message": "Keresés"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Kívánságlista"
+  },
+  "popupStatusSources": {
+    "message": "$N$/3 forrás aktív",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Adatforrások"
+  },
+  "onboardingTitle": {
+    "message": "Üdvözlünk a CrosTemben"
+  },
+  "onboardingTagline": {
+    "message": "Tudd meg, fut-e egy Steam-játék a Maceden — mielőtt megvennéd."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Ítélet minden játékoldalon"
+  },
+  "onboardingWidgetBody": {
+    "message": "A „Fut Macen?” widget egyetlen egyértelmű ítéletben egyesíti a CrossOver-értékeléseket, az AppleGamingWikit és az anticheat-állapotot."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Csillagok az egész boltban"
+  },
+  "onboardingCapsulesBody": {
+    "message": "A főoldal játékkapszuláin böngészés közben kompatibilitási csillag-overlay jelenik meg."
+  },
+  "onboardingSearchTitle": {
+    "message": "Jelvények a keresésben és a kívánságlistán"
+  },
+  "onboardingSearchBody": {
+    "message": "A keresési találatok és a kívánságlistád kompakt értékelési jelvényeket mutatnak — vidd fölé az egeret a részletekért."
+  },
+  "onboardingNativeTitle": {
+    "message": "Natív játékok megjelölve"
+  },
+  "onboardingNativeBody": {
+    "message": "A natív Mac-verzióval rendelkező játékok 5 csillagot és Intel / M Series architektúracímkét kapnak."
+  },
+  "onboardingCta": {
+    "message": "Beállítások megnyitása"
+  },
+  "onboardingHint": {
+    "message": "Válaszd ki, hol jelenjenek meg a jelvények, és mely adatforrások legyenek használatban."
+  },
+  "statusUnrated": {
+    "message": "Nincs értékelve"
+  }
+}

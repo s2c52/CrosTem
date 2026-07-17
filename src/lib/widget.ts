@@ -16,7 +16,6 @@ import type {
   ArchInfo,
   CwAppPage,
   RankedResult,
-  Verdict,
   VerdictLevel,
 } from '../types';
 
@@ -155,7 +154,7 @@ export interface FullCompat {
   cwSlug: string | null;
   agw: AgwCompat | null;
   ac: AnticheatInfo | null;
-  verdict: Verdict;
+  verdict: VerdictLevel;
 }
 
 export interface AppWidgetOpts {
@@ -188,18 +187,14 @@ const VERDICT_GLYPHS: Record<VerdictLevel, string> = {
 };
 
 /** Verdict banner: soft verdict-tinted strip readable at a glance. */
-function bannerEl(verdict: Verdict): HTMLElement {
-  const banner = el('div', 'crostem-banner crostem-banner-' + verdict.level);
+function bannerEl(verdict: VerdictLevel): HTMLElement {
+  const banner = el('div', 'crostem-banner crostem-banner-' + verdict);
   banner.setAttribute('role', 'status');
-  const dot = el('span', 'crostem-dot crostem-dot-' + verdict.level + ' crostem-banner-dot');
-  dot.appendChild(el('span', 'crostem-banner-glyph', VERDICT_GLYPHS[verdict.level]));
+  const dot = el('span', 'crostem-dot crostem-dot-' + verdict + ' crostem-banner-dot');
+  dot.appendChild(el('span', 'crostem-banner-glyph', VERDICT_GLYPHS[verdict]));
   banner.appendChild(dot);
   banner.appendChild(
-    el(
-      'span',
-      'crostem-banner-label crostem-verdict-' + verdict.level,
-      t('verdict_' + verdict.level),
-    ),
+    el('span', 'crostem-banner-label crostem-verdict-' + verdict, t('verdict_' + verdict)),
   );
   return banner;
 }
@@ -260,7 +255,7 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
   if (mac && data.cwSlug) {
     const summary = [
       starsEl(mac.stars),
-      el('span', 'crostem-status ' + statusClass(mac.status), mac.status || 'Unrated'),
+      el('span', 'crostem-status ' + statusClass(mac.status), mac.status || t('statusUnrated')),
     ];
     const detail: HTMLElement[] = [];
     if (mac.lastTested) {
@@ -365,7 +360,7 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
       ),
     ];
     const line = el('div', blocked ? 'crostem-status-bad crostem-small' : 'crostem-small');
-    line.textContent = `${data.ac.anticheats.join(', ') || 'Anticheat'}: ${data.ac.status}`;
+    line.textContent = `${data.ac.anticheats.join(', ') || t('sectionAc')}: ${data.ac.status}`;
     const note = el('div', 'crostem-muted crostem-small');
     note.textContent = t('acLinuxNote');
     note.appendChild(linkEl(AWACY_SITE, 'AreWeAntiCheatYet ↗', 'crostem-link crostem-small'));

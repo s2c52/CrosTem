@@ -4,7 +4,7 @@
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
 import { storageKeys } from '../lib/cache';
-import { applyI18n, t } from '../lib/i18n';
+import { applyI18n, currentLocale, initI18n, t } from '../lib/i18n';
 import { ctLogo } from '../lib/logo';
 import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
 
@@ -96,7 +96,8 @@ async function applyToSteamTabs(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  document.documentElement.lang = chrome.i18n.getUILanguage();
+  await initI18n();
+  document.documentElement.lang = currentLocale();
   applyI18n('optionsTitle');
   document.querySelector('.logo')?.replaceWith(ctLogo(22));
   fillForm(await getSettings());

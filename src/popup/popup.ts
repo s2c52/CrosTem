@@ -10,7 +10,7 @@ import { appUrl, search, steamDetails } from '../lib/client';
 import { MAX_POPUP_RESULTS, SEARCH_DEBOUNCE_MS } from '../lib/constants';
 import { AWACY_SITE } from '../lib/awacy';
 import { debounce } from '../lib/debounce';
-import { applyI18n, t } from '../lib/i18n';
+import { applyI18n, currentLocale, initI18n, t } from '../lib/i18n';
 import { logDebug } from '../lib/log';
 import { ctLogo } from '../lib/logo';
 import { resolveGame } from '../lib/resolve';
@@ -39,11 +39,7 @@ const queryEl = mustGet('query') as HTMLInputElement;
 const resultsEl = mustGet('results');
 const optionsLink = mustGet('open-options') as HTMLAnchorElement;
 
-document.documentElement.lang = chrome.i18n.getUILanguage();
-applyI18n();
 document.querySelector('.logo')?.replaceWith(ctLogo(18));
-queryEl.placeholder = t('popupSearchPlaceholder');
-optionsLink.textContent = t('popupOptions');
 optionsLink.addEventListener('click', (e) => {
   e.preventDefault();
   void chrome.runtime.openOptionsPage();
@@ -165,10 +161,10 @@ async function initCurrentTab(): Promise<void> {
     }
 
     const { cw, verdict } = await resolveGame(gameName, appid, { loadAppPage: false });
-    const banner = el('div', 'crostem-banner mini-banner crostem-banner-' + verdict.level);
+    const banner = el('div', 'crostem-banner mini-banner crostem-banner-' + verdict);
     banner.setAttribute('role', 'status');
     banner.appendChild(
-      el('span', 'crostem-banner-label crostem-verdict-' + verdict.level, t('verdict_' + verdict.level)),
+      el('span', 'crostem-banner-label crostem-verdict-' + verdict, t('verdict_' + verdict)),
     );
     body.appendChild(banner);
     if (cw.kind === 'hit') body.appendChild(miniStars(cw.stars));
@@ -241,7 +237,15 @@ function initQuickLinks(): void {
   }
 }
 
-initQuickLinks();
-void initToggles();
-void renderStatus();
-void initCurrentTab();
+void (async () => {
+  // The dictionary must be ready before anything renders text.
+  await initI18n();
+  document.documentElement.lang = currentLocale();
+  applyI18n();
+  queryEl.placeholder = t('popupSearchPlaceholder');
+  optionsLink.textContent = t('popupOptions');
+  initQuickLinks();
+  void initToggles();
+  void renderStatus();
+  void initCurrentTab();
+})();

@@ -40,6 +40,12 @@
     }
   ],
   "default_locale": "en",
+  "web_accessible_resources": [
+    {
+      "resources": ["locales/*.json"],
+      "matches": ["https://store.steampowered.com/*"]
+    }
+  ],
   "options_ui": {
     "page": "src/options/options.html",
     "open_in_tab": true
