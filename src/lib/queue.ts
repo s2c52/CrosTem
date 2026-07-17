@@ -30,13 +30,16 @@ export function createFetchQueue<T>(maxConcurrent: number): FetchQueue<T> {
     const p = new Promise<T>((resolve, reject) => {
       pending.push(() => {
         active++;
+        // Cleanup is chained BEFORE resolve/reject reach the caller:
+        // otherwise an awaiter re-running the same key immediately would
+        // still see the settled promise in `inflight` and get stale work.
         work()
-          .then(resolve, reject)
           .finally(() => {
             active--;
             inflight.delete(key);
             pump();
-          });
+          })
+          .then(resolve, reject);
       });
       pump();
     });
