@@ -5,11 +5,15 @@ import { defineConfig } from 'vite';
 import { crx } from '@crxjs/vite-plugin';
 import manifest from './manifest.json';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [crx({ manifest })],
   build: {
-    // Extension: unminified code eases Web Store review; source maps aid debugging.
-    minify: false,
+    // Default build stays unminified (readable dist for development and
+    // Web Store review); the packaged build minifies with Vite 8's
+    // built-in oxc (release mode via npm run package). Source maps ship
+    // in both — deliberate: the code is GPL and maps help diagnose user
+    // reports.
+    minify: mode === 'release',
     sourcemap: true,
     rollupOptions: {
       // crxjs only bundles pages referenced by the manifest; the
@@ -17,4 +21,4 @@ export default defineConfig({
       input: { onboarding: 'src/onboarding/onboarding.html' },
     },
   },
-});
+}));

@@ -2,6 +2,24 @@
 
 All notable changes to CrosTem are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] — 2026-07-17
+
+### Added
+
+- Live settings apply: toggling a surface in the popup or options now mounts/unmounts it immediately on open Steam tabs, no reload needed.
+- Stale-while-revalidate cache: previously seen games paint instantly (even past their cache TTL) and refresh silently in the background.
+- Per-origin circuit breakers, per-source fetch timeouts and retries with backoff/Retry-After: a slow or downed data source degrades fast instead of hanging badges.
+- Explicit content security policy for extension pages.
+
+### Changed
+
+- Badges resolve ahead of scrolling (~1 viewport of lookahead) and paint on the first source signal, refining when the rest arrive.
+- Fetch concurrency raised from 2 to 4 lanes, halving cold resolution on busy pages.
+- A CodeWeavers failure now degrades the badge to the AppleGamingWiki/anticheat verdict instead of discarding it.
+- Content scripts scan only newly added page content instead of the whole document on every change; hover handling no longer forces layout work while the pointer moves.
+- Cache upkeep: daily sweep of expired entries, quota-safe writes and size-capped eviction.
+- Packaged builds are minified; store zip is ~207 KB.
+
 ## [1.0.2] — 2026-07-17
 
 ### Added

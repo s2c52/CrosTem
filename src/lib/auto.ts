@@ -9,6 +9,7 @@
 import { agwLookup } from './agw';
 import { resolveNativeArch } from './arch';
 import { anticheatLookup } from './awacy';
+import { type SwrPass } from './cache';
 import { steamDetails } from './client';
 import { LAZY_ROOT_MARGIN } from './constants';
 import { resolveCw } from './cw';
@@ -38,6 +39,13 @@ const io = new IntersectionObserver(
   { rootMargin: LAZY_ROOT_MARGIN },
 );
 
+/** Unregisters an element (surface teardown): stops observing it and
+ * drops its pending resolution. Safe on elements never attached. */
+export function detach(el: Element): void {
+  io.unobserve(el);
+  registry.delete(el);
+}
+
 export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
   if (opts.native === true) {
     // Immediate provisional badge (5★ without architecture); the architecture
@@ -51,7 +59,18 @@ export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
 
 async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<void> {
   try {
-    renderBadge(el, await resolve(opts), opts);
+    // First pass may serve entries past their TTL (stale window): the
+    // badge paints instantly and, if anything stale was used, a strict
+    // second pass refetches just the expired sources and silently
+    // re-renders when the outcome changed.
+    const swr: SwrPass = { staleServed: false };
+    const onPartial = (partial: ResolveResult): void => renderBadge(el, partial, opts);
+    const first = await resolve(opts, swr, onPartial);
+    renderBadge(el, first, opts);
+    if (swr.staleServed) {
+      const fresh = await resolve(opts);
+      if (JSON.stringify(fresh) !== JSON.stringify(first)) renderBadge(el, fresh, opts);
+    }
   } catch (e) {
     logWarn('badge resolution failed', e);
     // Never remove the provisional native badge because of a network failure.
@@ -59,14 +78,18 @@ async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<
   }
 }
 
-async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
+async function resolve(
+  opts: AutoAttachOpts,
+  swr?: SwrPass,
+  onPartial?: (partial: ResolveResult) => void,
+): Promise<ResolveResult> {
   let name = opts.name ?? null;
   let native = opts.native; // undefined = unknown
   let details: SteamDetailsT | null = null;
 
   if ((name == null || native == null) && opts.appid) {
     try {
-      details = await steamDetails(opts.appid);
+      details = await steamDetails(opts.appid, swr);
       if (details) {
         if (name == null) name = details.name;
         if (native == null) native = details.mac;
@@ -87,13 +110,13 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   // Secondary sources in parallel with the CodeWeavers resolution
   // (each can be disabled in the options).
   const agwPromise = settings.sources.agw
-    ? agwLookup(name, opts.appid).catch((e: unknown) => {
+    ? agwLookup(name, opts.appid, swr).catch((e: unknown) => {
         logDebug('AGW lookup failed', e);
         return null;
       })
     : Promise.resolve(null);
   const acPromise = settings.sources.anticheat
-    ? anticheatLookup(opts.appid, name).catch((e: unknown) => {
+    ? anticheatLookup(opts.appid, name, swr).catch((e: unknown) => {
         logDebug('anticheat lookup failed', e);
         return null;
       })
@@ -107,21 +130,42 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
     | { type: 'none' } = { type: 'none' };
 
   if (settings.sources.cw) {
-    const res = await resolveCw(name, opts.appid);
-    if (res.kind === 'hit') {
-      cwSignal = res.app?.mac
-        ? { stars: res.stars, status: res.app.mac.status }
-        : { stars: res.stars };
-      cwOutcome = {
-        type: 'hit',
-        stars: res.stars,
-        slug: res.slug,
-        cwName: res.cwName,
-        approximate: res.approximate,
-      };
-    } else if (res.kind === 'ambiguous') {
-      cwOutcome = { type: 'ambiguous', count: res.candidates.length };
+    // A CodeWeavers failure (source down, breaker open) must not kill
+    // the badge: AGW/anticheat are already resolving in parallel and
+    // their verdict alone is still worth showing.
+    try {
+      const res = await resolveCw(name, opts.appid, swr ? { swr } : {});
+      if (res.kind === 'hit') {
+        cwSignal = res.app?.mac
+          ? { stars: res.stars, status: res.app.mac.status }
+          : { stars: res.stars };
+        cwOutcome = {
+          type: 'hit',
+          stars: res.stars,
+          slug: res.slug,
+          cwName: res.cwName,
+          approximate: res.approximate,
+        };
+      } else if (res.kind === 'ambiguous') {
+        cwOutcome = { type: 'ambiguous', count: res.candidates.length };
+      }
+    } catch (e) {
+      logDebug('CW resolution failed, degrading to secondary sources', e);
     }
+  }
+
+  // First-signal render: paint the stars with the CW-only verdict right
+  // away; the full verdict below refines it (rarely visibly — only when
+  // AGW/anticheat change the traffic light, e.g. an anticheat Denied).
+  if (onPartial && cwOutcome.type === 'hit') {
+    onPartial({
+      kind: 'stars',
+      stars: cwOutcome.stars,
+      slug: cwOutcome.slug,
+      cwName: cwOutcome.cwName,
+      approximate: cwOutcome.approximate,
+      level: computeVerdict(cwSignal, null, null),
+    });
   }
 
   const [agw, ac] = await Promise.all([agwPromise, acPromise]);

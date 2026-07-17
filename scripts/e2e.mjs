@@ -22,9 +22,20 @@ const BRAVE =
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
+// E2E_HEADLESS=1 for CI runners. Headless needs Playwright's full
+// Chromium build (channel; headless_shell can't load extensions and
+// Brave headless hides the extension service worker); headed keeps
+// using Brave locally. E2E_CHANNEL overrides the browser channel.
+const HEADLESS = process.env.E2E_HEADLESS === '1';
+const browser = process.env.E2E_CHANNEL
+  ? { channel: process.env.E2E_CHANNEL }
+  : HEADLESS
+    ? { channel: 'chromium' }
+    : { executablePath: BRAVE };
+
 const ctx = await chromium.launchPersistentContext(PROFILE, {
-  headless: false,
-  executablePath: BRAVE,
+  headless: HEADLESS,
+  ...browser,
   viewport: { width: 1400, height: 900 },
   args: [
     `--disable-extensions-except=${EXT}`,
@@ -45,12 +56,15 @@ const results = [];
 let failed = false;
 
 async function check(label, fn) {
+  // Per-check wall time goes into the report: it doubles as the
+  // cold/warm resolution metric quoted in integration PRs.
+  const start = Date.now();
   try {
     const detail = await fn();
-    results.push(`PASS ${label}${detail ? ' — ' + detail : ''}`);
+    results.push(`PASS ${label} (${Date.now() - start} ms)${detail ? ' — ' + detail : ''}`);
   } catch (e) {
     failed = true;
-    results.push(`FAIL ${label} — ${String(e.message).split('\n')[0]}`);
+    results.push(`FAIL ${label} (${Date.now() - start} ms) — ${String(e.message).split('\n')[0]}`);
   }
 }
 

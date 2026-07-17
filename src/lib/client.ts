@@ -3,11 +3,13 @@
 
 // High-level client used by the content scripts: fetch (via the service
 // worker, which avoids CORS), parsing and caching of CodeWeavers and Steam data.
+import { createBreaker } from './breaker';
 import * as cache from './cache';
-import { FETCH_TIMEOUT_MS, MAX_CONCURRENT_FETCHES } from './constants';
+import { FETCH_FAILURE_MEMO_MS, MAX_CONCURRENT_FETCHES } from './constants';
 import { asString, isRecord } from './guards';
 import { logDebug } from './log';
 import { baseName } from './matcher';
+import { fetchWithPolicy, messageTimeoutMs, sourceTimeoutMs } from './net';
 import { parseAppPage, parseSearchResults } from './parser';
 import { createFetchQueue } from './queue';
 import type {
@@ -24,14 +26,19 @@ const CW_BASE = 'https://www.codeweavers.com';
  * unlike a completed response with ok:false. */
 class TransportError extends Error {}
 
+/** The worker's breaker rejected the origin: fail fast, do not retry. */
+export class BreakerOpenError extends Error {}
+
 function sendFetchMessage(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     // MV3 can kill the service worker mid-request, in which case the
     // callback never fires: without this timeout the promise (and the
-    // widget behind it) would hang forever.
+    // widget behind it) would hang forever. The budget is the worker's
+    // worst case (all attempts + waits) so we never give up on a worker
+    // that is still legitimately retrying.
     const timer = setTimeout(
       () => reject(new TransportError('extension fetch timed out')),
-      FETCH_TIMEOUT_MS,
+      messageTimeoutMs(url),
     );
     const msg: ExtFetchRequest = { type: 'extFetch', url };
     chrome.runtime.sendMessage(msg, (res: ExtFetchResponse | undefined) => {
@@ -41,7 +48,7 @@ function sendFetchMessage(url: string): Promise<string> {
       } else if (!res) {
         reject(new TransportError('no response from service worker'));
       } else if (!res.ok) {
-        reject(new Error(res.error));
+        reject(res.code === 'breaker-open' ? new BreakerOpenError(res.error) : new Error(res.error));
       } else {
         resolve(res.body);
       }
@@ -49,16 +56,34 @@ function sendFetchMessage(url: string): Promise<string> {
   });
 }
 
+// URLs that just failed are not re-requested for a short while: on a
+// page with many surfaces the same lookup can otherwise re-pay a slow
+// failure repeatedly, and this memo survives the MV3 worker deaths that
+// reset the worker-side breaker.
+const failMemo = new Map<string, number>();
+
 /** Fetch of an external resource through the service worker (avoids CORS).
  * Retries once on transport failures: the worker may have just been
  * restarted by MV3 (its queue state is ephemeral by design). */
 export async function fetchExt(url: string): Promise<string> {
+  const cooldownUntil = failMemo.get(url);
+  if (cooldownUntil !== undefined && Date.now() < cooldownUntil) {
+    throw new Error('recently failed, cooling down: ' + url);
+  }
   try {
-    return await sendFetchMessage(url);
+    let body: string;
+    try {
+      body = await sendFetchMessage(url);
+    } catch (e) {
+      if (!(e instanceof TransportError)) throw e;
+      logDebug('extFetch transport failure, retrying once', e);
+      body = await sendFetchMessage(url);
+    }
+    failMemo.delete(url);
+    return body;
   } catch (e) {
-    if (!(e instanceof TransportError)) throw e;
-    logDebug('extFetch transport failure, retrying once', e);
-    return sendFetchMessage(url);
+    failMemo.set(url, Date.now() + FETCH_FAILURE_MEMO_MS);
+    throw e;
   }
 }
 
@@ -86,11 +111,11 @@ export function steamCacheKey(appid: string): string {
 }
 
 /** Searches CodeWeavers by (simplified) game name. */
-export async function search(name: string): Promise<CwSearchResult[]> {
+export async function search(name: string, swr?: cache.SwrPass): Promise<CwSearchResult[]> {
   const query = baseName(name);
   if (!query) return [];
   const cacheKey = 'search:' + query;
-  const cached = await cache.get<CwSearchResult[]>(cacheKey);
+  const cached = await cache.getSwr<CwSearchResult[]>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
   const html = await fetchExt(searchUrl(query));
@@ -104,9 +129,9 @@ export async function search(name: string): Promise<CwSearchResult[]> {
 }
 
 /** Downloads and parses a CodeWeavers app page by slug. */
-export async function getApp(slug: string): Promise<CwAppPage | null> {
+export async function getApp(slug: string, swr?: cache.SwrPass): Promise<CwAppPage | null> {
   const cacheKey = 'app:' + slug;
-  const cached = await cache.get<CwAppPage | null>(cacheKey);
+  const cached = await cache.getSwr<CwAppPage | null>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
   const html = await fetchExt(appUrl(slug));
@@ -121,6 +146,10 @@ export async function getApp(slug: string): Promise<CwAppPage | null> {
 
 const STEAM_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
 const steamQueue = createFetchQueue<SteamDetails | null>(MAX_CONCURRENT_FETCHES);
+// Steam is fetched directly (same origin), so the worker's breaker never
+// sees it: it gets its own, keyed by a constant.
+const steamBreaker = createBreaker();
+const STEAM_ORIGIN = 'https://store.steampowered.com';
 
 function stripHtml(s: string): string {
   return s
@@ -162,16 +191,29 @@ async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
     'https://store.steampowered.com/api/appdetails?appids=' +
     encodeURIComponent(appid) +
     '&filters=platforms,basic,release_date&l=english';
-  const res = await fetch(url, { credentials: 'same-origin' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const value = parseSteamDetails(await res.json(), appid);
+  if (!steamBreaker.allow(STEAM_ORIGIN)) {
+    throw new Error('steam appdetails circuit open');
+  }
+  const out = await fetchWithPolicy(url, {
+    timeoutMs: sourceTimeoutMs(url),
+    credentials: 'same-origin',
+  });
+  if (out.ok) steamBreaker.onSuccess(STEAM_ORIGIN);
+  else steamBreaker.onFailure(STEAM_ORIGIN);
+  // Errors keep throwing (nothing cached): only a parsed success:false
+  // response is a cacheable negative.
+  if (!out.ok) throw new Error(out.error);
+  const value = parseSteamDetails(JSON.parse(out.body) as unknown, appid);
   await cache.set(steamCacheKey(appid), value, value ? STEAM_TTL : cache.TTL_NEGATIVE);
   return value;
 }
 
 /** Name and native Mac flag, or null if Steam does not know the appid. */
-export async function steamDetails(appid: string): Promise<SteamDetails | null> {
-  const cached = await cache.get<SteamDetails | null>(steamCacheKey(appid));
+export async function steamDetails(
+  appid: string,
+  swr?: cache.SwrPass,
+): Promise<SteamDetails | null> {
+  const cached = await cache.getSwr<SteamDetails | null>(steamCacheKey(appid), swr);
   if (cached !== undefined) return cached;
   return steamQueue.run(appid, () => fetchSteamDetails(appid));
 }

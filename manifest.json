@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_appName__",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "__MSG_appDesc__",
   "author": {
     "email": "s2c52@users.noreply.github.com"
@@ -13,6 +13,9 @@
     "https://www.applegamingwiki.com/*",
     "https://raw.githubusercontent.com/AreWeAntiCheatYet/*"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  },
   "background": {
     "service_worker": "src/background.ts",
     "type": "module"

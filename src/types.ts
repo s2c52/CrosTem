@@ -136,5 +136,10 @@ export interface ExtFetchRequest {
 /** Every message a content script may send to the service worker. */
 export type ExtMessage = ExtFetchRequest;
 
+/** Why a fetch failed: lets callers distinguish retryable transport
+ * problems from HTTP errors, policy rejections and an open breaker. */
+export type FetchErrorCode = 'timeout' | 'http' | 'network' | 'breaker-open' | 'not-allowed';
+
 export type ExtFetchResponse =
-  { ok: true; body: string; finalUrl: string } | { ok: false; error: string };
+  | { ok: true; body: string; finalUrl: string }
+  | { ok: false; error: string; code?: FetchErrorCode; status?: number };

@@ -1,6 +1,6 @@
 {
   "name": "crostem",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": true,
   "description": "CrosTem — Mac compatibility for Steam (browser extension)",
   "author": "Sacha Gennari (s2c52)",
@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:release": "tsc --noEmit && vite build --mode release",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -19,7 +20,7 @@
     "format:check": "prettier --check .",
     "e2e": "node scripts/e2e.mjs",
     "icons": "node scripts/icons.mjs",
-    "package": "npm run build && node scripts/package.mjs",
+    "package": "npm run build:release && node scripts/package.mjs",
     "listing": "node scripts/listing.mjs"
   },
   "devDependencies": {

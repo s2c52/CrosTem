@@ -6,28 +6,58 @@
 // service worker can). The body comes back as text and is parsed in the content
 // script (DOMParser does not exist in service workers; JSON.parse works anywhere).
 import { isAllowedUrl } from './lib/allowlist';
+import { createBreaker } from './lib/breaker';
+import { maybeDailyMaintenance } from './lib/cache';
 import { MAX_CONCURRENT_FETCHES } from './lib/constants';
 import { isExtFetchRequest } from './lib/guards';
+import { fetchWithPolicy, sourceTimeoutMs } from './lib/net';
 import { createFetchQueue } from './lib/queue';
 import type { ExtFetchResponse } from './types';
 
-// Queue state is module-level and therefore ephemeral: MV3 may kill the
-// service worker at any time. That is fine — pending sendMessage calls
-// fail on the content-script side and are retried there.
+// Queue and breaker state is module-level and therefore ephemeral: MV3
+// may kill the service worker at any time. That is fine — pending
+// sendMessage calls fail on the content-script side and are retried
+// there, and the breaker simply re-learns a downed origin.
 const queue = createFetchQueue<ExtFetchResponse>(MAX_CONCURRENT_FETCHES);
+const breaker = createBreaker();
+
+// Cache upkeep on every cold start of the worker, throttled internally
+// to once per day. Replaces a chrome.alarms schedule (no extra permission).
+void maybeDailyMaintenance();
 
 async function doFetch(url: string): Promise<ExtFetchResponse> {
-  try {
-    const res = await fetch(url, { credentials: 'omit' });
-    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
-    return { ok: true, body: await res.text(), finalUrl: res.url };
-  } catch (e) {
-    return { ok: false, error: String(e instanceof Error ? e.message : e) };
+  // Re-check at slot acquisition: the breaker may have opened while this
+  // request waited in the queue, and burning the slot on a known-down
+  // origin would serialize the whole backlog at one timeout each.
+  const origin = new URL(url).origin;
+  if (!breaker.allow(origin)) {
+    return { ok: false, error: `circuit open for ${origin}`, code: 'breaker-open' };
   }
+  // Retries happen inside the queue slot, so a downed origin can hold a
+  // slot for the whole retry budget; the breaker caps that exposure.
+  const out = await fetchWithPolicy(url, {
+    timeoutMs: sourceTimeoutMs(url),
+    credentials: 'omit',
+  });
+  if (out.ok) breaker.onSuccess(origin);
+  else breaker.onFailure(origin);
+  return out;
 }
 
 function enqueueFetch(url: string): Promise<ExtFetchResponse> {
-  if (!isAllowedUrl(url)) return Promise.resolve({ ok: false, error: 'URL not allowed' });
+  if (!isAllowedUrl(url)) {
+    return Promise.resolve({ ok: false, error: 'URL not allowed', code: 'not-allowed' });
+  }
+  const origin = new URL(url).origin;
+  if (!breaker.allow(origin)) {
+    // Fail fast without occupying a queue slot: the sources already
+    // degrade gracefully on the content-script side.
+    return Promise.resolve({
+      ok: false,
+      error: `circuit open for ${origin}`,
+      code: 'breaker-open',
+    });
+  }
   return queue.run(url, () => doFetch(url));
 }
 

@@ -7,6 +7,7 @@
 // worker (fetchExt), so this module works in any extension context.
 import { agwLookupDetailed, type AgwLookup } from './agw';
 import { anticheatLookup } from './awacy';
+import { type SwrPass } from './cache';
 import { resolveCw, type CwResolution } from './cw';
 import { getSettings } from './settings';
 import { computeVerdict } from './verdict';
@@ -28,6 +29,8 @@ export interface ResolveGameOpts {
   forcePicker?: boolean;
   /** Fetch the full CodeWeavers app page (versions, last tested). */
   loadAppPage?: boolean;
+  /** Stale-while-revalidate pass marker (see cache.SwrPass). */
+  swr?: SwrPass;
 }
 
 /**
@@ -46,12 +49,15 @@ export async function resolveGame(
       ? resolveCw(gameName, appid, {
           forcePicker: opts.forcePicker ?? false,
           loadAppPage: opts.loadAppPage ?? true,
+          ...(opts.swr ? { swr: opts.swr } : {}),
         })
       : Promise.resolve<CwResolution>({ kind: 'none' }),
     sources.agw
-      ? agwLookupDetailed(gameName, appid).catch(() => EMPTY_AGW)
+      ? agwLookupDetailed(gameName, appid, opts.swr).catch(() => EMPTY_AGW)
       : Promise.resolve(EMPTY_AGW),
-    sources.anticheat ? anticheatLookup(appid, gameName).catch(() => null) : Promise.resolve(null),
+    sources.anticheat
+      ? anticheatLookup(appid, gameName, opts.swr).catch(() => null)
+      : Promise.resolve(null),
   ]);
   const cwApp = cw.kind === 'hit' ? cw.app : null;
   const verdict = computeVerdict(cwApp?.mac ?? null, agwLookup.result, ac);
