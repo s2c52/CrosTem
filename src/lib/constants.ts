@@ -51,6 +51,10 @@ export const RETRY_BASE_DELAY_MS = 500;
 export const RETRY_JITTER_MS = 250;
 /** Upper bound honored for a server-sent Retry-After header. */
 export const RETRY_AFTER_CAP_MS = 10_000;
+/** In-memory per-URL failure memo: a URL that just failed is not
+ * re-fetched for this long. Client-side, so it keeps damping even when
+ * MV3 kills the worker and resets the breaker. */
+export const FETCH_FAILURE_MEMO_MS = 60_000;
 /** Consecutive final failures of one origin that open its circuit breaker. */
 export const BREAKER_FAILURES = 5;
 /** How long an open breaker rejects an origin before allowing traffic again. */

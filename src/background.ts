@@ -26,13 +26,19 @@ const breaker = createBreaker();
 void maybeDailyMaintenance();
 
 async function doFetch(url: string): Promise<ExtFetchResponse> {
+  // Re-check at slot acquisition: the breaker may have opened while this
+  // request waited in the queue, and burning the slot on a known-down
+  // origin would serialize the whole backlog at one timeout each.
+  const origin = new URL(url).origin;
+  if (!breaker.allow(origin)) {
+    return { ok: false, error: `circuit open for ${origin}`, code: 'breaker-open' };
+  }
   // Retries happen inside the queue slot, so a downed origin can hold a
   // slot for the whole retry budget; the breaker caps that exposure.
   const out = await fetchWithPolicy(url, {
     timeoutMs: sourceTimeoutMs(url),
     credentials: 'omit',
   });
-  const origin = new URL(url).origin;
   if (out.ok) breaker.onSuccess(origin);
   else breaker.onFailure(origin);
   return out;
