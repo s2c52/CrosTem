@@ -16,7 +16,7 @@ import { logDebug, logWarn } from './log';
 import { computeVerdict } from './verdict';
 import { getSettings } from './settings';
 import { t } from './i18n';
-import { dotEl, starsEl } from './widget';
+import { ARCH_SOURCE_KEYS, dotEl, starsEl } from './widget';
 import type {
   AutoAttachOpts,
   CwSignal,
@@ -183,7 +183,9 @@ function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): v
         (arch
           ? ' — ' +
             t(arch.arch === 'm-series' ? 'archM' : 'archIntel') +
-            (arch.approximate ? ' ~' : '')
+            (arch.approximate ? ' ~' : '') +
+            ' · ' +
+            t(ARCH_SOURCE_KEYS[arch.source])
           : '');
       el.appendChild(span);
       break;

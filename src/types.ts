@@ -65,6 +65,8 @@ export interface ArchInfo {
   /** true = inferred (marked with "~", like approximate matching). */
   approximate: boolean;
   source: 'agw' | 'steam-reqs' | 'date';
+  /** AGW page name, only when source === 'agw' (enables linking to it). */
+  agwPage?: string;
 }
 
 /** Result of the automatic resolution of a badge/overlay. */

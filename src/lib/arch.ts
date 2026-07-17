@@ -19,12 +19,17 @@ const NEGATIVE: readonly AgwStatus[] = ['na', "doesn't work", 'unplayable'];
 export function archFromAgw(agw: AgwCompat | null): ArchInfo | null {
   if (!agw) return null;
   if (POSITIVE.includes(agw.native)) {
-    return { arch: 'm-series', approximate: false, source: 'agw' };
+    return { arch: 'm-series', approximate: false, source: 'agw', agwPage: agw.page };
   }
   if (POSITIVE.includes(agw.rosetta2)) {
     // negative native → definitely Intel binary; unknown native → probably
     // Intel-only, but AGW may simply not have filled in the cell.
-    return { arch: 'intel', approximate: !NEGATIVE.includes(agw.native), source: 'agw' };
+    return {
+      arch: 'intel',
+      approximate: !NEGATIVE.includes(agw.native),
+      source: 'agw',
+      agwPage: agw.page,
+    };
   }
   return null;
 }
