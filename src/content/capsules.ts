@@ -28,24 +28,38 @@ function nameHint(a: HTMLAnchorElement): string | null {
   return tabName?.textContent?.trim() || null;
 }
 
+/** True when the element lays its children out vertically. */
+function stacksVertically(el: HTMLElement): boolean {
+  const style = getComputedStyle(el);
+  if (style.display === 'block') return true;
+  return style.display.includes('flex') && style.flexDirection.startsWith('column');
+}
+
 /**
  * Inside an expanded hover card an absolute overlay would land on top of
  * the price and duplicate the collapsed capsule's pill. Instead, render a
- * single inline badge right below the price block.
+ * single inline badge right below the price block: walk up from the price
+ * widget to the nearest vertically-stacking ancestor (the card's layouts
+ * are all hashed classes, so this adapts to every responsive variant) and
+ * insert the badge after the row that contains the price.
  */
 function processHoverCard(card: HTMLElement, appid: string, name: string | null): void {
   if (card.dataset.crostemHoverCard) return;
   card.dataset.crostemHoverCard = '1';
 
-  // Insert after the whole price row (two wrappers above the price
-  // widget) so the badge gets its own line right below the price.
-  const price = card.querySelector(HOVER_CARD_PRICE);
-  const anchorPoint = price?.parentElement?.parentElement ?? price?.parentElement ?? null;
-  if (!anchorPoint) return; // unexpected layout: better nothing than overlap
+  const price = card.querySelector<HTMLElement>(HOVER_CARD_PRICE);
+  if (!price) return; // unexpected layout: better nothing than overlap
+
+  let rowWithPrice: HTMLElement = price;
+  let parent = price.parentElement;
+  while (parent && parent !== card && !stacksVertically(parent)) {
+    rowWithPrice = parent;
+    parent = parent.parentElement;
+  }
 
   const badge = document.createElement('span');
   badge.className = 'crostem-badge crostem-hovercard-badge';
-  anchorPoint.insertAdjacentElement('afterend', badge);
+  rowWithPrice.insertAdjacentElement('afterend', badge);
   attach(badge, { appid, name, mode: 'inline' });
 }
 
@@ -75,7 +89,27 @@ function processAnchor(a: HTMLAnchorElement): void {
   attach(overlay, { appid, name: nameHint(a), mode: 'overlay' });
 }
 
+/**
+ * React hydrates the hover-card class after our first scan, so a capsule
+ * anchor may already carry a classic overlay by the time its ancestor
+ * becomes a hover card. Migrate those: drop the overlay, badge the card.
+ */
+function fixupHoverCards(): void {
+  document
+    .querySelectorAll<HTMLElement>(`${HOVER_CARD} .crostem-overlay`)
+    .forEach((overlay) => {
+      const card = overlay.closest<HTMLElement>(HOVER_CARD);
+      const host = overlay.closest<HTMLAnchorElement>('a');
+      overlay.remove();
+      if (!card || !host) return;
+      host.classList.remove('crostem-capsule-host');
+      const appid = (host.getAttribute('href') ?? '').match(APP_LINK)?.[1];
+      if (appid) processHoverCard(card, appid, nameHint(host));
+    });
+}
+
 function scan(): void {
+  fixupHoverCards();
   document.querySelectorAll<HTMLAnchorElement>('a[href*="/app/"]').forEach(processAnchor);
 }
 
