@@ -148,6 +148,25 @@
   "noDataInline": {
     "message": "sin datos"
   },
+  "badgeCwRating": {
+    "message": "$NAME$ — valoración de CrossOver en CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(coincidencia aproximada)"
+  },
+  "badgeMatches": {
+    "message": "$N$ coincidencias posibles en CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
   "optionsTitle": {
     "message": "Ajustes de CrosTem"
   },

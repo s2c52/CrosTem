@@ -243,16 +243,25 @@
 }
 
 .crostem-overlay {
-  background: rgba(0, 0, 0, 0.78);
-  border-radius: var(--ct-radius-sm);
+  background: rgba(11, 17, 24, 0.72);
+  border-radius: var(--ct-radius-pill);
   font-family: var(--ct-font-steam);
   font-size: 11px;
   line-height: 1;
-  padding: 3px 5px;
+  padding: 4px 8px;
   position: absolute;
   right: 4px;
   top: 4px;
   z-index: 20;
+}
+
+/* Frosted pill where the browser supports it (small blur: dozens of
+   overlays can coexist on the store home, GPU cost must stay low). */
+@supports (backdrop-filter: blur(1px)) {
+  .crostem-overlay {
+    backdrop-filter: blur(5px);
+    background: rgba(11, 17, 24, 0.55);
+  }
 }
 
 /* Hidden while unresolved — visibility (not display) so the element keeps
@@ -584,4 +593,64 @@ button.crostem-source-toggle:hover .crostem-source-name {
 .crostem-retry:hover {
   background: var(--ct-bg-hover);
   color: var(--ct-text-bright);
+}
+
+/* Rich badge tooltip (singleton, fixed-positioned near the anchor) */
+
+.crostem-tooltip {
+  background: var(--ct-bg);
+  border: 1px solid var(--ct-border-hi);
+  border-left-width: 3px;
+  border-radius: var(--ct-radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  color: var(--ct-text);
+  font-family: var(--ct-font-steam);
+  font-size: 12px;
+  line-height: 1.35;
+  max-width: 260px;
+  opacity: 0;
+  padding: 8px 10px;
+  pointer-events: none;
+  position: fixed;
+  transition: opacity var(--ct-dur-fast) var(--ct-ease);
+  z-index: 99999;
+}
+
+.crostem-tooltip-visible {
+  opacity: 1;
+}
+
+.crostem-tooltip-green {
+  border-left-color: var(--ct-green);
+}
+.crostem-tooltip-yellow {
+  border-left-color: var(--ct-amber);
+}
+.crostem-tooltip-red {
+  border-left-color: var(--ct-red);
+}
+.crostem-tooltip-unknown {
+  border-left-color: var(--ct-unknown);
+}
+
+.crostem-tooltip-title {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.crostem-tooltip-green .crostem-tooltip-title {
+  color: var(--ct-green-bright);
+}
+.crostem-tooltip-yellow .crostem-tooltip-title {
+  color: var(--ct-amber);
+}
+.crostem-tooltip-red .crostem-tooltip-title {
+  color: var(--ct-red);
+}
+.crostem-tooltip-unknown .crostem-tooltip-title {
+  color: var(--ct-text-muted);
+}
+
+.crostem-tooltip-stars {
+  margin-bottom: 2px;
 }
