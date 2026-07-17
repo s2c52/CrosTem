@@ -32,6 +32,8 @@ export interface ChromeMock {
   localGets(): number;
   /** Value returned by storage.local.getBytesInUse. */
   setBytesInUse(bytes: number): void;
+  /** Makes the next `count` storage.local.set calls reject (quota tests). */
+  failLocalSets(count: number): void;
 }
 
 export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMock {
@@ -39,6 +41,7 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
   const sync = init.sync ?? {};
   let bytesInUse = 0;
   let localGetCalls = 0;
+  let failingSets = 0;
   const storageListeners: StorageListener[] = [];
   const messageListeners: MessageListener[] = [];
 
@@ -58,6 +61,10 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
         return Promise.resolve(read(store, keys));
       },
       set: (items: Store) => {
+        if (countGets && failingSets > 0) {
+          failingSets--;
+          return Promise.reject(new Error('QUOTA_BYTES quota exceeded'));
+        }
         Object.assign(store, items);
         return Promise.resolve();
       },
@@ -96,6 +103,9 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
     localGets: () => localGetCalls,
     setBytesInUse: (bytes) => {
       bytesInUse = bytes;
+    },
+    failLocalSets: (count) => {
+      failingSets = count;
     },
   };
 }
