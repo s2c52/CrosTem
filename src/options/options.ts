@@ -69,10 +69,38 @@ function fillForm(s: Settings): void {
 
 async function refreshCounts(): Promise<void> {
   $('cache-count').textContent = t('optCacheCount', String((await storageKeys('cache:')).length));
-  $('choices-count').textContent = t(
-    'optChoicesCount',
-    String((await storageKeys('choice:')).length),
+  const choiceKeys = await storageKeys('choice:');
+  const agwCount = choiceKeys.filter((k) => k.startsWith('choice:agw:')).length;
+  const cwCount = choiceKeys.length - agwCount;
+  $('choices-count').textContent =
+    t('optChoicesCount', String(choiceKeys.length)) +
+    (choiceKeys.length > 0
+      ? ` (${t('optChoicesSplit', [String(cwCount), String(agwCount)])})`
+      : '');
+}
+
+// "Apply now" bar: appears after any save and reloads open Steam tabs.
+let applyTimer: ReturnType<typeof setTimeout> | undefined;
+
+function showApplyBar(): void {
+  const bar = $('apply-bar');
+  clearTimeout(applyTimer);
+  $('apply-msg').textContent = t('optSaved');
+  $('apply-now').removeAttribute('hidden');
+  bar.hidden = false;
+}
+
+async function applyToSteamTabs(): Promise<void> {
+  const tabs = await chrome.tabs.query({ url: 'https://store.steampowered.com/*' });
+  await Promise.all(
+    tabs.flatMap((tab) => (tab.id != null ? [chrome.tabs.reload(tab.id)] : [])),
   );
+  $('apply-msg').textContent = t('optApplied', String(tabs.length));
+  $('apply-now').setAttribute('hidden', '');
+  clearTimeout(applyTimer);
+  applyTimer = setTimeout(() => {
+    $('apply-bar').hidden = true;
+  }, 2500);
 }
 
 async function main(): Promise<void> {
@@ -83,9 +111,11 @@ async function main(): Promise<void> {
 
   document.querySelectorAll('input[type="checkbox"], #cx-version, #cache-ttl').forEach((node) => {
     node.addEventListener('change', () => {
-      void saveSettings(readForm()).then(() => flash(t('optSaved')));
+      void saveSettings(readForm()).then(() => showApplyBar());
     });
   });
+
+  $('apply-now').addEventListener('click', () => void applyToSteamTabs());
 
   $('clear-cache').addEventListener('click', () => {
     void (async () => {

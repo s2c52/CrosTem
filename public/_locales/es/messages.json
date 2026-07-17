@@ -222,7 +222,29 @@
     "message": "Borrar todas las correcciones"
   },
   "optReloadNote": {
-    "message": "Recarga las pestañas de Steam abiertas para aplicar los cambios."
+    "message": "Los cambios se aplican a las pestañas de Steam al recargarlas — usa «Aplicar ahora» abajo."
+  },
+  "optApplyNow": {
+    "message": "Aplicar en las pestañas de Steam"
+  },
+  "optApplied": {
+    "message": "Aplicado — $N$ pestañas de Steam recargadas.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ de CodeWeavers · $AGW$ de AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
   },
   "optSaved": {
     "message": "Guardado."

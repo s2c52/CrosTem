@@ -11,44 +11,60 @@
     <main>
       <h1><span class="logo"></span> <span data-i18n="optionsTitle"></span></h1>
 
-      <section>
+      <section class="card">
         <h2 data-i18n="optSurfaces"></h2>
-        <label
-          ><input type="checkbox" id="surface-app" /> <span data-i18n="optSurfaceApp"></span
-        ></label>
-        <label
-          ><input type="checkbox" id="surface-capsules" />
-          <span data-i18n="optSurfaceCapsules"></span
-        ></label>
-        <label
-          ><input type="checkbox" id="surface-search" /> <span data-i18n="optSurfaceSearch"></span
-        ></label>
-        <label
-          ><input type="checkbox" id="surface-wishlist" />
-          <span data-i18n="optSurfaceWishlist"></span
-        ></label>
+        <div class="switch-list">
+          <label class="ct-switch">
+            <input type="checkbox" id="surface-app" />
+            <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+            <span data-i18n="optSurfaceApp"></span>
+          </label>
+          <label class="ct-switch">
+            <input type="checkbox" id="surface-capsules" />
+            <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+            <span data-i18n="optSurfaceCapsules"></span>
+          </label>
+          <label class="ct-switch">
+            <input type="checkbox" id="surface-search" />
+            <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+            <span data-i18n="optSurfaceSearch"></span>
+          </label>
+          <label class="ct-switch">
+            <input type="checkbox" id="surface-wishlist" />
+            <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+            <span data-i18n="optSurfaceWishlist"></span>
+          </label>
+        </div>
       </section>
 
-      <section>
+      <section class="card">
         <h2 data-i18n="optSources"></h2>
-        <label
-          ><input type="checkbox" id="source-cw" /> <span data-i18n="optSourceCw"></span
-        ></label>
-        <label
-          ><input type="checkbox" id="source-agw" /> <span data-i18n="optSourceAgw"></span
-        ></label>
-        <label
-          ><input type="checkbox" id="source-anticheat" /> <span data-i18n="optSourceAc"></span
-        ></label>
+        <div class="switch-list">
+          <label class="ct-switch">
+            <input type="checkbox" id="source-cw" />
+            <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+            <span data-i18n="optSourceCw"></span>
+          </label>
+          <label class="ct-switch">
+            <input type="checkbox" id="source-agw" />
+            <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+            <span data-i18n="optSourceAgw"></span>
+          </label>
+          <label class="ct-switch">
+            <input type="checkbox" id="source-anticheat" />
+            <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+            <span data-i18n="optSourceAc"></span>
+          </label>
+        </div>
       </section>
 
-      <section>
+      <section class="card">
         <h2 data-i18n="optCxVersion"></h2>
         <input type="text" id="cx-version" size="6" maxlength="10" />
         <p class="muted" data-i18n="optCxVersionNote"></p>
       </section>
 
-      <section>
+      <section class="card">
         <h2 data-i18n="optCache"></h2>
         <label class="inline"
           ><span data-i18n="optCacheTtl"></span>
@@ -58,7 +74,7 @@
         <button id="clear-cache" data-i18n="optCacheClear"></button>
       </section>
 
-      <section>
+      <section class="card">
         <h2 data-i18n="optChoices"></h2>
         <p class="muted"><span id="choices-count"></span></p>
         <button id="export-choices" data-i18n="optExport"></button>
@@ -70,6 +86,12 @@
       <p class="muted" data-i18n="optReloadNote"></p>
       <p id="status" class="status" role="status"></p>
     </main>
+
+    <div id="apply-bar" hidden>
+      <span id="apply-msg" role="status"></span>
+      <button id="apply-now" data-i18n="optApplyNow"></button>
+    </div>
+
     <script type="module" src="./options.ts"></script>
   </body>
 </html>

@@ -222,7 +222,29 @@
     "message": "Delete all corrections"
   },
   "optReloadNote": {
-    "message": "Reload open Steam tabs to apply changes."
+    "message": "Changes apply to Steam tabs after a reload — use “Apply now” below."
+  },
+  "optApplyNow": {
+    "message": "Apply to open Steam tabs"
+  },
+  "optApplied": {
+    "message": "Applied — $N$ Steam tabs reloaded.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
   },
   "optSaved": {
     "message": "Saved."
