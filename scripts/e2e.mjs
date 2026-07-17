@@ -64,7 +64,7 @@ await check('widget en ficha (Elden Ring)', async () => {
   await page.waitForFunction(
     () => {
       const w = document.querySelector('#crostem-widget');
-      return w && !/Checking/.test(w.textContent) && w.textContent.trim().length > 0;
+      return w && !w.querySelector(".crostem-skeleton") && w.textContent.trim().length > 20;
     },
     null,
     { timeout: 25000 },
@@ -87,6 +87,22 @@ await check('veredicto + desglose multi-fuente (Elden Ring)', async () => {
   return `${agw} · ${ac}`;
 });
 
+// 1b-bis. Redesign: verdict banner + collapsible source row
+await check('banner de veredicto + fila expandible (Elden Ring)', async () => {
+  const banner = page.locator('#crostem-widget .crostem-banner');
+  if ((await banner.count()) === 0) throw new Error('sin banner de veredicto');
+  const cls = (await banner.getAttribute('class')) ?? '';
+  const row = page.locator('#crostem-widget button.crostem-source-toggle').first();
+  await row.click();
+  await page.waitForTimeout(400);
+  const expanded = await row.getAttribute('aria-expanded');
+  await page
+    .locator('#crostem-widget .crostem-box')
+    .screenshot({ path: join(OUT, 'widget-expanded.png') });
+  if (expanded !== 'true') throw new Error('aria-expanded no cambió al expandir');
+  return /crostem-banner-\w+/.exec(cls)?.[0] ?? 'banner';
+});
+
 // 1c. Game with blocked anticheat (Destiny 2 = Denied on AWACY): red + warning
 await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', {
   waitUntil: 'domcontentloaded',
@@ -97,7 +113,7 @@ await check('anticheat Denied baja el semáforo (Destiny 2)', async () => {
   await page.waitForFunction(
     () => {
       const w = document.querySelector('#crostem-widget');
-      return w && !/Checking/.test(w.textContent);
+      return w && !w.querySelector(".crostem-skeleton");
     },
     null,
     { timeout: 25000 },
@@ -120,7 +136,10 @@ await check('badge nativo (Stardew Valley)', async () => {
   await widget.waitFor({ timeout: 20000 });
   const text = await widget.textContent();
   if (!/Native on macOS/.test(text)) throw new Error('sin badge nativo: ' + text.slice(0, 120));
-  await widget.screenshot({ path: join(OUT, 'native.png') });
+  // The architecture arrives async and re-renders the box: let it settle
+  // before screenshotting, or the locator points at a detached node.
+  await page.waitForTimeout(2500);
+  await page.locator('#crostem-widget .crostem-box').screenshot({ path: join(OUT, 'native.png') });
   return 'Native on macOS';
 });
 
@@ -157,6 +176,44 @@ await check('badges en búsqueda (dark souls)', async () => {
   return `${count} badges con contenido`;
 });
 
+// 5b. Rich tooltip on hover over a search badge. Steam re-renders search
+// rows while resolving, which can swap the hovered node: retry a few times.
+await check('tooltip enriquecido en badge de búsqueda', async () => {
+  let visible = false;
+  for (let attempt = 0; attempt < 3 && !visible; attempt++) {
+    await page.mouse.move(0, 0); // leave the badge so mouseenter re-fires
+    const badge = page.locator('.crostem-badge .crostem-badge-result').first();
+    await badge.scrollIntoViewIfNeeded();
+    // Any scroll hides the tooltip by design: let the scroll settle first.
+    await page.waitForTimeout(600);
+    await badge.hover();
+    visible = await page
+      .waitForSelector('.crostem-tooltip-visible', { timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
+  }
+  if (!visible) throw new Error('tooltip no visible tras 3 intentos');
+  await page.screenshot({ path: join(OUT, 'tooltip.png') });
+  return 'tooltip visible';
+});
+
+// 5c. prefers-reduced-motion turns CrosTem animations off
+await check('prefers-reduced-motion apaga animaciones', async () => {
+  const rm = await ctx.newPage();
+  await rm.emulateMedia({ reducedMotion: 'reduce' });
+  await rm.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', {
+    waitUntil: 'domcontentloaded',
+  });
+  await rm.waitForSelector('#crostem-widget .crostem-box', { timeout: 25000 });
+  const anim = await rm.evaluate(() => {
+    const el = document.querySelector('#crostem-widget .crostem-box');
+    return getComputedStyle(el).animationName;
+  });
+  await rm.close();
+  if (anim !== 'none') throw new Error('animation-name=' + anim);
+  return 'animaciones desactivadas';
+});
+
 // --- F3: popup, options and toggles ---
 let sw = ctx.serviceWorkers()[0];
 if (!sw) sw = await ctx.waitForEvent('serviceworker', { timeout: 15000 }).catch(() => null);
@@ -180,7 +237,10 @@ await check('options + toggle de cápsulas', async () => {
   const appChecked = await page.locator('#surface-app').isChecked();
   if (!appChecked) throw new Error('defaults no aplicados');
   await page.screenshot({ path: join(OUT, 'options.png') });
-  await page.locator('#surface-capsules').uncheck(); // triggers save
+  // The real checkbox is visually hidden behind the switch: force it.
+  await page.locator('#surface-capsules').uncheck({ force: true }); // triggers save
+  await page.waitForSelector('#apply-bar:not([hidden])', { timeout: 5000 });
+  await page.screenshot({ path: join(OUT, 'options-apply.png') });
   await page.waitForTimeout(500);
   await page.goto('https://store.steampowered.com/', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => window.scrollTo(0, 800));
@@ -189,6 +249,17 @@ await check('options + toggle de cápsulas', async () => {
   if (overlays > 0)
     throw new Error(`overlays presentes con la superficie desactivada: ${overlays}`);
   return 'overlays desactivados correctamente';
+});
+
+// 8. Onboarding welcome page renders
+await check('página de onboarding', async () => {
+  if (!extId) throw new Error('sin id de extensión');
+  await page.goto(`chrome-extension://${extId}/src/onboarding/onboarding.html`);
+  await page.waitForSelector('.surface-grid .card', { timeout: 5000 });
+  const cards = await page.locator('.surface-grid .card').count();
+  await page.screenshot({ path: join(OUT, 'onboarding.png'), fullPage: true });
+  if (cards < 4) throw new Error(`solo ${cards} cards`);
+  return `${cards} cards`;
 });
 
 console.log('\n===== RESULTADOS =====');
