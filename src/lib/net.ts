@@ -7,6 +7,7 @@
 // script's same-origin Steam appdetails fetch. Pure aside from fetch and
 // timers, both injectable for tests.
 import {
+  FETCH_MAX_BODY_BYTES,
   FETCH_MAX_RETRIES,
   FETCH_TIMEOUT_DEFAULT_MS,
   RETRY_AFTER_CAP_MS,
@@ -64,6 +65,10 @@ function parseRetryAfter(header: string | null): number | undefined {
   return Math.min(Math.max(date - Date.now(), 0), RETRY_AFTER_CAP_MS);
 }
 
+function tooLarge(bytes: number): FetchOutcome {
+  return { ok: false, error: `response too large (${bytes} bytes)`, code: 'too-large' };
+}
+
 function isRetryable(out: FetchOutcome): boolean {
   if (out.ok) return false;
   // A timed-out attempt is final: the per-source timeouts are already
@@ -99,8 +104,20 @@ async function attempt(url: string, opts: FetchPolicyOpts): Promise<AttemptResul
       if (retryAfterMs !== undefined) result.retryAfterMs = retryAfterMs;
       return result;
     }
+    // Refuse an oversized body before buffering it: a compromised
+    // allowlisted origin should not be able to exhaust worker memory.
+    const declared = Number(res.headers.get('content-length'));
+    if (Number.isFinite(declared) && declared > FETCH_MAX_BODY_BYTES) {
+      return { outcome: tooLarge(declared) };
+    }
     // The timeout also covers body download: abort() cancels text().
-    return { outcome: { ok: true, body: await res.text(), finalUrl: res.url } };
+    const body = await res.text();
+    // Backstop for chunked responses that omit Content-Length: the body
+    // is already in memory, but we still refuse to hand it downstream.
+    if (body.length > FETCH_MAX_BODY_BYTES) {
+      return { outcome: tooLarge(body.length) };
+    }
+    return { outcome: { ok: true, body, finalUrl: res.url } };
   } catch (e) {
     if (controller.signal.aborted) {
       return {

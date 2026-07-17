@@ -57,6 +57,11 @@ export const RETRY_AFTER_CAP_MS = 10_000;
  * re-fetched for this long. Client-side, so it keeps damping even when
  * MV3 kills the worker and resets the breaker. */
 export const FETCH_FAILURE_MEMO_MS = 60_000;
+/** Hard cap on a single response body. Bounds worker memory if an
+ * allowlisted origin is compromised and returns an oversized payload.
+ * AWACY's games.json (~460 KB) is the largest legitimate body, so 5 MB
+ * leaves ample headroom while refusing anything pathological. */
+export const FETCH_MAX_BODY_BYTES = 5 * 1024 * 1024;
 /** Consecutive final failures of one origin that open its circuit breaker. */
 export const BREAKER_FAILURES = 5;
 /** How long an open breaker rejects an origin before allowing traffic again. */
@@ -74,6 +79,15 @@ export const CACHE_QUOTA_SOFT_BYTES = 4 * 1024 * 1024;
 export const CACHE_EVICT_TARGET_BYTES = 3 * 1024 * 1024;
 /** Minimum interval between maintenance runs (sweep + eviction). */
 export const CACHE_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
+// --- Options import (options.ts) ---
+/** Max matching-correction entries accepted from an imported JSON file.
+ * A real corrections export holds at most a few dozen; a larger file is
+ * capped to protect storage.local from bloat. */
+export const MAX_IMPORT_ENTRIES = 5_000;
+/** Max length of a single imported choice value (a CodeWeavers slug or
+ * AGW page name); longer values are dropped as malformed. */
+export const MAX_IMPORT_VALUE_LEN = 200;
 
 // --- UI / DOM scanning ---
 /** Coalescing window for MutationObserver-triggered rescans. */

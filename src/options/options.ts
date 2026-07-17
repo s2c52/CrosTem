@@ -4,6 +4,8 @@
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
 import { storageKeys } from '../lib/cache';
+import { MAX_IMPORT_ENTRIES, MAX_IMPORT_VALUE_LEN } from '../lib/constants';
+import { sanitizeChoiceImport } from '../lib/guards';
 import { applyI18n, currentLocale, initExtPageI18n, t } from '../lib/i18n';
 import { ctLogo } from '../lib/logo';
 import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
@@ -172,9 +174,10 @@ async function main(): Promise<void> {
     if (!file) return;
     void file.text().then(async (text) => {
       try {
-        const data = JSON.parse(text) as Record<string, unknown>;
-        const entries = Object.fromEntries(
-          Object.entries(data).filter(([k, v]) => k.startsWith('choice:') && typeof v === 'string'),
+        const entries = sanitizeChoiceImport(
+          JSON.parse(text),
+          MAX_IMPORT_ENTRIES,
+          MAX_IMPORT_VALUE_LEN,
         );
         if (Object.keys(entries).length === 0) throw new Error('empty');
         await chrome.storage.local.set(entries);
