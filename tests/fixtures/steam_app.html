@@ -1,0 +1,11 @@
+<!-- Minimal hand-reduced subset of a Steam app page
+     (store.steampowered.com/app/<id>). Keeps only the nodes app.ts
+     relies on: #appHubAppName (game name), #game_area_purchase with the
+     platform icon row (tests add the `mac` class for the native
+     variant) and .game_meta_data (widget mount point).
+     Recapture: view-source of a real app page and keep those nodes. -->
+<div id="appHubAppName">ELDEN RING</div>
+<div id="game_area_purchase">
+  <div class="game_area_purchase_platform"><span class="platform_img win"></span></div>
+</div>
+<div class="game_meta_data"></div>
