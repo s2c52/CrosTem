@@ -15,3 +15,16 @@ HANDOFF-archive.md
 ROADMAP.md
 docs/store-checklist.md
 coverage/
+
+# Local debug artifacts (use a ".local." infix so they never get committed)
+*.local.*
+# Root-level throwaway screenshots (real icons live under public/icons & store-assets)
+/*.png
+
+# Secrets — never commit
+.env
+.env.*
+*.pem
+*.key
+*.p12
+.npmrc
