@@ -10,7 +10,7 @@ import { appUrl, search, steamDetails } from '../lib/client';
 import { MAX_POPUP_RESULTS, SEARCH_DEBOUNCE_MS } from '../lib/constants';
 import { AWACY_SITE } from '../lib/awacy';
 import { debounce } from '../lib/debounce';
-import { t } from '../lib/i18n';
+import { applyI18n, t } from '../lib/i18n';
 import { logDebug } from '../lib/log';
 import { ctLogo } from '../lib/logo';
 import { resolveGame } from '../lib/resolve';
@@ -38,13 +38,6 @@ function el(tag: string, className?: string, text?: string): HTMLElement {
 const queryEl = mustGet('query') as HTMLInputElement;
 const resultsEl = mustGet('results');
 const optionsLink = mustGet('open-options') as HTMLAnchorElement;
-
-function applyI18n(): void {
-  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((node) => {
-    const key = node.dataset.i18n;
-    if (key) node.textContent = t(key);
-  });
-}
 
 document.documentElement.lang = chrome.i18n.getUILanguage();
 applyI18n();

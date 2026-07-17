@@ -331,5 +331,41 @@
   },
   "popupLinks": {
     "message": "Data sources"
+  },
+  "onboardingTitle": {
+    "message": "Welcome to CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Know if a Steam game runs on your Mac — before you buy it."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Verdict on every game page"
+  },
+  "onboardingWidgetBody": {
+    "message": "A “Runs on Mac?” widget combines CrossOver ratings, AppleGamingWiki and anticheat status into one clear verdict."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Stars across the store"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Game capsules on the front page get a compatibility star overlay as you browse."
+  },
+  "onboardingSearchTitle": {
+    "message": "Badges in search and wishlist"
+  },
+  "onboardingSearchBody": {
+    "message": "Search results and your wishlist show compact rating badges — hover for details."
+  },
+  "onboardingNativeTitle": {
+    "message": "Native games, flagged"
+  },
+  "onboardingNativeBody": {
+    "message": "Games with a native Mac build get 5 stars and an Intel / M Series architecture tag."
+  },
+  "onboardingCta": {
+    "message": "Open settings"
+  },
+  "onboardingHint": {
+    "message": "Choose where badges appear and which data sources to use."
   }
 }

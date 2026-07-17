@@ -4,7 +4,7 @@
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
 import { storageKeys } from '../lib/cache';
-import { t } from '../lib/i18n';
+import { applyI18n, t } from '../lib/i18n';
 import { ctLogo } from '../lib/logo';
 import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
 
@@ -17,14 +17,6 @@ function $(id: string): HTMLElement {
 
 function input(id: string): HTMLInputElement {
   return $(id) as HTMLInputElement;
-}
-
-function applyI18n(): void {
-  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((node) => {
-    const key = node.dataset.i18n;
-    if (key) node.textContent = t(key);
-  });
-  document.title = t('optionsTitle');
 }
 
 let statusTimer: ReturnType<typeof setTimeout> | undefined;
@@ -105,7 +97,7 @@ async function applyToSteamTabs(): Promise<void> {
 
 async function main(): Promise<void> {
   document.documentElement.lang = chrome.i18n.getUILanguage();
-  applyI18n();
+  applyI18n('optionsTitle');
   document.querySelector('.logo')?.replaceWith(ctLogo(22));
   fillForm(await getSettings());
   await refreshCounts();
