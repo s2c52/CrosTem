@@ -14,6 +14,12 @@
   "errorReach": {
     "message": "No se pudo contactar con las fuentes de compatibilidad."
   },
+  "errorFriendly": {
+    "message": "Ahora mismo no hemos podido consultar las fuentes de compatibilidad."
+  },
+  "retry": {
+    "message": "Reintentar"
+  },
   "nativeBadge": {
     "message": "Nativo en macOS"
   },
@@ -122,6 +128,15 @@
   "noneOfThese": {
     "message": "Ninguna de estas — buscar en CodeWeavers ↗"
   },
+  "agwPickMatch": {
+    "message": "Varias páginas posibles en AppleGamingWiki — elige la correcta:"
+  },
+  "agwNoneOfThese": {
+    "message": "Ninguna de estas — buscar en AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Coincidencias posibles en AppleGamingWiki…"
+  },
   "matchesN": {
     "message": "$N$ coincidencias ↗",
     "placeholders": {
@@ -132,6 +147,39 @@
   },
   "noDataInline": {
     "message": "sin datos"
+  },
+  "starsAria": {
+    "message": "$N$ de $MAX$ estrellas",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "sin valoración"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — valoración de CrossOver en CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(coincidencia aproximada)"
+  },
+  "badgeMatches": {
+    "message": "$N$ coincidencias posibles en CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
   },
   "optionsTitle": {
     "message": "Ajustes de CrosTem"
@@ -216,7 +264,29 @@
     "message": "Borrar todas las correcciones"
   },
   "optReloadNote": {
-    "message": "Recarga las pestañas de Steam abiertas para aplicar los cambios."
+    "message": "Los cambios se aplican a las pestañas de Steam al recargarlas — usa «Aplicar ahora» abajo."
+  },
+  "optApplyNow": {
+    "message": "Aplicar en las pestañas de Steam"
+  },
+  "optApplied": {
+    "message": "Aplicado — $N$ pestañas de Steam recargadas.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ de CodeWeavers · $AGW$ de AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
   },
   "optSaved": {
     "message": "Guardado."
@@ -232,5 +302,70 @@
   },
   "popupError": {
     "message": "Falló la búsqueda. Reintenta."
+  },
+  "popupCurrentTab": {
+    "message": "Esta pestaña"
+  },
+  "popupSurfaces": {
+    "message": "Mostrar en Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Ficha del juego"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Cápsulas"
+  },
+  "popupSurfaceSearch": {
+    "message": "Búsqueda"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Lista de deseados"
+  },
+  "popupStatusSources": {
+    "message": "$N$ de 3 fuentes activas",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Fuentes de datos"
+  },
+  "onboardingTitle": {
+    "message": "Bienvenido a CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Sabe si un juego de Steam corre en tu Mac — antes de comprarlo."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Veredicto en cada ficha de juego"
+  },
+  "onboardingWidgetBody": {
+    "message": "Un widget «Runs on Mac?» combina las valoraciones de CrossOver, AppleGamingWiki y el estado del anticheat en un veredicto claro."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Estrellas por toda la tienda"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Las cápsulas de la portada muestran una superposición de estrellas de compatibilidad mientras navegas."
+  },
+  "onboardingSearchTitle": {
+    "message": "Badges en búsqueda y lista de deseados"
+  },
+  "onboardingSearchBody": {
+    "message": "Los resultados de búsqueda y tu lista de deseados muestran badges compactos — pasa el ratón para ver el detalle."
+  },
+  "onboardingNativeTitle": {
+    "message": "Juegos nativos, señalados"
+  },
+  "onboardingNativeBody": {
+    "message": "Los juegos con versión nativa de Mac reciben 5 estrellas y una etiqueta de arquitectura Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Abrir ajustes"
+  },
+  "onboardingHint": {
+    "message": "Elige dónde aparecen los badges y qué fuentes de datos usar."
   }
 }

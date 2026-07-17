@@ -48,6 +48,12 @@ export async function remove(...keys: string[]): Promise<void> {
   await chrome.storage.local.remove(keys.map((k) => 'cache:' + k));
 }
 
+/** Keys in chrome.storage.local starting with the given prefix. */
+export async function storageKeys(prefix: string): Promise<string[]> {
+  const all = await chrome.storage.local.get(null);
+  return Object.keys(all).filter((k) => k.startsWith(prefix));
+}
+
 // User-confirmed matching corrections, per data source
 // ('cw' → CodeWeavers slug, 'agw' → AppleGamingWiki page).
 export type MatchSource = 'cw' | 'agw';

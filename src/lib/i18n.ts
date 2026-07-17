@@ -14,3 +14,15 @@ export function t(key: string, substitutions?: string | string[]): string {
     return key;
   }
 }
+
+/**
+ * Fill every [data-i18n] element from the locale; optionally translate
+ * the document title too. Shared by popup, options and onboarding.
+ */
+export function applyI18n(titleKey?: string): void {
+  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((node) => {
+    const key = node.dataset.i18n;
+    if (key) node.textContent = t(key);
+  });
+  if (titleKey) document.title = t(titleKey);
+}

@@ -11,5 +11,10 @@ export default defineConfig({
     // Extension: unminified code eases Web Store review; source maps aid debugging.
     minify: false,
     sourcemap: true,
+    rollupOptions: {
+      // crxjs only bundles pages referenced by the manifest; the
+      // onboarding page is opened programmatically on install.
+      input: { onboarding: 'src/onboarding/onboarding.html' },
+    },
   },
 });

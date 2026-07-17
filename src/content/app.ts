@@ -3,14 +3,13 @@
 
 // Steam game page: "Runs on Mac?" widget with combined verdict
 // (CodeWeavers + AppleGamingWiki + anticheat) and per-source breakdown.
-import { agwCacheKey, agwLookup } from '../lib/agw';
+import { agwCacheKey, agwSearchUrl } from '../lib/agw';
 import { resolveNativeArch } from '../lib/arch';
-import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
-import { resolveCw, type CwResolution } from '../lib/cw';
-import { logWarn } from '../lib/log';
-import { computeVerdict } from '../lib/verdict';
+import { logDebug, logWarn } from '../lib/log';
+import { t } from '../lib/i18n';
+import { resolveGame } from '../lib/resolve';
 import { getSettings } from '../lib/settings';
 import {
   renderAppWidget,
@@ -81,22 +80,33 @@ if (appidFromPath && nameFromDom) {
     );
   };
 
+  const showAgwCandidates = (candidates: RankedResult[]): void => {
+    show(
+      renderCandidateList(
+        candidates,
+        gameName,
+        async (picked) => {
+          // AGW candidates carry the page name in `slug`.
+          await cache.setSourceChoice('agw', appid, picked.slug);
+          await cache.remove(agwCacheKey(gameName));
+          void resolveAll(false);
+        },
+        {
+          prompt: t('agwPickMatch'),
+          searchHref: agwSearchUrl(gameName),
+          searchLabel: t('agwNoneOfThese'),
+        },
+      ),
+    );
+  };
+
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
     show(renderLoading());
     try {
-      // The three sources in parallel (can be disabled in options); AGW and
-      // anticheat must not break anything.
       const settings = await getSettings();
-      const sources = settings.sources;
-      const [cw, agw, ac] = await Promise.all([
-        sources.cw
-          ? resolveCw(gameName, appid, { forcePicker, loadAppPage: true })
-          : Promise.resolve<CwResolution>({ kind: 'none' }),
-        sources.agw ? agwLookup(gameName, appid).catch(() => null) : Promise.resolve(null),
-        sources.anticheat
-          ? anticheatLookup(appid, gameName).catch(() => null)
-          : Promise.resolve(null),
-      ]);
+      const { cw, agw, agwCandidates, ac, verdict } = await resolveGame(gameName, appid, {
+        forcePicker,
+      });
 
       if (cw.kind === 'ambiguous') {
         showCandidates(cw.candidates);
@@ -104,7 +114,6 @@ if (appidFromPath && nameFromDom) {
       }
 
       const cwApp = cw.kind === 'hit' ? cw.app : null;
-      const verdict = computeVerdict(cwApp?.mac ?? null, agw, ac);
       show(
         renderAppWidget(
           { cw: cwApp, cwSlug: cw.kind === 'hit' ? cw.slug : null, agw, ac, verdict },
@@ -117,12 +126,21 @@ if (appidFromPath && nameFromDom) {
               await cache.clearSourceChoice('cw', appid);
               void resolveAll(true);
             },
+            onChangeAgwMatch:
+              agwCandidates.length > 0
+                ? async () => {
+                    await cache.clearSourceChoice('agw', appid);
+                    showAgwCandidates(agwCandidates);
+                  }
+                : undefined,
             onRefresh: refresh,
           },
         ),
       );
     } catch (e) {
-      show(renderError(`Couldn't load compatibility data (${(e as Error).message})`));
+      // Friendly, localized message; the technical detail goes to the console.
+      logDebug('widget resolution failed', e);
+      show(renderError(t('errorFriendly'), () => void resolveAll(false)));
     }
   };
 
