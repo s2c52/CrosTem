@@ -7,10 +7,10 @@
 **"Does it run on my Mac?" — answered right on the Steam store.**
 
 [![CI](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml/badge.svg)](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.0.1-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](CHANGELOG.md)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/manifest-v3-orange)](manifest.json)
-[![Tests](https://img.shields.io/badge/tests-167%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-234%20passing-brightgreen)](tests/)
 [![Languages](https://img.shields.io/badge/languages-30-purple)](public/_locales/)
 [![Runtime deps](https://img.shields.io/badge/runtime%20deps-0-lightgrey)](package.json)
 
@@ -59,7 +59,7 @@ CrosTem renders on six surfaces, all individually toggleable:
 - **Store-wide capsule overlays** — star ratings in the corner of game capsules everywhere (front page, sales, categories, "more like this"…), resolved lazily as each capsule scrolls into view. `?` marks games with several possible matches; `~` marks approximate matches.
 - **Search results & wishlist badges** — compact rating badges next to each row's title, injected as rows appear (MutationObserver for Steam's AJAX search, generic `/app/` link detection for the React wishlist SPA).
 - **Toolbar popup** — the active tab's verdict at a glance, manual game lookup, quick surface toggles and cache stats.
-- **Options page** — toggle each surface and data source, set your CrossOver version, tune the cache TTL (1–30 days), and export/import your match corrections.
+- **Options page** — toggle each surface and data source (changes apply live to open Steam tabs), set your CrossOver version, tune the cache TTL (1–30 days), and export/import your match corrections.
 - **Hover tooltip & onboarding** — a mini-card with the verdict and per-source lines on badge hover, and a one-time onboarding page after install.
 
 <table>
@@ -111,7 +111,7 @@ flowchart LR
         R <--> C
     end
     subgraph sw["Service worker (background.ts)"]
-        Q["fetch queue<br>max 2 concurrent · dedupe · 10 s timeout"]
+        Q["fetch queue<br>4 lanes · dedupe · per-source timeouts<br>retries + circuit breakers"]
         A["URL allowlist"]
         Q --> A
     end
@@ -123,9 +123,9 @@ flowchart LR
 ```
 
 - **CodeWeavers has no public API**, so the extension fetches their public pages (`/compatibility?name=…` to search, `/compatibility/crossover/<slug>` for detail) and parses the HTML with `DOMParser`. All scraping lives in one file: [src/lib/parser.ts](src/lib/parser.ts).
-- **The service worker proxies every external fetch** — content scripts can't cross origins (CORS), the worker can via `host_permissions`. It enforces a strict, unit-tested **URL allowlist** ([src/lib/allowlist.ts](src/lib/allowlist.ts)): only the three sources' public endpoints, nothing else. Max 2 concurrent requests per queue, in-flight deduplication, 10 s timeout.
-- **Everything is cached** in `chrome.storage.local`: results for 7 days (configurable 1–30), "no data" answers for 24 h, Steam details for 30 days, the anti-cheat dataset for 7 days — and your match choices permanently. Settings live in `chrome.storage.sync`, so they travel with your browser account and propagate live to open tabs.
-- **Badges resolve lazily**: a shared `IntersectionObserver` ([src/lib/auto.ts](src/lib/auto.ts)) triggers resolution just before a capsule enters the viewport, so browsing the front page doesn't fire hundreds of requests.
+- **The service worker proxies every external fetch** — content scripts can't cross origins (CORS), the worker can via `host_permissions`. It enforces a strict, unit-tested **URL allowlist** ([src/lib/allowlist.ts](src/lib/allowlist.ts)): only the three sources' public endpoints, nothing else. Four concurrent lanes with in-flight deduplication, per-source timeouts (5–15 s under `AbortController`), retries with exponential backoff honoring `Retry-After`, and **per-origin circuit breakers** ([src/lib/breaker.ts](src/lib/breaker.ts)) so a slow or downed source fails fast instead of hanging badges — which then degrade to whatever the other sources report.
+- **Everything is cached** in `chrome.storage.local`: results for 7 days (configurable 1–30), "no data" answers for 24 h, Steam details for 30 days, the anti-cheat dataset for 7 days — and your match choices permanently. Reads go **stale-while-revalidate**: a recently expired entry paints instantly while a background pass refreshes it and silently corrects the badge if anything changed. The cache maintains itself (in-memory L1, daily sweep, quota-safe writes, size-capped eviction). Settings live in `chrome.storage.sync` and apply **live**: toggling a surface mounts or unmounts it immediately on open Steam tabs, no reload.
+- **Badges resolve ahead of time**: a shared `IntersectionObserver` ([src/lib/auto.ts](src/lib/auto.ts)) triggers resolution about a viewport before a capsule scrolls into view, paints on the first source signal and refines when the rest arrive — while content scripts rescan only newly added page content ([src/lib/scan.ts](src/lib/scan.ts)), so browsing the front page stays cheap.
 - **No `innerHTML` anywhere** — all UI is built with `createElement`/`createElementNS`, safe under strict CSP and Trusted Types. Accessible by design: star ratings carry `role="img"` labels, verdicts are never conveyed by color alone, and `prefers-reduced-motion` is honored.
 
 ## Privacy
@@ -140,7 +140,7 @@ flowchart LR
 manifest.json             MV3: permissions and entry points (compiled by @crxjs/vite-plugin)
 vite.config.ts            Vite + crxjs
 src/types.ts              Domain and messaging types
-src/background.ts         Service worker: proxied fetches (queue + dedupe + allowlist)
+src/background.ts         Service worker: proxied fetches (queue + breaker + allowlist)
 src/content/app.ts        Game page → widget
 src/content/capsules.ts   Star overlays on capsules across the store
 src/content/search.ts     Search results (MutationObserver for AJAX)
@@ -154,7 +154,9 @@ src/lib/agw.ts            AppleGamingWiki client (MediaWiki cargo API)
 src/lib/awacy.ts          AreWeAntiCheatYet client (games.json → appid index)
 src/lib/arch.ts           Native binary architecture detection (M Series vs Intel)
 src/lib/client.ts         search()/getApp()/steamDetails(): fetch + parse + cache
-src/lib/cache.ts          TTL cache + permanent appid→slug choices
+src/lib/net.ts            Fetch policy: per-source timeouts, retries with backoff
+src/lib/breaker.ts        Per-origin circuit breaker (fail fast on downed sources)
+src/lib/cache.ts          TTL cache: in-memory L1, stale-while-revalidate, upkeep
 src/lib/queue.ts          Generic fetch queue (concurrency + dedupe)
 src/lib/allowlist.ts      Security boundary: URLs the service worker may fetch
 src/lib/settings.ts       User settings (storage.sync)
@@ -164,6 +166,8 @@ src/lib/widget.ts         Game-page widget construction
 src/lib/badge.ts          Single badge renderer (capsules, search, wishlist)
 src/lib/tooltip.ts        Hover card (singleton)
 src/lib/auto.ts           Lazy badge resolution (shared IntersectionObserver)
+src/lib/scan.ts           Incremental DOM scanning (added-subtree roots only)
+src/lib/surface.ts        Live mount/unmount of surfaces on settings changes
 src/lib/logo.ts           Programmatic SVG monogram
 src/popup/                Toolbar popup
 src/options/              Options page
@@ -182,13 +186,13 @@ scripts/                  verify.sh, e2e.mjs, package.mjs, icons.mjs, listing.mj
 npm install
 npm run dev            # vite in watch mode (reloads the extension on save)
 npm run build          # typecheck + vite build → dist/
-npm test               # 167 unit tests (vitest + happy-dom, real HTML fixtures)
+npm test               # 234 unit tests (vitest + happy-dom, real HTML fixtures)
 npm run lint           # eslint
-npm run e2e            # Playwright against the real Steam store (local only, needs Brave)
-npm run package        # build + zip for the Chrome Web Store
+npm run e2e            # Playwright against the real Steam store (headed Brave; E2E_HEADLESS=1 for CI)
+npm run package        # minified release build + zip for the Chrome Web Store
 ```
 
-The verification gate is `scripts/verify.sh` (typecheck + lint + tests + build); CI on GitHub Actions runs the same on every push (Node 22) and uploads `dist/` as an artifact. The e2e suite is deliberately **not** in CI — it drives the real Steam store, which is too flaky for a gate — and runs locally before each release.
+The verification gate is `scripts/verify.sh` (typecheck + lint + tests + build); CI on GitHub Actions runs the same on every push (Node 22), audits dependencies and uploads `dist/` as an artifact. The e2e suite also runs in CI on pull requests to `development` as a **non-blocking** job (headless Chromium; real Steam is too flaky for a gate) — the headed run before each release remains the authoritative check.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to help, and [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
 
