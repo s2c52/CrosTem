@@ -341,3 +341,247 @@
   margin-bottom: 3px;
   text-transform: uppercase;
 }
+
+/* Widget entrance */
+
+#crostem-widget .crostem-box {
+  animation: crostem-enter var(--ct-dur-slow) var(--ct-ease);
+}
+
+@keyframes crostem-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Verdict banner */
+
+.crostem-banner {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+.crostem-banner-green {
+  background: var(--ct-green-soft);
+}
+.crostem-banner-yellow {
+  background: var(--ct-amber-soft);
+}
+.crostem-banner-red {
+  background: var(--ct-red-soft);
+}
+.crostem-banner-unknown {
+  background: var(--ct-unknown-soft);
+}
+
+.crostem-banner-label {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.25;
+}
+
+/* The banner dot is a scaled-up traffic light with the glyph inside */
+.crostem-banner .crostem-dot {
+  align-items: center;
+  animation: crostem-pop var(--ct-dur-slow) var(--ct-ease);
+  display: inline-flex;
+  flex: none;
+  height: 18px;
+  justify-content: center;
+  margin-right: 0;
+  width: 18px;
+}
+
+.crostem-banner-glyph {
+  color: rgba(0, 0, 0, 0.72);
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.crostem-banner-unknown .crostem-banner-glyph {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes crostem-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Star fill-in inside the widget (not on store-wide badges) */
+.crostem-box .crostem-stars-filled {
+  animation: crostem-stars-in var(--ct-dur-slow) var(--ct-ease);
+  display: inline-block;
+}
+
+@keyframes crostem-stars-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Compact source rows with disclosure detail */
+
+.crostem-source {
+  border-top: 1px solid var(--ct-border);
+  margin-top: 6px;
+  padding-top: 2px;
+}
+
+.crostem-source-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  padding: 5px 0;
+  width: 100%;
+}
+
+button.crostem-source-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+button.crostem-source-toggle:hover .crostem-source-name {
+  color: var(--ct-accent-hi);
+}
+
+.crostem-source-name {
+  color: var(--ct-accent);
+  flex: none;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: color var(--ct-dur-fast) var(--ct-ease);
+}
+
+.crostem-source-summary {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+  margin-left: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crostem-chevron {
+  color: var(--ct-text-muted);
+  flex: none;
+  font-size: 10px;
+  transition: transform var(--ct-dur) var(--ct-ease);
+}
+
+.crostem-open .crostem-chevron {
+  transform: rotate(90deg);
+}
+
+.crostem-source-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ct-dur) var(--ct-ease);
+}
+
+.crostem-open .crostem-source-detail {
+  grid-template-rows: 1fr;
+}
+
+.crostem-source-detail-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding-left: 2px;
+}
+
+.crostem-source-detail-inner > :last-child {
+  margin-bottom: 6px;
+}
+
+/* Loading skeleton (same footprint as the resolved widget) */
+
+.crostem-skeleton-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 150px;
+}
+
+.crostem-skeleton {
+  animation: crostem-shimmer 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    100deg,
+    var(--ct-bg-raised) 40%,
+    var(--ct-border-hi) 50%,
+    var(--ct-bg-raised) 60%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--ct-radius-sm);
+}
+
+.crostem-skeleton-banner {
+  height: 34px;
+}
+
+.crostem-skeleton-row {
+  height: 20px;
+}
+
+@keyframes crostem-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+
+/* Friendly error + retry */
+
+.crostem-error {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crostem-retry {
+  background: var(--ct-bg-raised);
+  border: 1px solid var(--ct-border-hi);
+  border-radius: var(--ct-radius-sm);
+  color: var(--ct-accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 10px;
+  transition:
+    background var(--ct-dur-fast) var(--ct-ease),
+    color var(--ct-dur-fast) var(--ct-ease);
+}
+
+.crostem-retry:hover {
+  background: var(--ct-bg-hover);
+  color: var(--ct-text-bright);
+}

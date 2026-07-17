@@ -14,6 +14,12 @@
   "errorReach": {
     "message": "Couldn't reach the compatibility sources."
   },
+  "errorFriendly": {
+    "message": "We couldn't check the compatibility sources right now."
+  },
+  "retry": {
+    "message": "Retry"
+  },
   "nativeBadge": {
     "message": "Native on macOS"
   },

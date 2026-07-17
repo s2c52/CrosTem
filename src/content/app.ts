@@ -9,7 +9,8 @@ import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
 import { resolveCw, type CwResolution } from '../lib/cw';
-import { logWarn } from '../lib/log';
+import { logDebug, logWarn } from '../lib/log';
+import { t } from '../lib/i18n';
 import { computeVerdict } from '../lib/verdict';
 import { getSettings } from '../lib/settings';
 import {
@@ -122,7 +123,9 @@ if (appidFromPath && nameFromDom) {
         ),
       );
     } catch (e) {
-      show(renderError(`Couldn't load compatibility data (${(e as Error).message})`));
+      // Friendly, localized message; the technical detail goes to the console.
+      logDebug('widget resolution failed', e);
+      show(renderError(t('errorFriendly'), () => void resolveAll(false)));
     }
   };
 
