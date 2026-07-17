@@ -13,6 +13,9 @@
     "https://www.applegamingwiki.com/*",
     "https://raw.githubusercontent.com/AreWeAntiCheatYet/*"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  },
   "background": {
     "service_worker": "src/background.ts",
     "type": "module"
