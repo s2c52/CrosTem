@@ -3,6 +3,7 @@
 
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
+import { storageKeys } from '../lib/cache';
 import { t } from '../lib/i18n';
 import { ctLogo } from '../lib/logo';
 import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
@@ -64,11 +65,6 @@ function fillForm(s: Settings): void {
   input('source-anticheat').checked = s.sources.anticheat;
   input('cx-version').value = s.crossoverVersion;
   input('cache-ttl').value = String(s.cacheTtlDays);
-}
-
-async function storageKeys(prefix: string): Promise<string[]> {
-  const all = await chrome.storage.local.get(null);
-  return Object.keys(all).filter((k) => k.startsWith(prefix));
 }
 
 async function refreshCounts(): Promise<void> {

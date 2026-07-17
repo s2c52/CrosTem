@@ -238,5 +238,34 @@
   },
   "popupError": {
     "message": "Search failed. Try again."
+  },
+  "popupCurrentTab": {
+    "message": "This tab"
+  },
+  "popupSurfaces": {
+    "message": "Show on Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Game page"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Capsules"
+  },
+  "popupSurfaceSearch": {
+    "message": "Search"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Wishlist"
+  },
+  "popupStatusSources": {
+    "message": "$N$ of 3 sources active",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Data sources"
   }
 }

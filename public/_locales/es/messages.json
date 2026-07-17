@@ -238,5 +238,34 @@
   },
   "popupError": {
     "message": "Falló la búsqueda. Reintenta."
+  },
+  "popupCurrentTab": {
+    "message": "Esta pestaña"
+  },
+  "popupSurfaces": {
+    "message": "Mostrar en Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Ficha del juego"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Cápsulas"
+  },
+  "popupSurfaceSearch": {
+    "message": "Búsqueda"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Lista de deseados"
+  },
+  "popupStatusSources": {
+    "message": "$N$ de 3 fuentes activas",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Fuentes de datos"
   }
 }

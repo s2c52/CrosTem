@@ -73,6 +73,68 @@
   --ct-radius-pill: 999px;
 }
 
+/* Accessible switch: the real checkbox stays focusable (visually hidden),
+   the track/thumb animate on :checked. Shared by popup and options. */
+
+.ct-switch {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+}
+
+.ct-switch input {
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.ct-switch-track {
+  background: var(--ct-bg-raised);
+  border: 1px solid var(--ct-border-hi);
+  border-radius: var(--ct-radius-pill);
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  height: 20px;
+  padding: 2px;
+  transition:
+    background var(--ct-dur) var(--ct-ease),
+    border-color var(--ct-dur) var(--ct-ease);
+  width: 34px;
+}
+
+.ct-switch-thumb {
+  background: var(--ct-text-muted);
+  border-radius: 50%;
+  height: 14px;
+  transition:
+    transform var(--ct-dur) var(--ct-ease),
+    background var(--ct-dur) var(--ct-ease);
+  width: 14px;
+}
+
+.ct-switch input:checked + .ct-switch-track {
+  background: var(--ct-accent);
+  border-color: var(--ct-accent);
+}
+
+.ct-switch input:checked + .ct-switch-track .ct-switch-thumb {
+  background: var(--ct-bg-deep);
+  transform: translateX(14px);
+}
+
+.ct-switch input:focus-visible + .ct-switch-track {
+  outline: 2px solid var(--ct-accent);
+  outline-offset: 2px;
+}
+
+.ct-switch:hover .ct-switch-track {
+  border-color: var(--ct-accent);
+}
+
 /* Kill all CrosTem motion when the user prefers reduced motion. Scoped to
    our own elements (.crostem-* injected into Steam, .ct-page on extension
    pages) so the host page's transitions are never touched. */
