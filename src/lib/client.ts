@@ -4,21 +4,44 @@
 // High-level client used by the content scripts: fetch (via the service
 // worker, which avoids CORS), parsing and caching of CodeWeavers and Steam data.
 import * as cache from './cache';
+import { FETCH_TIMEOUT_MS, MAX_CONCURRENT_FETCHES } from './constants';
+import { asString, isRecord } from './guards';
+import { logDebug } from './log';
 import { baseName } from './matcher';
 import { parseAppPage, parseSearchResults } from './parser';
-import type { CwAppPage, CwSearchResult, ExtFetchRequest, ExtFetchResponse, SteamDetails } from '../types';
+import { createFetchQueue } from './queue';
+import type {
+  CwAppPage,
+  CwSearchResult,
+  ExtFetchRequest,
+  ExtFetchResponse,
+  SteamDetails,
+} from '../types';
 
 const CW_BASE = 'https://www.codeweavers.com';
 
-/** Fetch of an external resource through the service worker (avoids CORS). */
-export function fetchExt(url: string): Promise<string> {
+/** Message round-trip failed (worker killed, timeout) — retryable,
+ * unlike a completed response with ok:false. */
+class TransportError extends Error {}
+
+function sendFetchMessage(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
+    // MV3 can kill the service worker mid-request, in which case the
+    // callback never fires: without this timeout the promise (and the
+    // widget behind it) would hang forever.
+    const timer = setTimeout(
+      () => reject(new TransportError('extension fetch timed out')),
+      FETCH_TIMEOUT_MS,
+    );
     const msg: ExtFetchRequest = { type: 'extFetch', url };
     chrome.runtime.sendMessage(msg, (res: ExtFetchResponse | undefined) => {
+      clearTimeout(timer);
       if (chrome.runtime.lastError) {
-        reject(new Error(chrome.runtime.lastError.message));
-      } else if (!res || !res.ok) {
-        reject(new Error(res && !res.ok ? res.error : 'fetch failed'));
+        reject(new TransportError(chrome.runtime.lastError.message));
+      } else if (!res) {
+        reject(new TransportError('no response from service worker'));
+      } else if (!res.ok) {
+        reject(new Error(res.error));
       } else {
         resolve(res.body);
       }
@@ -26,7 +49,18 @@ export function fetchExt(url: string): Promise<string> {
   });
 }
 
-const fetchHtml = fetchExt;
+/** Fetch of an external resource through the service worker (avoids CORS).
+ * Retries once on transport failures: the worker may have just been
+ * restarted by MV3 (its queue state is ephemeral by design). */
+export async function fetchExt(url: string): Promise<string> {
+  try {
+    return await sendFetchMessage(url);
+  } catch (e) {
+    if (!(e instanceof TransportError)) throw e;
+    logDebug('extFetch transport failure, retrying once', e);
+    return sendFetchMessage(url);
+  }
+}
 
 export function searchUrl(query: string): string {
   return CW_BASE + '/compatibility?name=' + encodeURIComponent(query);
@@ -57,9 +91,13 @@ export async function search(name: string): Promise<CwSearchResult[]> {
   const cached = await cache.get<CwSearchResult[]>(cacheKey);
   if (cached !== undefined) return cached;
 
-  const html = await fetchHtml(searchUrl(query));
+  const html = await fetchExt(searchUrl(query));
   const results = parseSearchResults(html);
-  await cache.set(cacheKey, results, results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult());
+  await cache.set(
+    cacheKey,
+    results,
+    results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult(),
+  );
   return results;
 }
 
@@ -69,7 +107,7 @@ export async function getApp(slug: string): Promise<CwAppPage | null> {
   const cached = await cache.get<CwAppPage | null>(cacheKey);
   if (cached !== undefined) return cached;
 
-  const html = await fetchHtml(appUrl(slug));
+  const html = await fetchExt(appUrl(slug));
   const data = parseAppPage(html);
   await cache.set(cacheKey, data, data ? await cache.ttlResult() : cache.TTL_NEGATIVE);
   return data;
@@ -80,48 +118,34 @@ export async function getApp(slug: string): Promise<CwAppPage | null> {
 // Throttled and cached long-term because of Steam's rate limit.
 
 const STEAM_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
-const STEAM_MAX_CONCURRENT = 2;
-let steamActive = 0;
-const steamQueue: Array<{
-  appid: string;
-  resolve: (v: SteamDetails | null) => void;
-  reject: (e: unknown) => void;
-}> = [];
-const steamInflight = new Map<string, Promise<SteamDetails | null>>();
-
-function steamPump(): void {
-  while (steamActive < STEAM_MAX_CONCURRENT && steamQueue.length > 0) {
-    const job = steamQueue.shift()!;
-    steamActive++;
-    fetchSteamDetails(job.appid)
-      .then(job.resolve, job.reject)
-      .finally(() => {
-        steamActive--;
-        steamInflight.delete(job.appid);
-        steamPump();
-      });
-  }
-}
+const steamQueue = createFetchQueue<SteamDetails | null>(MAX_CONCURRENT_FETCHES);
 
 function stripHtml(s: string): string {
-  return s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  return s
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-/** Pure parsing of the appdetails response (testable with fixtures). */
+/** Pure parsing of the appdetails response (testable with fixtures).
+ * The response is untrusted input: every field is validated, never cast. */
 export function parseSteamDetails(json: unknown, appid: string): SteamDetails | null {
-  const entry = (json as Record<string, { success?: boolean; data?: Record<string, unknown> } | undefined>)?.[appid];
-  if (!entry?.success || !entry.data) return null;
+  if (!isRecord(json)) return null;
+  const entry = json[appid];
+  if (!isRecord(entry) || entry.success !== true || !isRecord(entry.data)) return null;
   const data = entry.data;
-  const mac = !!(data.platforms as { mac?: boolean } | undefined)?.mac;
+  const mac = isRecord(data.platforms) && data.platforms.mac === true;
   // mac_requirements comes with the basic filter; Steam sends [] when empty.
-  const mr = data.mac_requirements as { minimum?: string; recommended?: string } | unknown[] | undefined;
-  const macRequirements = mac && mr && !Array.isArray(mr)
-    ? stripHtml([mr.minimum, mr.recommended].filter(Boolean).join(' ')) || null
-    : null;
-  const yearMatch = String((data.release_date as { date?: string } | undefined)?.date ?? '')
-    .match(/\b(19|20)\d{2}\b/);
+  const mr = data.mac_requirements;
+  let macRequirements: string | null = null;
+  if (mac && isRecord(mr)) {
+    const joined = [asString(mr.minimum), asString(mr.recommended)].filter(Boolean).join(' ');
+    macRequirements = stripHtml(joined) || null;
+  }
+  const releaseDate = isRecord(data.release_date) ? asString(data.release_date.date) : undefined;
+  const yearMatch = (releaseDate ?? '').match(/\b(19|20)\d{2}\b/);
   return {
-    name: (data.name as string | undefined) ?? null,
+    name: asString(data.name) ?? null,
     mac,
     macRequirements,
     releaseYear: yearMatch ? Number(yearMatch[0]) : null,
@@ -129,8 +153,10 @@ export function parseSteamDetails(json: unknown, appid: string): SteamDetails | 
 }
 
 async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
-  const url = 'https://store.steampowered.com/api/appdetails?appids=' +
-    encodeURIComponent(appid) + '&filters=platforms,basic,release_date';
+  const url =
+    'https://store.steampowered.com/api/appdetails?appids=' +
+    encodeURIComponent(appid) +
+    '&filters=platforms,basic,release_date';
   const res = await fetch(url, { credentials: 'same-origin' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const value = parseSteamDetails(await res.json(), appid);
@@ -142,12 +168,5 @@ async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
 export async function steamDetails(appid: string): Promise<SteamDetails | null> {
   const cached = await cache.get<SteamDetails | null>('steam:' + appid);
   if (cached !== undefined) return cached;
-  const existing = steamInflight.get(appid);
-  if (existing) return existing;
-  const p = new Promise<SteamDetails | null>((resolve, reject) => {
-    steamQueue.push({ appid, resolve, reject });
-    steamPump();
-  });
-  steamInflight.set(appid, p);
-  return p;
+  return steamQueue.run(appid, () => fetchSteamDetails(appid));
 }

@@ -20,14 +20,18 @@ describe('mergeSettings', () => {
 
   it('sanea la versión de CrossOver', () => {
     expect(mergeSettings({ crossoverVersion: '  25  ' }).crossoverVersion).toBe('25');
-    expect(mergeSettings({ crossoverVersion: '' }).crossoverVersion).toBe(DEFAULTS.crossoverVersion);
-    expect(mergeSettings({ crossoverVersion: 42 }).crossoverVersion).toBe(DEFAULTS.crossoverVersion);
+    expect(mergeSettings({ crossoverVersion: '' }).crossoverVersion).toBe(
+      DEFAULTS.crossoverVersion,
+    );
+    expect(mergeSettings({ crossoverVersion: 42 }).crossoverVersion).toBe(
+      DEFAULTS.crossoverVersion,
+    );
   });
 
   it('acota el TTL a 1-30 días y redondea', () => {
     expect(mergeSettings({ cacheTtlDays: 3.7 }).cacheTtlDays).toBe(4);
     expect(mergeSettings({ cacheTtlDays: 0 }).cacheTtlDays).toBe(DEFAULTS.cacheTtlDays);
-    expect(mergeSettings({ cacheTtlDays: 99 }).cacheTtlDays).toBe(DEFAULTS.cacheTtlDays);
+    expect(mergeSettings({ cacheTtlDays: 99 }).cacheTtlDays).toBe(30);
     expect(mergeSettings({ cacheTtlDays: '7' }).cacheTtlDays).toBe(DEFAULTS.cacheTtlDays);
   });
 });

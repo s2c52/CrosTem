@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseAppPage, parseSearchResults } from '../src/lib/parser';
+import { must } from './helpers';
 
 // <link> tags are stripped because happy-dom tries to download them (network
 // noise in the tests) and they contribute nothing to the parsing.
@@ -46,7 +47,7 @@ describe('parseSearchResults', () => {
 });
 
 describe('parseAppPage', () => {
-  const app = parseAppPage(fixture('cw_elden.html'))!;
+  const app = must(parseAppPage(fixture('cw_elden.html')), 'parsed app page');
 
   it('extrae el rating Mac con estado, última versión testeada y nº de reports', () => {
     expect(app.mac).toEqual({

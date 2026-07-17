@@ -18,12 +18,12 @@ CrosTem **no recopila ningún dato personal**. No hay telemetría, ni analítica
 
 Para consultar la compatibilidad de un juego, la extensión pide páginas/APIs públicas de estos servicios, enviando solo el nombre del juego o su appid público de Steam:
 
-| Servicio | Propósito |
-|---|---|
-| `www.codeweavers.com` | Ratings de compatibilidad de CrossOver |
-| `www.applegamingwiki.com` | Estado de CrossOver/Parallels/Rosetta 2 |
-| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Estado del soporte de anticheat |
-| `store.steampowered.com` | Nombre del juego y flag de Mac nativo (el mismo sitio que estás navegando) |
+| Servicio                                        | Propósito                                                                  |
+| ----------------------------------------------- | -------------------------------------------------------------------------- |
+| `www.codeweavers.com`                           | Ratings de compatibilidad de CrossOver                                     |
+| `www.applegamingwiki.com`                       | Estado de CrossOver/Parallels/Rosetta 2                                    |
+| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Estado del soporte de anticheat                                            |
+| `store.steampowered.com`                        | Nombre del juego y flag de Mac nativo (el mismo sitio que estás navegando) |
 
 Estas peticiones no llevan identificadores de la extensión más allá de lo que incluye cualquier petición del navegador. A lo que cada servicio registre en su servidor se le aplica su propia política de privacidad. Los resultados se cachean (7 días por defecto) para minimizar las peticiones.
 

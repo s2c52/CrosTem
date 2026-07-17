@@ -5,12 +5,33 @@
 // CodeWeavers does not know the Steam appid, so we normalize both names
 // and score candidates; ambiguous cases are resolved by the user (the
 // choice is persisted).
+import {
+  MAX_CANDIDATES,
+  SCORE_BASE_MATCH,
+  SCORE_CONFIDENT,
+  SCORE_DICE_WEIGHT,
+  SCORE_MIN_CANDIDATE,
+  SCORE_PREFIX_MATCH,
+} from './constants';
 import type { CwSearchResult, RankedResult, RankOutcome } from '../types';
 
 const EDITION_WORDS = [
-  'game of the year', 'goty', 'definitive', 'deluxe', 'ultimate', 'complete',
-  'enhanced', 'standard', 'gold', 'premium', 'anniversary', 'legendary',
-  "director's cut", 'directors cut', 'remastered', 'edition',
+  'game of the year',
+  'goty',
+  'definitive',
+  'deluxe',
+  'ultimate',
+  'complete',
+  'enhanced',
+  'standard',
+  'gold',
+  'premium',
+  'anniversary',
+  'legendary',
+  "director's cut",
+  'directors cut',
+  'remastered',
+  'edition',
 ];
 
 export function normalizeName(name: string): string {
@@ -18,7 +39,10 @@ export function normalizeName(name: string): string {
   s = s.normalize('NFKD').replace(/[\u0300-\u036f]/g, ''); // diacritics
   s = s.replace(/[™®©]/g, ' ');
   s = s.replace(/&/g, ' and ');
-  s = s.replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+  s = s
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   return s;
 }
 
@@ -60,27 +84,30 @@ export function score(steamName: string, cwName: string): number {
   if (a === b) return 1;
   const ba = baseName(steamName);
   const bb = baseName(cwName);
-  if (ba === bb) return 0.95;
-  if (ba.startsWith(bb) || bb.startsWith(ba)) return 0.8;
-  return diceCoefficient(ba, bb) * 0.75;
+  if (ba === bb) return SCORE_BASE_MATCH;
+  if (ba.startsWith(bb) || bb.startsWith(ba)) return SCORE_PREFIX_MATCH;
+  return diceCoefficient(ba, bb) * SCORE_DICE_WEIGHT;
 }
 
 export function rank(steamName: string, searchResults: CwSearchResult[]): RankOutcome {
   const scored: RankedResult[] = searchResults
     .map((r) => ({ ...r, score: score(steamName, r.name) }))
-    .filter((r) => r.score >= 0.3)
+    .filter((r) => r.score >= SCORE_MIN_CANDIDATE)
     .sort((x, y) => y.score - x.score);
 
   let confident: RankedResult | null = null;
-  if (scored.length > 0) {
-    const top = scored[0];
+  const top = scored[0];
+  if (top) {
     // A single exact match wins outright; otherwise we require a
     // near-exact one with no rival at the same level.
     if (top.score === 1 && scored.filter((r) => r.score === 1).length === 1) {
       confident = top;
-    } else if (top.score >= 0.95 && scored.filter((r) => r.score >= 0.95).length === 1) {
+    } else if (
+      top.score >= SCORE_CONFIDENT &&
+      scored.filter((r) => r.score >= SCORE_CONFIDENT).length === 1
+    ) {
       confident = top;
     }
   }
-  return { confident, candidates: scored.slice(0, 5) };
+  return { confident, candidates: scored.slice(0, MAX_CANDIDATES) };
 }

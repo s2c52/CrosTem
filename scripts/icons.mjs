@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SVG = readFileSync(join(ROOT, 'public/icons/icon.svg'), 'utf8');
 const SIZES = [16, 32, 48, 128];
-const BRAVE = process.env.BRAVE_BIN ??
-  '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser';
+const BRAVE =
+  process.env.BRAVE_BIN ?? '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser';
 
 const browser = await chromium.launch({ executablePath: BRAVE, headless: true });
 const page = await browser.newPage();

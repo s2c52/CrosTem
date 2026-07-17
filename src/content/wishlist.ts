@@ -6,6 +6,8 @@
 // we look for links to /app/<id> that carry the title as text. The native
 // Mac flag arrives via Steam's appdetails API (resolved in lib/auto).
 import { attach } from '../lib/auto';
+import { SCAN_DEBOUNCE_MS } from '../lib/constants';
+import { coalesce } from '../lib/debounce';
 import { getSettings } from '../lib/settings';
 import '../styles.css';
 
@@ -24,29 +26,20 @@ function looksLikeTitleLink(a: HTMLAnchorElement): boolean {
 function scan(): void {
   document.querySelectorAll<HTMLAnchorElement>('a[href*="/app/"]').forEach((a) => {
     if (!looksLikeTitleLink(a)) return;
+    const appid = (a.getAttribute('href') ?? '').match(APP_LINK)?.[1];
+    const name = a.textContent?.trim();
+    if (!appid || !name) return;
     a.dataset.crostem = '1';
 
     const badge = document.createElement('span');
     badge.className = 'crostem-badge';
     a.insertAdjacentElement('afterend', badge);
 
-    attach(badge, {
-      appid: (a.getAttribute('href') ?? '').match(APP_LINK)![1],
-      name: a.textContent!.trim(),
-      mode: 'inline',
-    });
+    attach(badge, { appid, name, mode: 'inline' });
   });
 }
 
-let scheduled = false;
-function scheduleScan(): void {
-  if (scheduled) return;
-  scheduled = true;
-  setTimeout(() => {
-    scheduled = false;
-    scan();
-  }, 300);
-}
+const scheduleScan = coalesce(scan, SCAN_DEBOUNCE_MS);
 
 void (async () => {
   if (!(await getSettings()).surfaces.wishlist) return;

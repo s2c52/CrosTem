@@ -38,8 +38,12 @@ void (async () => {
   scan();
 
   // Steam loads more rows via AJAX (infinite scroll / pagination).
-  const resultsContainer = document.getElementById('search_resultsRows') ??
-    document.getElementById('search_results') ?? document.body;
-  new MutationObserver(() => scan(resultsContainer))
-    .observe(resultsContainer, { childList: true, subtree: true });
+  const resultsContainer =
+    document.getElementById('search_resultsRows') ??
+    document.getElementById('search_results') ??
+    document.body;
+  new MutationObserver(() => scan(resultsContainer)).observe(resultsContainer, {
+    childList: true,
+    subtree: true,
+  });
 })();

@@ -8,8 +8,8 @@ import manifest from './manifest.json';
 export default defineConfig({
   plugins: [crx({ manifest })],
   build: {
-    // Extensión: sin minificar facilita la revisión de la Web Store y el debug.
+    // Extension: unminified code eases Web Store review; source maps aid debugging.
     minify: false,
-    sourcemap: false,
+    sourcemap: true,
   },
 });

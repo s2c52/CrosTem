@@ -4,10 +4,13 @@
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
 import { t } from '../lib/i18n';
-import { getSettings, saveSettings, type Settings } from '../lib/settings';
+import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
 
 function $(id: string): HTMLElement {
-  return document.getElementById(id)!;
+  const node = document.getElementById(id);
+  // The options page owns its DOM: a missing id is a programming error.
+  if (!node) throw new Error(`CrosTem options: missing element #${id}`);
+  return node;
 }
 
 function input(id: string): HTMLInputElement {
@@ -16,7 +19,8 @@ function input(id: string): HTMLInputElement {
 
 function applyI18n(): void {
   document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((node) => {
-    node.textContent = t(node.dataset.i18n!);
+    const key = node.dataset.i18n;
+    if (key) node.textContent = t(key);
   });
   document.title = t('optionsTitle');
 }
@@ -25,11 +29,14 @@ let statusTimer: ReturnType<typeof setTimeout> | undefined;
 function flash(msg: string): void {
   $('status').textContent = msg;
   clearTimeout(statusTimer);
-  statusTimer = setTimeout(() => { $('status').textContent = ''; }, 2500);
+  statusTimer = setTimeout(() => {
+    $('status').textContent = '';
+  }, 2500);
 }
 
 function readForm(): Settings {
-  return {
+  // mergeSettings is the single source of truth for validation/clamping.
+  return mergeSettings({
     surfaces: {
       app: input('surface-app').checked,
       capsules: input('surface-capsules').checked,
@@ -41,9 +48,9 @@ function readForm(): Settings {
       agw: input('source-agw').checked,
       anticheat: input('source-anticheat').checked,
     },
-    crossoverVersion: input('cx-version').value.trim() || '26',
-    cacheTtlDays: Math.min(30, Math.max(1, Number(input('cache-ttl').value) || 7)),
-  };
+    crossoverVersion: input('cx-version').value,
+    cacheTtlDays: Number(input('cache-ttl').value) || undefined,
+  });
 }
 
 function fillForm(s: Settings): void {
@@ -65,7 +72,10 @@ async function storageKeys(prefix: string): Promise<string[]> {
 
 async function refreshCounts(): Promise<void> {
   $('cache-count').textContent = t('optCacheCount', String((await storageKeys('cache:')).length));
-  $('choices-count').textContent = t('optChoicesCount', String((await storageKeys('choice:')).length));
+  $('choices-count').textContent = t(
+    'optChoicesCount',
+    String((await storageKeys('choice:')).length),
+  );
 }
 
 async function main(): Promise<void> {

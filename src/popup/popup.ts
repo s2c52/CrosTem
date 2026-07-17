@@ -4,11 +4,22 @@
 // Toolbar popup: manual search against CodeWeavers (useful outside
 // Steam) + access to settings. Uses the same client/cache as the rest.
 import { appUrl, search } from '../lib/client';
+import { MAX_POPUP_RESULTS, SEARCH_DEBOUNCE_MS } from '../lib/constants';
+import { debounce } from '../lib/debounce';
 import { t } from '../lib/i18n';
+import { starsEl } from '../lib/widget';
+import '../styles.css';
 
-const queryEl = document.getElementById('query') as HTMLInputElement;
-const resultsEl = document.getElementById('results')!;
-const optionsLink = document.getElementById('open-options') as HTMLAnchorElement;
+function mustGet(id: string): HTMLElement {
+  const node = document.getElementById(id);
+  // The popup owns its DOM: a missing id is a programming error.
+  if (!node) throw new Error(`CrosTem popup: missing element #${id}`);
+  return node;
+}
+
+const queryEl = mustGet('query') as HTMLInputElement;
+const resultsEl = mustGet('results');
+const optionsLink = mustGet('open-options') as HTMLAnchorElement;
 
 queryEl.placeholder = t('popupSearchPlaceholder');
 optionsLink.textContent = t('popupOptions');
@@ -17,23 +28,6 @@ optionsLink.addEventListener('click', (e) => {
   void chrome.runtime.openOptionsPage();
 });
 
-function starsSpan(n: number | null): HTMLElement {
-  const span = document.createElement('span');
-  if (n == null) {
-    span.textContent = '—';
-    return span;
-  }
-  const filled = document.createElement('span');
-  filled.className = 'stars-filled';
-  filled.textContent = '★'.repeat(n);
-  const empty = document.createElement('span');
-  empty.className = 'stars-empty';
-  empty.textContent = '☆'.repeat(Math.max(0, 5 - n));
-  span.append(filled, empty);
-  return span;
-}
-
-let timer: ReturnType<typeof setTimeout> | undefined;
 let lastQuery = '';
 
 async function runSearch(q: string): Promise<void> {
@@ -55,7 +49,7 @@ async function runSearch(q: string): Promise<void> {
       resultsEl.appendChild(none);
       return;
     }
-    for (const r of results.slice(0, 8)) {
+    for (const r of results.slice(0, MAX_POPUP_RESULTS)) {
       const a = document.createElement('a');
       a.className = 'result';
       a.href = appUrl(r.slug);
@@ -66,7 +60,7 @@ async function runSearch(q: string): Promise<void> {
       name.textContent = r.name;
       const meta = document.createElement('div');
       meta.className = 'meta';
-      meta.appendChild(starsSpan(r.stars));
+      meta.appendChild(starsEl(r.stars));
       meta.appendChild(document.createTextNode(r.company ? ` · ${r.company}` : ''));
       a.append(name, meta);
       resultsEl.appendChild(a);
@@ -81,7 +75,5 @@ async function runSearch(q: string): Promise<void> {
   }
 }
 
-queryEl.addEventListener('input', () => {
-  clearTimeout(timer);
-  timer = setTimeout(() => void runSearch(queryEl.value), 350);
-});
+const debouncedSearch = debounce(() => void runSearch(queryEl.value), SEARCH_DEBOUNCE_MS);
+queryEl.addEventListener('input', debouncedSearch);

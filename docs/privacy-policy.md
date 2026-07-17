@@ -18,12 +18,12 @@ CrosTem collects **no personal data whatsoever**. There is no telemetry, no anal
 
 To look up a game's compatibility, the extension requests public pages/APIs of these services, sending only the game's name or public Steam app id:
 
-| Service | Purpose |
-|---|---|
-| `www.codeweavers.com` | CrossOver compatibility ratings |
-| `www.applegamingwiki.com` | CrossOver/Parallels/Rosetta 2 status |
-| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Anticheat support status |
-| `store.steampowered.com` | Game name and native-Mac flag (same site you are browsing) |
+| Service                                         | Purpose                                                    |
+| ----------------------------------------------- | ---------------------------------------------------------- |
+| `www.codeweavers.com`                           | CrossOver compatibility ratings                            |
+| `www.applegamingwiki.com`                       | CrossOver/Parallels/Rosetta 2 status                       |
+| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Anticheat support status                                   |
+| `store.steampowered.com`                        | Game name and native-Mac flag (same site you are browsing) |
 
 These requests carry no identifiers from the extension beyond what any browser request includes. Each service's own privacy policy applies to what they log server-side. Results are cached (default 7 days) to keep requests to a minimum.
 
