@@ -30,6 +30,8 @@ export interface ResolveCwOpts {
   forcePicker?: boolean;
   /** Also download the full app page for search matches (widget). */
   loadAppPage?: boolean;
+  /** Stale-while-revalidate pass marker (see cache.SwrPass). */
+  swr?: cache.SwrPass;
 }
 
 export async function resolveCw(
@@ -40,7 +42,7 @@ export async function resolveCw(
   if (!opts.forcePicker && appid) {
     const savedSlug = await cache.getSourceChoice('cw', appid);
     if (savedSlug) {
-      const app = await getApp(savedSlug);
+      const app = await getApp(savedSlug, opts.swr);
       if (app?.mac || opts.loadAppPage) {
         return {
           kind: 'hit',
@@ -55,7 +57,7 @@ export async function resolveCw(
     }
   }
 
-  const results = await search(name);
+  const results = await search(name, opts.swr);
   const ranked = rank(name, results);
   const pick =
     (opts.forcePicker ? null : ranked.confident) ??
@@ -67,7 +69,7 @@ export async function resolveCw(
       cwName: pick.name,
       approximate: pick.score < 1,
       stars: pick.stars,
-      app: opts.loadAppPage ? await getApp(pick.slug) : null,
+      app: opts.loadAppPage ? await getApp(pick.slug, opts.swr) : null,
     };
   }
   if (ranked.candidates.length > 1) return { kind: 'ambiguous', candidates: ranked.candidates };

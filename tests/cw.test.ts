@@ -76,7 +76,7 @@ describe('resolveCw', () => {
     vi.mocked(getApp).mockResolvedValue(appPage(5));
     const res = await resolveCw('Elden Ring', null, { loadAppPage: true });
     expect(res.kind).toBe('hit');
-    expect(getApp).toHaveBeenCalledWith('elden-ring');
+    expect(getApp).toHaveBeenCalledWith('elden-ring', undefined);
   });
 
   it('varios candidatos sin claro ganador → ambiguous', async () => {

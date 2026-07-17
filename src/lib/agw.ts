@@ -102,6 +102,7 @@ const EMPTY_LOOKUP: AgwLookup = { result: null, candidates: [] };
 export async function agwLookupDetailed(
   name: string,
   appid?: string | null,
+  swr?: cache.SwrPass,
 ): Promise<AgwLookup> {
   const base = baseName(name);
   if (!base) return EMPTY_LOOKUP;
@@ -110,14 +111,14 @@ export async function agwLookupDetailed(
   if (appid) {
     const chosen = await cache.getSourceChoice('agw', appid);
     if (chosen) {
-      const rows = await cachedQuery(`_pageName=${sqlQuote(chosen)}`, 1, 'agw:page:' + chosen);
+      const rows = await cachedQuery(`_pageName=${sqlQuote(chosen)}`, 1, 'agw:page:' + chosen, swr);
       const row = rows[0];
       if (row) return { result: row, candidates: [] };
     }
   }
 
   const cacheKey = 'agw:' + base;
-  const cached = await cache.get<unknown>(cacheKey);
+  const cached = await cache.getSwr<unknown>(cacheKey, swr);
   if (cached !== undefined) {
     if (isRecord(cached) && 'result' in cached && 'candidates' in cached) {
       return cached as unknown as AgwLookup;
@@ -151,12 +152,21 @@ export async function agwLookupDetailed(
 }
 
 /** Result-only variant kept for callers that don't need candidates. */
-export async function agwLookup(name: string, appid?: string | null): Promise<AgwCompat | null> {
-  return (await agwLookupDetailed(name, appid)).result;
+export async function agwLookup(
+  name: string,
+  appid?: string | null,
+  swr?: cache.SwrPass,
+): Promise<AgwCompat | null> {
+  return (await agwLookupDetailed(name, appid, swr)).result;
 }
 
-async function cachedQuery(where: string, limit: number, key: string): Promise<AgwCompat[]> {
-  const cached = await cache.get<AgwCompat[]>(key);
+async function cachedQuery(
+  where: string,
+  limit: number,
+  key: string,
+  swr?: cache.SwrPass,
+): Promise<AgwCompat[]> {
+  const cached = await cache.getSwr<AgwCompat[]>(key, swr);
   if (cached !== undefined) return cached;
   const rows = await cargoQuery(where, limit);
   await cache.set(key, rows);

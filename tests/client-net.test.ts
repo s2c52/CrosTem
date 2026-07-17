@@ -56,6 +56,28 @@ describe('fetchExt failure memo', () => {
   });
 });
 
+describe('SWR en client.search', () => {
+  it('sirve la entrada vencida al instante y la pasada estricta refetchea', async () => {
+    const handler = vi.fn(() => ({ ok: true, body: '<html></html>', finalUrl: 'https://x/' }));
+    mock.onSendMessage(handler);
+    const { search } = await import('../src/lib/client');
+
+    // Populate the cache (empty results → negative TTL, 24h).
+    await search('Elden Ring');
+    const callsAfterSeed = handler.mock.calls.length;
+
+    vi.advanceTimersByTime(24 * 60 * 60 * 1000 + 1); // expired, inside stale window
+    const swr = { staleServed: false };
+    await expect(search('Elden Ring', swr)).resolves.toEqual([]);
+    expect(swr.staleServed).toBe(true);
+    expect(handler.mock.calls.length).toBe(callsAfterSeed); // served without network
+
+    // Strict pass (no SwrPass): the expired entry is refetched.
+    await search('Elden Ring');
+    expect(handler.mock.calls.length).toBeGreaterThan(callsAfterSeed);
+  });
+});
+
 describe('steam appdetails breaker', () => {
   it('abre tras fallos consecutivos y corta sin tocar la red', async () => {
     const fetchMock = vi.fn(() =>

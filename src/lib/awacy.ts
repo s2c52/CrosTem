@@ -59,8 +59,8 @@ export function buildIndex(games: unknown[]): AwacyIndex {
   return index;
 }
 
-async function getIndex(): Promise<AwacyIndex | null> {
-  const cached = await cache.get<AwacyIndex>('awacy:index');
+async function getIndex(swr?: cache.SwrPass): Promise<AwacyIndex | null> {
+  const cached = await cache.getSwr<AwacyIndex>('awacy:index', swr);
   if (cached !== undefined) return cached;
   try {
     const body = await fetchExt(AWACY_URL);
@@ -84,8 +84,9 @@ async function getIndex(): Promise<AwacyIndex | null> {
 export async function anticheatLookup(
   appid: string | null | undefined,
   name: string | null | undefined,
+  swr?: cache.SwrPass,
 ): Promise<AnticheatInfo | null> {
-  const index = await getIndex();
+  const index = await getIndex(swr);
   if (!index) return null;
   if (appid && index.bySteamId[appid]) return index.bySteamId[appid];
   if (name) return index.byName[normalizeName(name)] ?? null;
