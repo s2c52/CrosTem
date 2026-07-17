@@ -7,6 +7,7 @@
 // script (DOMParser does not exist in service workers; JSON.parse works anywhere).
 import { isAllowedUrl } from './lib/allowlist';
 import { createBreaker } from './lib/breaker';
+import { maybeDailyMaintenance } from './lib/cache';
 import { MAX_CONCURRENT_FETCHES } from './lib/constants';
 import { isExtFetchRequest } from './lib/guards';
 import { fetchWithPolicy, sourceTimeoutMs } from './lib/net';
@@ -19,6 +20,10 @@ import type { ExtFetchResponse } from './types';
 // there, and the breaker simply re-learns a downed origin.
 const queue = createFetchQueue<ExtFetchResponse>(MAX_CONCURRENT_FETCHES);
 const breaker = createBreaker();
+
+// Cache upkeep on every cold start of the worker, throttled internally
+// to once per day. Replaces a chrome.alarms schedule (no extra permission).
+void maybeDailyMaintenance();
 
 async function doFetch(url: string): Promise<ExtFetchResponse> {
   // Retries happen inside the queue slot, so a downed origin can hold a

@@ -56,6 +56,14 @@ export const BREAKER_FAILURES = 5;
 /** How long an open breaker rejects an origin before allowing traffic again. */
 export const BREAKER_COOLDOWN_MS = 2 * 60_000;
 
+// --- Cache lifecycle (cache.ts) ---
+/** storage.local usage that triggers eviction (quota is 10MB in MV3). */
+export const CACHE_QUOTA_SOFT_BYTES = 4 * 1024 * 1024;
+/** Eviction stops once estimated usage drops below this. */
+export const CACHE_EVICT_TARGET_BYTES = 3 * 1024 * 1024;
+/** Minimum interval between maintenance runs (sweep + eviction). */
+export const CACHE_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
 // --- UI / DOM scanning ---
 /** Coalescing window for MutationObserver-triggered rescans. */
 export const SCAN_DEBOUNCE_MS = 300;
