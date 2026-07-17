@@ -78,7 +78,7 @@ function box(): HTMLElement {
   return root;
 }
 
-const ARCH_SOURCE_KEYS = {
+export const ARCH_SOURCE_KEYS = {
   agw: 'archSourceAgw',
   'steam-reqs': 'archSourceSteam',
   date: 'archSourceDate',
@@ -95,7 +95,16 @@ export function renderNativeBadge(arch: ArchInfo | null = null): HTMLElement {
     const label =
       t(arch.arch === 'm-series' ? 'archM' : 'archIntel') + (arch.approximate ? ' ~' : '');
     body.appendChild(el('div', 'crostem-arch-line', label));
-    body.appendChild(el('div', 'crostem-muted crostem-small', t(ARCH_SOURCE_KEYS[arch.source])));
+    const sourceLine = el('div', 'crostem-muted crostem-small');
+    if (arch.source === 'agw' && arch.agwPage) {
+      // Link to the game's AGW page so the claim can be verified.
+      sourceLine.appendChild(
+        linkEl(agwPageUrl(arch.agwPage), t(ARCH_SOURCE_KEYS.agw), 'crostem-link crostem-small'),
+      );
+    } else {
+      sourceLine.textContent = t(ARCH_SOURCE_KEYS[arch.source]);
+    }
+    body.appendChild(sourceLine);
   }
   body.appendChild(el('div', 'crostem-muted crostem-small', t('nativeNote')));
   root.appendChild(body);

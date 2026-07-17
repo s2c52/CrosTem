@@ -17,11 +17,13 @@ describe('archFromAgw', () => {
       arch: 'm-series',
       approximate: false,
       source: 'agw',
+      agwPage: 'X',
     });
     expect(archFromAgw(agw('menu', 'unknown'))).toEqual({
       arch: 'm-series',
       approximate: false,
       source: 'agw',
+      agwPage: 'X',
     });
   });
 
@@ -30,6 +32,7 @@ describe('archFromAgw', () => {
       arch: 'intel',
       approximate: false,
       source: 'agw',
+      agwPage: 'X',
     });
   });
 
@@ -38,6 +41,7 @@ describe('archFromAgw', () => {
       arch: 'intel',
       approximate: true,
       source: 'agw',
+      agwPage: 'X',
     });
   });
 
@@ -70,6 +74,11 @@ describe('archFromSteamReqs', () => {
       approximate: true,
       source: 'steam-reqs',
     });
+  });
+
+  it('las fuentes inferidas no llevan agwPage', () => {
+    expect(archFromSteamReqs('Processor: Intel Core i5')).not.toHaveProperty('agwPage');
+    expect(archFromReleaseYear(2021)).not.toHaveProperty('agwPage');
   });
 
   it('Rosetta gana aunque cite M1', () => {
@@ -122,6 +131,7 @@ describe('detectArch (precedencia AGW → reqs → fecha)', () => {
       arch: 'intel',
       approximate: false,
       source: 'agw',
+      agwPage: 'X',
     });
   });
 
