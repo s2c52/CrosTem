@@ -34,6 +34,8 @@ export interface ChromeMock {
   setBytesInUse(bytes: number): void;
   /** Makes the next `count` storage.local.set calls reject (quota tests). */
   failLocalSets(count: number): void;
+  /** Handler for runtime.sendMessage: return value goes to the callback. */
+  onSendMessage(handler: (msg: unknown) => unknown): void;
 }
 
 export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMock {
@@ -42,6 +44,11 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
   let bytesInUse = 0;
   let localGetCalls = 0;
   let failingSets = 0;
+  let sendMessageHandler: (msg: unknown) => unknown = () => ({
+    ok: false,
+    error: 'no sendMessage handler configured',
+    code: 'network',
+  });
   const storageListeners: StorageListener[] = [];
   const messageListeners: MessageListener[] = [];
 
@@ -80,6 +87,7 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
     runtime: {
       id: EXTENSION_ID,
       getURL: (path: string) => path,
+      sendMessage: (msg: unknown, cb: (res: unknown) => void) => cb(sendMessageHandler(msg)),
       onMessage: { addListener: (l: MessageListener) => void messageListeners.push(l) },
       onInstalled: { addListener: () => undefined },
     },
@@ -106,6 +114,9 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
     },
     failLocalSets: (count) => {
       failingSets = count;
+    },
+    onSendMessage: (handler) => {
+      sendMessageHandler = handler;
     },
   };
 }
