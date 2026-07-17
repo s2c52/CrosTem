@@ -1,63 +1,200 @@
-# CrosTem — Mac compatibility for Steam
+<div align="center">
 
-Browser extension (Manifest V3, Chromium) that shows **CrossOver (macOS)** compatibility ratings from the [CodeWeavers](https://www.codeweavers.com/compatibility) database directly on the Steam store.
+<img src="public/icons/icon128.png" alt="CrosTem icon" width="96" height="96">
 
-**Author:** Sacha Gennari — [s2c52](https://github.com/s2c52) · **License:** [GPL-3.0-or-later](LICENSE)
+# CrosTem
 
-## What it does
+**"Does it run on my Mac?" — answered right on the Steam store.**
 
-- **Game page** (`store.steampowered.com/app/*`): widget in the right column with the Mac rating ("Runs Great"…), stars, last tested version and a breakdown of the 3 latest CrossOver versions (the 26.x branch is highlighted in blue), with a link to CodeWeavers.
-- **Capsules across the whole store** (front page, deals, categories, "more like this"…): star overlay in the corner of the game image, loaded automatically when the capsule enters the viewport (IntersectionObserver). `` = native, `?` = several possible matches (links to CodeWeavers), `~` = approximate match. Capsules with no data show nothing.
-- **Search and wishlist**: automatic stars next to each row's title as it becomes visible.
-- **Native macOS games**: green "Native on macOS" badge without querying CodeWeavers (on capsules it is detected via Steam's same-origin `appdetails` API).
-- **Ambiguous matching**: if the Steam name doesn't clearly match a single CodeWeavers entry, the game-page widget shows a list of candidates; your choice is remembered for that game ("Wrong match?" to change it) and the overlays honor it too.
+[![CI](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml/badge.svg)](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue)](CHANGELOG.md)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
+[![Manifest V3](https://img.shields.io/badge/manifest-v3-orange)](manifest.json)
+[![Tests](https://img.shields.io/badge/tests-167%20passing-brightgreen)](tests/)
+[![Languages](https://img.shields.io/badge/languages-30-purple)](public/_locales/)
+[![Runtime deps](https://img.shields.io/badge/runtime%20deps-0-lightgrey)](package.json)
+
+*A browser extension (Chromium, Manifest V3) by Sacha Gennari — [s2c52](https://github.com/s2c52)*
+
+</div>
+
+![Elden Ring's Steam page with the CrosTem widget showing a green "Playable on Mac via CrossOver" verdict, a per-version CrossOver star breakdown, AppleGamingWiki status and anti-cheat info](store-assets/1-game-page-verdict.png)
+
+## What is CrosTem?
+
+Steam says "Windows only" for most of its catalog — but a huge share of those games run beautifully on a Mac through [CrossOver](https://www.codeweavers.com/crossover), Parallels or Rosetta 2. The catch: finding out *which ones* means juggling three different community databases in separate tabs, every time you browse the store.
+
+CrosTem folds all of that into Steam itself. Every game page gets a **"Runs on Mac?" verdict** — a conservative traffic light (🟢🟡🔴) computed from three community sources — plus star overlays on capsules across the whole store, and badges in search results and your wishlist. No accounts, no servers, no telemetry: the extension only fetches public compatibility pages and caches them in your browser.
+
+## The three sources
+
+| Source | What it contributes |
+|---|---|
+| [CodeWeavers CrossOver database](https://www.codeweavers.com/compatibility) | Official CrossOver compatibility ratings ("Runs Great"…), stars, last-tested version and a per-version breakdown |
+| [AppleGamingWiki](https://www.applegamingwiki.com/) | Community status for CrossOver, Parallels, Rosetta 2 and native macOS builds |
+| [Are We Anti-Cheat Yet?](https://areweanticheatyet.com/) | Anti-cheat support status — the #1 blocker for multiplayer games under CrossOver (Linux/Proton data, indicative) |
+
+Steam's own same-origin `appdetails` API supplies the native-macOS flag and game metadata — native games are flagged directly, no external lookups needed.
+
+## How the verdict works
+
+The verdict engine ([src/lib/verdict.ts](src/lib/verdict.ts)) is a pure, fully-tested function with a deliberately **conservative** policy:
+
+| Verdict | Meaning | When |
+|---|---|---|
+| 🟢 | Playable on Mac via CrossOver | CodeWeavers ≥ "Runs Well" (or ≥ 4★) **or** AppleGamingWiki ≥ *playable* — with no bad signal from the other source and no anti-cheat problem |
+| 🟡 | Playable with caveats | Mixed or intermediate signals, or anti-cheat support merely *Planned* |
+| 🔴 | Likely unplayable on Mac | Anti-cheat *Denied* or *Broken* (always forces red), or only negative compatibility signals |
+| ⚪ | No compatibility data | Neither CodeWeavers nor AppleGamingWiki knows the game |
+
+When the sources disagree, the widget says so explicitly ("Sources disagree — check both before buying") and shows each source's raw status so you can judge for yourself.
+
+![Destiny 2's Steam page with a red "Likely unplayable on Mac" verdict caused by BattlEye: Denied anti-cheat status](store-assets/2-anticheat-warning.png)
+
+## Features
+
+CrosTem renders on six surfaces, all individually toggleable:
+
+- **Game-page widget** — a "Runs on Mac?" panel in the right column: verdict banner, collapsible per-source rows, the 3 latest CrossOver versions with stars (your branch highlighted), last-tested version, and direct links to each source. Skeleton shimmer while loading, retry on error.
+- **Store-wide capsule overlays** — star ratings in the corner of game capsules everywhere (front page, sales, categories, "more like this"…), resolved lazily as each capsule scrolls into view. `?` marks games with several possible matches; `~` marks approximate matches.
+- **Search results & wishlist badges** — compact rating badges next to each row's title, injected as rows appear (MutationObserver for Steam's AJAX search, generic `/app/` link detection for the React wishlist SPA).
+- **Toolbar popup** — the active tab's verdict at a glance, manual game lookup, quick surface toggles and cache stats.
+- **Options page** — toggle each surface and data source, set your CrossOver version, tune the cache TTL (1–30 days), and export/import your match corrections.
+- **Hover tooltip & onboarding** — a mini-card with the verdict and per-source lines on badge hover, and a one-time onboarding page after install.
+
+<table>
+<tr>
+<td width="50%"><img src="store-assets/3-store-overlays.png" alt="Steam front page with CrosTem star overlays on game capsules"></td>
+<td width="50%"><img src="store-assets/4-search-badges.png" alt="Steam search results with CrosTem verdict badges next to each title"></td>
+</tr>
+<tr>
+<td align="center"><em>Star overlays across the store</em></td>
+<td align="center"><em>Badges in search results</em></td>
+</tr>
+</table>
+
+Plus:
+
+- **Native macOS games** get a "Native on macOS" badge with 5 stars and an architecture tag — **M Series (Apple Silicon)** vs **Intel (Rosetta 2 on M)** — detected from AppleGamingWiki, Steam system requirements or release date ([src/lib/arch.ts](src/lib/arch.ts)), without querying CodeWeavers at all.
+- **Ambiguous-match resolution** — when a Steam name doesn't clearly map to a single CodeWeavers entry, the widget shows the candidates; pick once and CrosTem remembers it for that game everywhere ("Wrong match?" to change it). Corrections are kept per source and can be exported/imported.
+
+![CrosTem options page: surface toggles, data sources, CrossOver version, cache TTL and match corrections](store-assets/5-options.png)
+
+## Install
+
+**Chrome Web Store:** coming soon.
+
+**From source** (Chrome, Brave, Edge — any Chromium browser):
+
+```bash
+git clone https://github.com/s2c52/CrosTem.git
+cd CrosTem
+npm install
+npm run build      # typecheck + vite build → dist/
+```
+
+Then open `chrome://extensions` (or `brave://extensions`), enable **Developer mode**, click **Load unpacked** and select the generated **`dist/`** folder.
+
+## 30 languages
+
+The injected UI follows the **language of the Steam page you're viewing** — not the browser's — in all 30 languages Steam supports, detected from Steam's own page config (with `?l=` and the `Steam_Language` cookie as fallbacks; [src/lib/steam-lang.ts](src/lib/steam-lang.ts)). Statuses quoted from the sources ("Runs Great", "playable"…) are intentionally left untranslated: they are citations, not UI copy.
+
+## How it works
+
+```mermaid
+flowchart LR
+    subgraph tab["Steam store tab (content scripts)"]
+        CS["app.ts · capsules.ts<br>search.ts · wishlist.ts"]
+        R["resolve.ts<br>verdict pipeline"]
+        C[("chrome.storage.local<br>TTL cache")]
+        CS --> R
+        R <--> C
+    end
+    subgraph sw["Service worker (background.ts)"]
+        Q["fetch queue<br>max 2 concurrent · dedupe · 10 s timeout"]
+        A["URL allowlist"]
+        Q --> A
+    end
+    R -- messaging --> Q
+    A --> CW["codeweavers.com<br>(HTML, scraped)"]
+    A --> AGW["applegamingwiki.com<br>(MediaWiki cargo API)"]
+    A --> AC["AreWeAntiCheatYet<br>(games.json on GitHub)"]
+    R -- "same origin" --> SD["Steam appdetails API"]
+```
+
+- **CodeWeavers has no public API**, so the extension fetches their public pages (`/compatibility?name=…` to search, `/compatibility/crossover/<slug>` for detail) and parses the HTML with `DOMParser`. All scraping lives in one file: [src/lib/parser.ts](src/lib/parser.ts).
+- **The service worker proxies every external fetch** — content scripts can't cross origins (CORS), the worker can via `host_permissions`. It enforces a strict, unit-tested **URL allowlist** ([src/lib/allowlist.ts](src/lib/allowlist.ts)): only the three sources' public endpoints, nothing else. Max 2 concurrent requests per queue, in-flight deduplication, 10 s timeout.
+- **Everything is cached** in `chrome.storage.local`: results for 7 days (configurable 1–30), "no data" answers for 24 h, Steam details for 30 days, the anti-cheat dataset for 7 days — and your match choices permanently. Settings live in `chrome.storage.sync`, so they travel with your browser account and propagate live to open tabs.
+- **Badges resolve lazily**: a shared `IntersectionObserver` ([src/lib/auto.ts](src/lib/auto.ts)) triggers resolution just before a capsule enters the viewport, so browsing the front page doesn't fire hundreds of requests.
+- **No `innerHTML` anywhere** — all UI is built with `createElement`/`createElementNS`, safe under strict CSP and Trusted Types. Accessible by design: star ratings carry `role="img"` labels, verdicts are never conveyed by color alone, and `prefers-reduced-motion` is honored.
+
+## Privacy
+
+- The only Chrome permission is **`storage`**. No `tabs`, no history, no cookies.
+- Requests go exclusively to the four hosts above — Steam (the page you're already on), CodeWeavers, AppleGamingWiki and AreWeAntiCheatYet's public dataset.
+- No telemetry, no accounts, no servers of ours. Full policy: [docs/privacy-policy.md](docs/privacy-policy.md) ([español](docs/privacy-policy.es.md)).
+
+## Project structure
+
+```
+manifest.json             MV3: permissions and entry points (compiled by @crxjs/vite-plugin)
+vite.config.ts            Vite + crxjs
+src/types.ts              Domain and messaging types
+src/background.ts         Service worker: proxied fetches (queue + dedupe + allowlist)
+src/content/app.ts        Game page → widget
+src/content/capsules.ts   Star overlays on capsules across the store
+src/content/search.ts     Search results (MutationObserver for AJAX)
+src/content/wishlist.ts   Wishlist (React SPA, generic /app/ link detection)
+src/lib/resolve.ts        Shared verdict pipeline (runs enabled sources in parallel)
+src/lib/verdict.ts        Traffic-light engine (pure function)
+src/lib/cw.ts             CodeWeavers resolution (saved choice → search + ranking)
+src/lib/parser.ts         CodeWeavers HTML scraping (all of it lives here)
+src/lib/matcher.ts        Name normalization and candidate scoring
+src/lib/agw.ts            AppleGamingWiki client (MediaWiki cargo API)
+src/lib/awacy.ts          AreWeAntiCheatYet client (games.json → appid index)
+src/lib/arch.ts           Native binary architecture detection (M Series vs Intel)
+src/lib/client.ts         search()/getApp()/steamDetails(): fetch + parse + cache
+src/lib/cache.ts          TTL cache + permanent appid→slug choices
+src/lib/queue.ts          Generic fetch queue (concurrency + dedupe)
+src/lib/allowlist.ts      Security boundary: URLs the service worker may fetch
+src/lib/settings.ts       User settings (storage.sync)
+src/lib/steam-lang.ts     Steam page-language detection (30 locales)
+src/lib/i18n.ts           Runtime i18n helper
+src/lib/widget.ts         Game-page widget construction
+src/lib/badge.ts          Single badge renderer (capsules, search, wishlist)
+src/lib/tooltip.ts        Hover card (singleton)
+src/lib/auto.ts           Lazy badge resolution (shared IntersectionObserver)
+src/lib/logo.ts           Programmatic SVG monogram
+src/popup/                Toolbar popup
+src/options/              Options page
+src/onboarding/           Post-install onboarding page
+src/styles.css            Styles injected into Steam
+src/theme.css             Design tokens (--ct-*), single source of the palette
+public/_locales/          30 locales for the manifest (name/description)
+public/locales/           30 runtime dictionaries (web-accessible)
+tests/                    Vitest + real CodeWeavers HTML fixtures
+scripts/                  verify.sh, e2e.mjs, package.mjs, icons.mjs, listing.mjs
+```
 
 ## Development
 
 ```bash
 npm install
-npm run build      # typecheck + vite build → dist/
-npm test           # unit tests (vitest, real HTML fixtures)
-npm run dev        # vite in watch mode (reloads the extension on save)
+npm run dev            # vite in watch mode (reloads the extension on save)
+npm run build          # typecheck + vite build → dist/
+npm test               # 167 unit tests (vitest + happy-dom, real HTML fixtures)
+npm run lint           # eslint
+npm run e2e            # Playwright against the real Steam store (local only, needs Brave)
+npm run package        # build + zip for the Chrome Web Store
 ```
 
-**Load in Brave/Chrome:** `brave://extensions` → Developer mode → **Load unpacked** → select the **`dist/`** folder (generated by `npm run build`).
+The verification gate is `scripts/verify.sh` (typecheck + lint + tests + build); CI on GitHub Actions runs the same on every push (Node 22) and uploads `dist/` as an artifact. The e2e suite is deliberately **not** in CI — it drives the real Steam store, which is too flaky for a gate — and runs locally before each release.
 
-The verification gate is `scripts/verify.sh` (typecheck + tests + build); CI on GitHub Actions runs the same on every push.
+See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to help, and [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to help.
+### If CodeWeavers changes their HTML
 
-## How it works
-
-- CodeWeavers has no public API: the extension queries their website (`/compatibility?name=...` to search and `/compatibility/crossover/<slug>` for the detail page) and parses the HTML.
-- The **service worker** (`src/background.ts`) performs the fetches (content scripts can't, due to CORS), with a maximum of 2 concurrent requests and deduplication.
-- The **content script** parses with `DOMParser` (`src/lib/parser.ts`) and caches parsed results for 7 days in `chrome.storage.local` (24 h for "no data" responses). Matching choices (`appid → slug`) are permanent.
-- For capsules with no name in the DOM, Steam's `appdetails` API is used (same origin, `filters=platforms,basic`), which also provides the native-Mac flag; cached 30 days, limited to 2 concurrent requests.
-
-## Structure
-
-```
-manifest.json            MV3: permissions and entry points (src/*.ts paths; compiled by crxjs)
-vite.config.ts           Vite + @crxjs/vite-plugin
-src/types.ts             Domain and messaging types
-src/background.ts        SW: fetches to codeweavers.com (queue + dedupe)
-src/lib/parser.ts        CodeWeavers HTML scraping (all of it lives here)
-src/lib/matcher.ts       Name normalization and candidate scoring
-src/lib/cache.ts         TTL cache + appid→slug choices
-src/lib/client.ts        search()/getApp()/steamDetails(): fetch + parse + cache
-src/lib/widget.ts        Game-page widget construction
-src/lib/auto.ts          Shared automatic resolution (IntersectionObserver)
-src/content/app.ts       Game page
-src/content/capsules.ts  Star overlay on capsules across the store
-src/content/search.ts    Search results (MutationObserver for AJAX)
-src/content/wishlist.ts  Wishlist (React SPA, generic /app/ link detection)
-src/styles.css           Steam-flavored styling
-tests/                   Vitest + real CodeWeavers HTML fixtures
-```
-
-## If CodeWeavers changes their HTML
-
-All scraping lives in `src/lib/parser.ts` (selectors: `#teTable-app` for search; `#appRating .os_Mac` and `#breakdown .breakdown-row` for the detail page). The tests in `tests/parser.test.ts` will fail with new fixtures — the header comment explains how to recapture them.
+All scraping lives in [src/lib/parser.ts](src/lib/parser.ts) (selectors: `#teTable-app` for search; `#appRating .os_Mac` and `#breakdown .breakdown-row` for the detail page). The tests in [tests/parser.test.ts](tests/parser.test.ts) will fail with new fixtures — the header comment explains how to recapture them.
 
 ## License
 
@@ -72,7 +209,7 @@ The HTML files under `tests/fixtures/` are captures of public pages from codewea
 CrosTem displays data from these third-party sources, credited with thanks:
 
 - [CodeWeavers CrossOver compatibility database](https://www.codeweavers.com/compatibility) — CrossOver ratings and version breakdowns.
-- [AppleGamingWiki](https://www.applegamingwiki.com/) — complementary macOS compatibility data.
+- [AppleGamingWiki](https://www.applegamingwiki.com/) — macOS compatibility data (CrossOver, Parallels, Rosetta 2, native).
 - [Are We Anti-Cheat Yet?](https://areweanticheatyet.com/) — anti-cheat status data.
 - [Steam appdetails API](https://store.steampowered.com/) — platform flags and game metadata.
 
