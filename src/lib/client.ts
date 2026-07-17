@@ -111,11 +111,11 @@ export function steamCacheKey(appid: string): string {
 }
 
 /** Searches CodeWeavers by (simplified) game name. */
-export async function search(name: string): Promise<CwSearchResult[]> {
+export async function search(name: string, swr?: cache.SwrPass): Promise<CwSearchResult[]> {
   const query = baseName(name);
   if (!query) return [];
   const cacheKey = 'search:' + query;
-  const cached = await cache.get<CwSearchResult[]>(cacheKey);
+  const cached = await cache.getSwr<CwSearchResult[]>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
   const html = await fetchExt(searchUrl(query));
@@ -129,9 +129,9 @@ export async function search(name: string): Promise<CwSearchResult[]> {
 }
 
 /** Downloads and parses a CodeWeavers app page by slug. */
-export async function getApp(slug: string): Promise<CwAppPage | null> {
+export async function getApp(slug: string, swr?: cache.SwrPass): Promise<CwAppPage | null> {
   const cacheKey = 'app:' + slug;
-  const cached = await cache.get<CwAppPage | null>(cacheKey);
+  const cached = await cache.getSwr<CwAppPage | null>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
   const html = await fetchExt(appUrl(slug));
@@ -209,8 +209,11 @@ async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
 }
 
 /** Name and native Mac flag, or null if Steam does not know the appid. */
-export async function steamDetails(appid: string): Promise<SteamDetails | null> {
-  const cached = await cache.get<SteamDetails | null>(steamCacheKey(appid));
+export async function steamDetails(
+  appid: string,
+  swr?: cache.SwrPass,
+): Promise<SteamDetails | null> {
+  const cached = await cache.getSwr<SteamDetails | null>(steamCacheKey(appid), swr);
   if (cached !== undefined) return cached;
   return steamQueue.run(appid, () => fetchSteamDetails(appid));
 }

@@ -6,6 +6,7 @@
 import { agwCacheKey, agwSearchUrl } from '../lib/agw';
 import { resolveNativeArch } from '../lib/arch';
 import * as cache from '../lib/cache';
+import { type SwrPass } from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
 import { logDebug, logWarn } from '../lib/log';
 import { initContentI18n, t } from '../lib/i18n';
@@ -101,43 +102,61 @@ if (appidFromPath && nameFromDom) {
     );
   };
 
+  const renderResolution = async (
+    resolution: Awaited<ReturnType<typeof resolveGame>>,
+    resolveAll: (forcePicker: boolean) => Promise<void>,
+  ): Promise<void> => {
+    const settings = await getSettings();
+    const { cw, agw, agwCandidates, ac, verdict } = resolution;
+
+    if (cw.kind === 'ambiguous') {
+      showCandidates(cw.candidates);
+      return;
+    }
+
+    const cwApp = cw.kind === 'hit' ? cw.app : null;
+    show(
+      renderAppWidget(
+        { cw: cwApp, cwSlug: cw.kind === 'hit' ? cw.slug : null, agw, ac, verdict },
+        {
+          gameName,
+          cwName: cw.kind === 'hit' ? cw.cwName : undefined,
+          approximate: cw.kind === 'hit' ? cw.approximate : false,
+          cxVersion: settings.crossoverVersion,
+          onChangeMatch: async () => {
+            await cache.clearSourceChoice('cw', appid);
+            void resolveAll(true);
+          },
+          onChangeAgwMatch:
+            agwCandidates.length > 0
+              ? async () => {
+                  await cache.clearSourceChoice('agw', appid);
+                  showAgwCandidates(agwCandidates);
+                }
+              : undefined,
+          onRefresh: refresh,
+        },
+      ),
+    );
+  };
+
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
     show(renderLoading());
     try {
-      const settings = await getSettings();
-      const { cw, agw, agwCandidates, ac, verdict } = await resolveGame(gameName, appid, {
-        forcePicker,
-      });
-
-      if (cw.kind === 'ambiguous') {
-        showCandidates(cw.candidates);
-        return;
+      // Stale-while-revalidate: paint immediately from whatever the
+      // cache holds (even past TTL, within the stale window), then
+      // strictly re-resolve just the expired sources and silently
+      // re-render if the outcome changed. Skipped around the candidate
+      // picker: a background re-render must never yank it away.
+      const swr: SwrPass = { staleServed: false };
+      const first = await resolveGame(gameName, appid, { forcePicker, swr });
+      await renderResolution(first, resolveAll);
+      if (swr.staleServed && first.cw.kind !== 'ambiguous') {
+        const fresh = await resolveGame(gameName, appid, { forcePicker });
+        if (fresh.cw.kind !== 'ambiguous' && JSON.stringify(fresh) !== JSON.stringify(first)) {
+          await renderResolution(fresh, resolveAll);
+        }
       }
-
-      const cwApp = cw.kind === 'hit' ? cw.app : null;
-      show(
-        renderAppWidget(
-          { cw: cwApp, cwSlug: cw.kind === 'hit' ? cw.slug : null, agw, ac, verdict },
-          {
-            gameName,
-            cwName: cw.kind === 'hit' ? cw.cwName : undefined,
-            approximate: cw.kind === 'hit' ? cw.approximate : false,
-            cxVersion: settings.crossoverVersion,
-            onChangeMatch: async () => {
-              await cache.clearSourceChoice('cw', appid);
-              void resolveAll(true);
-            },
-            onChangeAgwMatch:
-              agwCandidates.length > 0
-                ? async () => {
-                    await cache.clearSourceChoice('agw', appid);
-                    showAgwCandidates(agwCandidates);
-                  }
-                : undefined,
-            onRefresh: refresh,
-          },
-        ),
-      );
     } catch (e) {
       // Friendly, localized message; the technical detail goes to the console.
       logDebug('widget resolution failed', e);
