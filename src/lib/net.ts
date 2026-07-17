@@ -66,7 +66,10 @@ function parseRetryAfter(header: string | null): number | undefined {
 
 function isRetryable(out: FetchOutcome): boolean {
   if (out.ok) return false;
-  if (out.code === 'network' || out.code === 'timeout') return true;
+  // A timed-out attempt is final: the per-source timeouts are already
+  // generous (a hung source will hang again), and retrying it triples
+  // the user-visible worst case while holding a queue slot.
+  if (out.code === 'network') return true;
   return out.code === 'http' && (out.status === 429 || (out.status ?? 0) >= 500);
 }
 

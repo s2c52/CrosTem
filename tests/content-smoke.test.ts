@@ -103,4 +103,42 @@ describe('content/wishlist.ts', () => {
     const badge = document.querySelector('.crostem-badge');
     expect(badge?.previousElementSibling?.textContent).toBe('Stardew Valley');
   });
+
+  it('aplica en vivo el toggle de la superficie (off → limpia, on → remonta)', async () => {
+    document.body.innerHTML = WISHLIST_HTML;
+    window.history.pushState({}, '', '/wishlist/profiles/123/');
+    await import('../src/content/wishlist');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(1);
+    });
+
+    mock.emitStorageChange({ settings: { newValue: { surfaces: { wishlist: false } } } }, 'sync');
+    expect(document.querySelectorAll('.crostem-badge').length).toBe(0);
+    expect(document.querySelector('a[data-crostem]')).toBeNull();
+
+    mock.emitStorageChange({ settings: { newValue: { surfaces: { wishlist: true } } } }, 'sync');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(1);
+    });
+  });
+});
+
+describe('live-apply del widget de ficha', () => {
+  it('desmonta y remonta el widget al cambiar surfaces.app', async () => {
+    document.body.innerHTML = APP_HTML;
+    document.querySelector('.platform_img')?.classList.add('mac');
+    window.history.pushState({}, '', '/app/1245620/ELDEN_RING/');
+    await import('../src/content/app');
+    await vi.waitFor(() => {
+      expect(document.querySelector('#crostem-widget')).not.toBeNull();
+    });
+
+    mock.emitStorageChange({ settings: { newValue: { surfaces: { app: false } } } }, 'sync');
+    expect(document.querySelector('#crostem-widget')).toBeNull();
+
+    mock.emitStorageChange({ settings: { newValue: { surfaces: { app: true } } } }, 'sync');
+    await vi.waitFor(() => {
+      expect(document.querySelector('#crostem-widget')).not.toBeNull();
+    });
+  });
 });

@@ -38,6 +38,13 @@ const io = new IntersectionObserver(
   { rootMargin: LAZY_ROOT_MARGIN },
 );
 
+/** Unregisters an element (surface teardown): stops observing it and
+ * drops its pending resolution. Safe on elements never attached. */
+export function detach(el: Element): void {
+  io.unobserve(el);
+  registry.delete(el);
+}
+
 export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
   if (opts.native === true) {
     // Immediate provisional badge (5★ without architecture); the architecture
@@ -107,20 +114,27 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
     | { type: 'none' } = { type: 'none' };
 
   if (settings.sources.cw) {
-    const res = await resolveCw(name, opts.appid);
-    if (res.kind === 'hit') {
-      cwSignal = res.app?.mac
-        ? { stars: res.stars, status: res.app.mac.status }
-        : { stars: res.stars };
-      cwOutcome = {
-        type: 'hit',
-        stars: res.stars,
-        slug: res.slug,
-        cwName: res.cwName,
-        approximate: res.approximate,
-      };
-    } else if (res.kind === 'ambiguous') {
-      cwOutcome = { type: 'ambiguous', count: res.candidates.length };
+    // A CodeWeavers failure (source down, breaker open) must not kill
+    // the badge: AGW/anticheat are already resolving in parallel and
+    // their verdict alone is still worth showing.
+    try {
+      const res = await resolveCw(name, opts.appid);
+      if (res.kind === 'hit') {
+        cwSignal = res.app?.mac
+          ? { stars: res.stars, status: res.app.mac.status }
+          : { stars: res.stars };
+        cwOutcome = {
+          type: 'hit',
+          stars: res.stars,
+          slug: res.slug,
+          cwName: res.cwName,
+          approximate: res.approximate,
+        };
+      } else if (res.kind === 'ambiguous') {
+        cwOutcome = { type: 'ambiguous', count: res.candidates.length };
+      }
+    } catch (e) {
+      logDebug('CW resolution failed, degrading to secondary sources', e);
     }
   }
 

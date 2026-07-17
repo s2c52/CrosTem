@@ -34,7 +34,9 @@ export const DEFAULTS: Settings = {
   language: 'auto',
 };
 
-const KEY = 'settings';
+/** chrome.storage.sync key holding the Settings object. */
+export const SETTINGS_KEY = 'settings';
+const KEY = SETTINGS_KEY;
 
 /** Valid range for the cache TTL, in days. */
 export const CACHE_TTL_MIN_DAYS = 1;

@@ -134,6 +134,25 @@ describe('fetchWithPolicy', () => {
     expect(times).toEqual([0, RETRY_AFTER_CAP_MS]); // 30s capped to 10s
   });
 
+  it('un timeout es definitivo: no se reintenta aunque haya presupuesto', async () => {
+    const fetchFn = vi.fn(
+      (_url: string, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () =>
+            reject(new DOMException('aborted', 'AbortError')),
+          );
+        }),
+    );
+    const p = fetchWithPolicy('https://example.test/', {
+      timeoutMs: 5_000,
+      fetchFn: asFetch(fetchFn), // default maxRetries (2) available
+    });
+    await vi.runAllTimersAsync();
+    const out = await p;
+    expect(out).toMatchObject({ ok: false, code: 'timeout' });
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+  });
+
   it('no reintenta 4xx distintos de 429', async () => {
     const fetchFn = vi.fn(() => Promise.resolve(res(404)));
     const p = fetchWithPolicy('https://example.test/', {

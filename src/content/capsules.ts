@@ -3,13 +3,16 @@
 
 // Star overlay on game capsules (images) across the whole
 // Steam store: front page, deals, categories, "more like this", etc.
-import { attach } from '../lib/auto';
+import { attach, detach } from '../lib/auto';
 import { SCAN_DEBOUNCE_MS } from '../lib/constants';
 import { coalesce } from '../lib/debounce';
 import { initContentI18n } from '../lib/i18n';
+import { createIncrementalScanner } from '../lib/scan';
+import { watchSurface } from '../lib/surface';
 import '../styles.css';
 
 const APP_LINK = /\/app\/(\d+)/;
+const ANCHOR_SEL = 'a[href*="/app/"]';
 
 // React store hover cards: hovering a capsule expands it into a card with
 // tags, reviews and price. Some variants have a semantic root class
@@ -173,9 +176,19 @@ function fixupHoverCards(): void {
  * hover-card region; the next pass restores it once the card closes.
  */
 function suppressCoveredOverlays(): void {
-  const regions = [
+  const regionEls = [
     ...document.querySelectorAll<HTMLElement>(`${HOVER_CARD}, a[data-crostem-hover-hero='1']`),
-  ]
+  ];
+  if (regionEls.length === 0) {
+    // Fast path — no hover card anywhere (the overwhelmingly common case
+    // for pointer movement): zero getBoundingClientRect calls, just
+    // clear any leftover suppression from a card that closed.
+    document
+      .querySelectorAll('.' + SUPPRESSED_CLASS)
+      .forEach((el) => el.classList.remove(SUPPRESSED_CLASS));
+    return;
+  }
+  const regions = regionEls
     .map((el) => {
       // For hashed-variant heroes the card root is unknown: approximate
       // the card region with the hero's grandparent (the card body).
@@ -196,25 +209,67 @@ function suppressCoveredOverlays(): void {
   });
 }
 
-function scan(): void {
+/** roots = null means a full-document pass (initial scan / overflow). */
+function scan(roots: readonly Element[] | null): void {
+  // Hover-card fixup stays document-wide: it only walks our own
+  // overlays (DOM queries, no layout reads), and React hydration can
+  // mutate far from the overlay it invalidates.
   fixupHoverCards();
-  document.querySelectorAll<HTMLAnchorElement>('a[href*="/app/"]').forEach(processAnchor);
+  if (roots === null) {
+    document.querySelectorAll<HTMLAnchorElement>(ANCHOR_SEL).forEach(processAnchor);
+  } else {
+    for (const root of roots) {
+      if (root instanceof HTMLAnchorElement && APP_LINK.test(root.getAttribute('href') ?? '')) {
+        processAnchor(root);
+      }
+      root.querySelectorAll<HTMLAnchorElement>(ANCHOR_SEL).forEach(processAnchor);
+    }
+  }
   suppressCoveredOverlays();
 }
 
-const scheduleScan = coalesce(scan, SCAN_DEBOUNCE_MS);
-const scheduleSuppress = coalesce(suppressCoveredOverlays, 150);
+const scanner = createIncrementalScanner(scan, SCAN_DEBOUNCE_MS);
+// Coalesced to 150ms and aligned to a frame: pointer movement never
+// forces a mid-handler reflow, and the fast path above makes the
+// no-card case free.
+const scheduleSuppress = coalesce(() => requestAnimationFrame(suppressCoveredOverlays), 150);
+
+function removeInjected(): void {
+  document
+    .querySelectorAll<HTMLElement>('.crostem-overlay, .crostem-hovercard-badge')
+    .forEach((el) => {
+      detach(el);
+      el.remove();
+    });
+  document.querySelectorAll<HTMLElement>('[data-crostem-capsule]').forEach((el) => {
+    delete el.dataset.crostemCapsule;
+    delete el.dataset.crostemHoverHero;
+    el.classList.remove('crostem-capsule-host');
+  });
+  document.querySelectorAll<HTMLElement>('[data-crostem-hover-card]').forEach((el) => {
+    delete el.dataset.crostemHoverCard;
+  });
+}
+
+const surface = {
+  start(): void {
+    scanner.start(document.body);
+    // Hover cards can open without childList mutations (pre-rendered,
+    // CSS-toggled): re-check coverage as the pointer moves.
+    document.addEventListener('mouseover', scheduleSuppress, { passive: true });
+  },
+  stop(): void {
+    scanner.stop();
+    document.removeEventListener('mouseover', scheduleSuppress);
+    removeInjected();
+  },
+};
 
 // Wishlist rows carry their own inline badge (content/wishlist.ts);
 // overlaying their capsules too would duplicate the information.
 if (!location.pathname.startsWith('/wishlist')) {
   void (async () => {
-    const settings = await initContentI18n();
-    if (!settings.surfaces.capsules) return;
-    scan();
-    new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });
-    // Hover cards can open without childList mutations (pre-rendered,
-    // CSS-toggled): re-check coverage as the pointer moves.
-    document.addEventListener('mouseover', scheduleSuppress, { passive: true });
+    await initContentI18n();
+    await watchSurface('capsules', surface);
   })();
 }
