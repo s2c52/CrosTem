@@ -39,8 +39,18 @@ async function doFetch(url: string): Promise<ExtFetchResponse> {
     timeoutMs: sourceTimeoutMs(url),
     credentials: 'omit',
   });
-  if (out.ok) breaker.onSuccess(origin);
-  else breaker.onFailure(origin);
+  if (out.ok) {
+    // The allowlist only vetted the requested URL; a 3xx from an
+    // allowlisted host could land off-allowlist. Re-check where the
+    // request actually ended up before returning the body. Not a breaker
+    // signal: the origin is healthy, we simply refuse the payload.
+    if (!isAllowedUrl(out.finalUrl)) {
+      return { ok: false, error: 'redirected off allowlist', code: 'not-allowed' };
+    }
+    breaker.onSuccess(origin);
+  } else {
+    breaker.onFailure(origin);
+  }
   return out;
 }
 

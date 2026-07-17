@@ -138,7 +138,13 @@ export type ExtMessage = ExtFetchRequest;
 
 /** Why a fetch failed: lets callers distinguish retryable transport
  * problems from HTTP errors, policy rejections and an open breaker. */
-export type FetchErrorCode = 'timeout' | 'http' | 'network' | 'breaker-open' | 'not-allowed';
+export type FetchErrorCode =
+  | 'timeout'
+  | 'http'
+  | 'network'
+  | 'breaker-open'
+  | 'not-allowed'
+  | 'too-large';
 
 export type ExtFetchResponse =
   | { ok: true; body: string; finalUrl: string }

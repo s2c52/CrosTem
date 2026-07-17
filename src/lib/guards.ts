@@ -19,3 +19,24 @@ export function asString(v: unknown): string | undefined {
 export function isExtFetchRequest(msg: unknown): msg is ExtFetchRequest {
   return isRecord(msg) && msg.type === 'extFetch' && typeof msg.url === 'string';
 }
+
+/** Keep only well-formed `choice:*` string entries from an untrusted
+ * imported corrections file, bounding both value length and total count
+ * (storage-bloat protection). Anything else is silently dropped. */
+export function sanitizeChoiceImport(
+  data: unknown,
+  maxEntries: number,
+  maxValueLen: number,
+): Record<string, string> {
+  if (!isRecord(data)) return {};
+  const out: Record<string, string> = {};
+  let count = 0;
+  for (const [key, value] of Object.entries(data)) {
+    if (count >= maxEntries) break;
+    if (key.startsWith('choice:') && typeof value === 'string' && value.length <= maxValueLen) {
+      out[key] = value;
+      count++;
+    }
+  }
+  return out;
+}

@@ -38,15 +38,15 @@ CrosTem scrapes codeweavers.com, which has no public API. When they change their
 
 ## Developer Certificate of Origin (DCO)
 
-By contributing you certify the [Developer Certificate of Origin](https://developercertificate.org/) — in short, that you wrote the code or otherwise have the right to submit it under the project license (GPL-3.0-or-later).
+By opening a pull request you certify the [Developer Certificate of Origin](https://developercertificate.org/) — in short, that you wrote the code or otherwise have the right to submit it under the project license (GPL-3.0-or-later).
 
-Every commit must be signed off:
+A `Signed-off-by` trailer is welcome but not required; if you want to add one:
 
 ```bash
 git commit -s -m "Fix search-row parsing"
 ```
 
-which adds a `Signed-off-by: Your Name <your@email>` line to the commit message. PRs with unsigned commits will be asked to rebase with `git rebase --signoff`.
+which appends a `Signed-off-by: Your Name <your@email>` line to the commit message.
 
 ## License
 
