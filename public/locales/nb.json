@@ -1,0 +1,368 @@
+{
+  "widgetTitle": {
+    "message": "Kjører det på Mac?"
+  },
+  "checking": {
+    "message": "Sjekker kompatibilitetskilder…"
+  },
+  "errorReach": {
+    "message": "Fikk ikke kontakt med kompatibilitetskildene."
+  },
+  "errorFriendly": {
+    "message": "Vi fikk ikke sjekket kompatibilitetskildene akkurat nå."
+  },
+  "retry": {
+    "message": "Prøv igjen"
+  },
+  "nativeBadge": {
+    "message": "Nativt på macOS"
+  },
+  "nativeNote": {
+    "message": "Dette spillet har en nativ Mac-versjon — CrossOver er ikke nødvendig."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 på M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Arkitektur ifølge AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Arkitektur utledet fra Steams systemkrav."
+  },
+  "archSourceDate": {
+    "message": "Arkitektur anslått ut fra utgivelsesdatoen."
+  },
+  "verdict_green": {
+    "message": "Spillbart på Mac via CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Spillbart med forbehold"
+  },
+  "verdict_red": {
+    "message": "Trolig ikke spillbart på Mac"
+  },
+  "verdict_unknown": {
+    "message": "Ingen kompatibilitetsdata"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Anticheat"
+  },
+  "lastTested": {
+    "message": "Sist testet: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ rapporter",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Vis på CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Vis på AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Søk på CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Ingen data."
+  },
+  "yourVersion": {
+    "message": "din versjon"
+  },
+  "approxMatch": {
+    "message": "omtrentlig treff: «$NAME$»",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Feil treff?"
+  },
+  "acLinuxNote": {
+    "message": "Linux/Proton-data — veiledende for CrossOver. "
+  },
+  "refresh": {
+    "message": "↻ Oppdater data"
+  },
+  "refreshTitle": {
+    "message": "Tøm cachen for dette spillet og sjekk alle kilder på nytt"
+  },
+  "attribution": {
+    "message": "Data: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Ingen tilknytning."
+  },
+  "pickMatch": {
+    "message": "Flere mulige treff på CodeWeavers — velg riktig:"
+  },
+  "noneOfThese": {
+    "message": "Ingen av disse — søk på CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Flere mulige sider på AppleGamingWiki — velg riktig:"
+  },
+  "agwNoneOfThese": {
+    "message": "Ingen av disse — søk på AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Mulige treff på AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "$N$ treff ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "ingen data"
+  },
+  "starsAria": {
+    "message": "$N$ av $MAX$ stjerner",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "ingen vurdering"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — CrossOver-vurdering på CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(omtrentlig treff)"
+  },
+  "badgeMatches": {
+    "message": "$N$ mulige treff på CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "CrosTem-innstillinger"
+  },
+  "optSurfaces": {
+    "message": "Hvor kompatibiliteten vises"
+  },
+  "optSurfaceApp": {
+    "message": "Widget på spillsiden"
+  },
+  "optSurfaceCapsules": {
+    "message": "Stjerne-overlays på butikkapsler"
+  },
+  "optSurfaceSearch": {
+    "message": "Badges i søkeresultater"
+  },
+  "optSurfaceWishlist": {
+    "message": "Badges på ønskelisten"
+  },
+  "optSources": {
+    "message": "Datakilder"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (CrossOver-vurderinger)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (anticheat-status)"
+  },
+  "optCxVersion": {
+    "message": "Din CrossOver-versjon"
+  },
+  "optCxVersionNote": {
+    "message": "Vurderinger for din versjon fremheves i widgeten (f.eks. 26)."
+  },
+  "optCache": {
+    "message": "Cache"
+  },
+  "optCacheTtl": {
+    "message": "Behold resultater i cachen i (dager)"
+  },
+  "optCacheClear": {
+    "message": "Tøm cache"
+  },
+  "optCacheCleared": {
+    "message": "Cache tømt."
+  },
+  "optCacheCount": {
+    "message": "$N$ oppføringer i cachen",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Treff-korrigeringer"
+  },
+  "optChoicesCount": {
+    "message": "$N$ lagrede korrigeringer",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Eksporter"
+  },
+  "optImport": {
+    "message": "Importer"
+  },
+  "optImported": {
+    "message": "Korrigeringer importert."
+  },
+  "optImportError": {
+    "message": "Ugyldig fil."
+  },
+  "optClearChoices": {
+    "message": "Slett alle korrigeringer"
+  },
+  "optReloadNote": {
+    "message": "Endringer gjelder for Steam-faner etter ny innlasting — bruk «Bruk nå» nedenfor."
+  },
+  "optApplyNow": {
+    "message": "Bruk på åpne Steam-faner"
+  },
+  "optApplied": {
+    "message": "Brukt — $N$ Steam-faner lastet inn på nytt.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Lagret."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Søk etter et spill på CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Ingen resultater."
+  },
+  "popupOptions": {
+    "message": "Innstillinger"
+  },
+  "popupError": {
+    "message": "Søket mislyktes. Prøv igjen."
+  },
+  "popupCurrentTab": {
+    "message": "Denne fanen"
+  },
+  "popupSurfaces": {
+    "message": "Vis på Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Spillside"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Kapsler"
+  },
+  "popupSurfaceSearch": {
+    "message": "Søk"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Ønskeliste"
+  },
+  "popupStatusSources": {
+    "message": "$N$ av 3 kilder aktive",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Datakilder"
+  },
+  "onboardingTitle": {
+    "message": "Velkommen til CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Finn ut om et Steam-spill kjører på Macen din — før du kjøper det."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Dom på hver spillside"
+  },
+  "onboardingWidgetBody": {
+    "message": "En «Kjører det på Mac?»-widget kombinerer CrossOver-vurderinger, AppleGamingWiki og anticheat-status til én klar dom."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Stjerner i hele butikken"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Spillkapsler på forsiden får et stjerne-overlay med kompatibilitet mens du blar."
+  },
+  "onboardingSearchTitle": {
+    "message": "Badges i søk og ønskeliste"
+  },
+  "onboardingSearchBody": {
+    "message": "Søkeresultater og ønskelisten din viser kompakte vurderings-badges — hold musepekeren over for detaljer."
+  },
+  "onboardingNativeTitle": {
+    "message": "Native spill, merket"
+  },
+  "onboardingNativeBody": {
+    "message": "Spill med en nativ Mac-versjon får 5 stjerner og en arkitektur-tag med Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Åpne innstillinger"
+  },
+  "onboardingHint": {
+    "message": "Velg hvor badges vises og hvilke datakilder som brukes."
+  },
+  "statusUnrated": {
+    "message": "Ikke vurdert"
+  }
+}

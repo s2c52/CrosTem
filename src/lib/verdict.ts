@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 // Combined verdict engine (traffic light). Pure, tested function: takes
-// the signals from the three sources and produces level + label + reasons.
+// the signals from the three sources and produces the level; the UI
+// renders it via the localized verdict_* keys.
 //
 // CONSERVATIVE policy (product decision, see ROADMAP.md):
 // - 🟢 only if CodeWeavers ≥ "Runs Well" or AGW ≥ playable, with no bad signal
@@ -10,7 +11,7 @@
 // - Anticheat Denied/Broken (Linux/Proton data, indicative) lowers to 🔴.
 // - Mixed or intermediate signals → 🟡. No data → ⚪ unknown.
 import { CW_STARS_BAD, CW_STARS_GOOD } from './constants';
-import type { AgwCompat, AnticheatInfo, CwSignal, Verdict, VerdictLevel } from '../types';
+import type { AgwCompat, AnticheatInfo, CwSignal, VerdictLevel } from '../types';
 
 function cwGood(cw: CwSignal | null): boolean {
   if (!cw) return false;
@@ -45,49 +46,23 @@ function acUncertain(ac: AnticheatInfo | null): boolean {
   return ac != null && ac.status === 'Planned';
 }
 
-const LABELS: Record<VerdictLevel, string> = {
-  green: 'Playable on Mac via CrossOver',
-  yellow: 'Playable with caveats',
-  red: 'Likely unplayable on Mac',
-  unknown: 'No compatibility data',
-};
-
 export function computeVerdict(
   cw: CwSignal | null,
   agw: AgwCompat | null,
   ac: AnticheatInfo | null,
-): Verdict {
-  const reasons: string[] = [];
+): VerdictLevel {
   const hasCw = cw != null && (cw.stars != null || !!cw.status);
   const hasAgwSignal = agw != null && agw.crossover !== 'na' && agw.crossover !== 'unknown';
 
-  if (cw?.status) reasons.push(`CodeWeavers: ${cw.status}`);
-  else if (cw?.stars != null) reasons.push(`CodeWeavers: ${cw.stars}/5 stars`);
-  if (hasAgwSignal) reasons.push(`AppleGamingWiki: CrossOver ${agw.crossover}`);
-  if (ac) {
-    reasons.push(
-      `Anticheat (${ac.anticheats.join(', ') || 'unknown'}): ${ac.status} on Linux/Proton — indicative for CrossOver`,
-    );
-  }
-
-  let level: VerdictLevel;
   if (!hasCw && !hasAgwSignal) {
     // No compatibility data: anticheat alone does not assert playability,
     // but a block does deny it.
-    level = acBlocked(ac) ? 'red' : 'unknown';
-  } else if (acBlocked(ac)) {
-    level = 'red';
-  } else {
-    const good = cwGood(cw) || agwGood(agw);
-    const bad = cwBad(cw) || agwBad(agw);
-    if (good && !bad && !acUncertain(ac)) level = 'green';
-    else if (!good && bad) level = 'red';
-    else level = 'yellow'; // mixed, intermediate or uncertain anticheat
+    return acBlocked(ac) ? 'red' : 'unknown';
   }
-
-  if (level === 'yellow' && (cwGood(cw) || agwGood(agw)) && (cwBad(cw) || agwBad(agw))) {
-    reasons.push('Sources disagree — check both before buying');
-  }
-
-  return { level, label: LABELS[level], reasons };
+  if (acBlocked(ac)) return 'red';
+  const good = cwGood(cw) || agwGood(agw);
+  const bad = cwBad(cw) || agwBad(agw);
+  if (good && !bad && !acUncertain(ac)) return 'green';
+  if (!good && bad) return 'red';
+  return 'yellow'; // mixed, intermediate or uncertain anticheat
 }

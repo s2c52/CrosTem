@@ -1,0 +1,368 @@
+{
+  "widgetTitle": {
+    "message": "Běží na Macu?"
+  },
+  "checking": {
+    "message": "Kontrolujeme zdroje kompatibility…"
+  },
+  "errorReach": {
+    "message": "Nepodařilo se spojit se zdroji kompatibility."
+  },
+  "errorFriendly": {
+    "message": "Zdroje kompatibility se teď nepodařilo ověřit."
+  },
+  "retry": {
+    "message": "Zkusit znovu"
+  },
+  "nativeBadge": {
+    "message": "Nativně na macOS"
+  },
+  "nativeNote": {
+    "message": "Tato hra má nativní verzi pro Mac — CrossOver není potřeba."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 na M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Architektura podle AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Architektura odvozená ze systémových požadavků Steamu."
+  },
+  "archSourceDate": {
+    "message": "Architektura odhadnutá podle data vydání."
+  },
+  "verdict_green": {
+    "message": "Hratelné na Macu přes CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Hratelné s výhradami"
+  },
+  "verdict_red": {
+    "message": "Na Macu nejspíš nehratelné"
+  },
+  "verdict_unknown": {
+    "message": "Žádná data o kompatibilitě"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Anticheat"
+  },
+  "lastTested": {
+    "message": "Naposledy testováno: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "Hlášení: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Zobrazit na CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Zobrazit na AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Hledat na CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Žádná data."
+  },
+  "yourVersion": {
+    "message": "vaše verze"
+  },
+  "approxMatch": {
+    "message": "přibližná shoda: „$NAME$“",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Špatná shoda?"
+  },
+  "acLinuxNote": {
+    "message": "Data z Linux/Proton — pro CrossOver orientační. "
+  },
+  "refresh": {
+    "message": "↻ Obnovit data"
+  },
+  "refreshTitle": {
+    "message": "Vymazat mezipaměť této hry a znovu ověřit všechny zdroje"
+  },
+  "attribution": {
+    "message": "Data: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Bez přidružení."
+  },
+  "pickMatch": {
+    "message": "Několik možných shod na CodeWeavers — vyberte tu správnou:"
+  },
+  "noneOfThese": {
+    "message": "Žádná z nich — hledat na CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Několik možných stránek na AppleGamingWiki — vyberte tu správnou:"
+  },
+  "agwNoneOfThese": {
+    "message": "Žádná z nich — hledat na AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Možné shody na AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "Shody: $N$ ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "žádná data"
+  },
+  "starsAria": {
+    "message": "Hvězdičky: $N$ z $MAX$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "bez hodnocení"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — hodnocení CrossOver na CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(přibližná shoda)"
+  },
+  "badgeMatches": {
+    "message": "Možné shody na CodeWeavers: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "Nastavení CrosTem"
+  },
+  "optSurfaces": {
+    "message": "Kde zobrazovat kompatibilitu"
+  },
+  "optSurfaceApp": {
+    "message": "Widget na stránce hry"
+  },
+  "optSurfaceCapsules": {
+    "message": "Hvězdičky na kapslích obchodu"
+  },
+  "optSurfaceSearch": {
+    "message": "Odznaky ve výsledcích hledání"
+  },
+  "optSurfaceWishlist": {
+    "message": "Odznaky na seznamu přání"
+  },
+  "optSources": {
+    "message": "Zdroje dat"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (hodnocení CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (stav anticheatu)"
+  },
+  "optCxVersion": {
+    "message": "Vaše verze CrossOver"
+  },
+  "optCxVersionNote": {
+    "message": "Její hodnocení se ve widgetu zvýrazňují (např. 26)."
+  },
+  "optCache": {
+    "message": "Mezipaměť"
+  },
+  "optCacheTtl": {
+    "message": "Uchovávat výsledky v mezipaměti (dny)"
+  },
+  "optCacheClear": {
+    "message": "Vymazat mezipaměť"
+  },
+  "optCacheCleared": {
+    "message": "Mezipaměť vymazána."
+  },
+  "optCacheCount": {
+    "message": "Záznamy v mezipaměti: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Opravy shod"
+  },
+  "optChoicesCount": {
+    "message": "Uložené opravy: $N$",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Exportovat"
+  },
+  "optImport": {
+    "message": "Importovat"
+  },
+  "optImported": {
+    "message": "Opravy importovány."
+  },
+  "optImportError": {
+    "message": "Neplatný soubor."
+  },
+  "optClearChoices": {
+    "message": "Smazat všechny opravy"
+  },
+  "optReloadNote": {
+    "message": "Změny se na kartách Steamu projeví po jejich obnovení — použijte „Použít teď“ níže."
+  },
+  "optApplyNow": {
+    "message": "Použít na otevřené karty Steamu"
+  },
+  "optApplied": {
+    "message": "Použito — obnovené karty Steamu: $N$.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Uloženo."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Hledat hru na CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Žádné výsledky."
+  },
+  "popupOptions": {
+    "message": "Nastavení"
+  },
+  "popupError": {
+    "message": "Hledání selhalo. Zkuste to znovu."
+  },
+  "popupCurrentTab": {
+    "message": "Tato karta"
+  },
+  "popupSurfaces": {
+    "message": "Zobrazovat na Steamu"
+  },
+  "popupSurfaceApp": {
+    "message": "Stránka hry"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Kapsle"
+  },
+  "popupSurfaceSearch": {
+    "message": "Hledání"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Seznam přání"
+  },
+  "popupStatusSources": {
+    "message": "Aktivní zdroje: $N$ ze 3",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Zdroje dat"
+  },
+  "onboardingTitle": {
+    "message": "Vítejte v CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Zjistěte, jestli hra ze Steamu poběží na vašem Macu — ještě před nákupem."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Verdikt na každé stránce hry"
+  },
+  "onboardingWidgetBody": {
+    "message": "Widget „Běží na Macu?“ spojuje hodnocení CrossOver, AppleGamingWiki a stav anticheatu do jednoho jasného verdiktu."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Hvězdičky napříč obchodem"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Kapsle her na hlavní stránce dostávají při procházení překryv s hvězdičkami kompatibility."
+  },
+  "onboardingSearchTitle": {
+    "message": "Odznaky v hledání a seznamu přání"
+  },
+  "onboardingSearchBody": {
+    "message": "Výsledky hledání a váš seznam přání zobrazují kompaktní odznaky s hodnocením — podrobnosti uvidíte po najetí myší."
+  },
+  "onboardingNativeTitle": {
+    "message": "Nativní hry — označené"
+  },
+  "onboardingNativeBody": {
+    "message": "Hry s nativní verzí pro Mac dostanou 5 hvězdiček a štítek architektury Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Otevřít nastavení"
+  },
+  "onboardingHint": {
+    "message": "Zvolte, kde se mají odznaky zobrazovat a které zdroje dat používat."
+  },
+  "statusUnrated": {
+    "message": "Bez hodnocení"
+  }
+}

@@ -80,7 +80,9 @@ export function appCacheKey(slug: string): string {
 }
 
 export function steamCacheKey(appid: string): string {
-  return 'steam:' + appid;
+  // "en" marks entries fetched with l=english (name/requirements language
+  // affects matching and arch inference); older un-pinned entries are ignored.
+  return 'steam:en:' + appid;
 }
 
 /** Searches CodeWeavers by (simplified) game name. */
@@ -153,20 +155,23 @@ export function parseSteamDetails(json: unknown, appid: string): SteamDetails | 
 }
 
 async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
+  // l=english pins the response language regardless of the user's Steam
+  // session: the English name matches the (English) compatibility sources
+  // and mac_requirements stays parseable by the arch regexes.
   const url =
     'https://store.steampowered.com/api/appdetails?appids=' +
     encodeURIComponent(appid) +
-    '&filters=platforms,basic,release_date';
+    '&filters=platforms,basic,release_date&l=english';
   const res = await fetch(url, { credentials: 'same-origin' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const value = parseSteamDetails(await res.json(), appid);
-  await cache.set('steam:' + appid, value, value ? STEAM_TTL : cache.TTL_NEGATIVE);
+  await cache.set(steamCacheKey(appid), value, value ? STEAM_TTL : cache.TTL_NEGATIVE);
   return value;
 }
 
 /** Name and native Mac flag, or null if Steam does not know the appid. */
 export async function steamDetails(appid: string): Promise<SteamDetails | null> {
-  const cached = await cache.get<SteamDetails | null>('steam:' + appid);
+  const cached = await cache.get<SteamDetails | null>(steamCacheKey(appid));
   if (cached !== undefined) return cached;
   return steamQueue.run(appid, () => fetchSteamDetails(appid));
 }

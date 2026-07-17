@@ -10,7 +10,7 @@ import { anticheatLookup } from './awacy';
 import { resolveCw, type CwResolution } from './cw';
 import { getSettings } from './settings';
 import { computeVerdict } from './verdict';
-import type { AgwCompat, AnticheatInfo, RankedResult, Verdict } from '../types';
+import type { AgwCompat, AnticheatInfo, RankedResult, VerdictLevel } from '../types';
 
 export interface GameResolution {
   cw: CwResolution;
@@ -18,7 +18,7 @@ export interface GameResolution {
   /** Plausible AGW pages, for the "wrong match?" correction picker. */
   agwCandidates: RankedResult[];
   ac: AnticheatInfo | null;
-  verdict: Verdict;
+  verdict: VerdictLevel;
 }
 
 const EMPTY_AGW: AgwLookup = { result: null, candidates: [] };

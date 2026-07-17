@@ -103,6 +103,21 @@ await check('banner de veredicto + fila expandible (Elden Ring)', async () => {
   return /crostem-banner-\w+/.exec(cls)?.[0] ?? 'banner';
 });
 
+// 1d. i18n: the widget follows the Steam page language (?l= drives the
+// page's application_config, first step of the detection cascade).
+await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/?l=spanish', {
+  waitUntil: 'domcontentloaded',
+});
+await check('widget sigue el idioma de la página (?l=spanish)', async () => {
+  const widget = page.locator('#crostem-widget .crostem-box');
+  await widget.waitFor({ timeout: 25000 });
+  const text = await widget.textContent();
+  if (!text.includes('¿Corre en Mac?'))
+    throw new Error('cabecera no en español: ' + text.replace(/\s+/g, ' ').slice(0, 100));
+  await widget.screenshot({ path: join(OUT, 'widget-spanish.png') });
+  return 'widget en español';
+});
+
 // 1c. Game with blocked anticheat (Destiny 2 = Denied on AWACY): red + warning
 await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', {
   waitUntil: 'domcontentloaded',

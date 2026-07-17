@@ -1,0 +1,368 @@
+{
+  "widgetTitle": {
+    "message": "Jalan di Mac?"
+  },
+  "checking": {
+    "message": "Memeriksa sumber kompatibilitas…"
+  },
+  "errorReach": {
+    "message": "Tidak dapat menghubungi sumber kompatibilitas."
+  },
+  "errorFriendly": {
+    "message": "Saat ini kami tidak dapat memeriksa sumber kompatibilitas."
+  },
+  "retry": {
+    "message": "Coba lagi"
+  },
+  "nativeBadge": {
+    "message": "Native di macOS"
+  },
+  "nativeNote": {
+    "message": "Game ini punya versi Mac native — tidak perlu CrossOver."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 di M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Arsitektur menurut AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Arsitektur diperkirakan dari persyaratan sistem Steam."
+  },
+  "archSourceDate": {
+    "message": "Arsitektur diperkirakan dari tanggal rilis."
+  },
+  "verdict_green": {
+    "message": "Bisa dimainkan di Mac lewat CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Bisa dimainkan dengan catatan"
+  },
+  "verdict_red": {
+    "message": "Kemungkinan tidak bisa dimainkan di Mac"
+  },
+  "verdict_unknown": {
+    "message": "Tidak ada data kompatibilitas"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Anticheat"
+  },
+  "lastTested": {
+    "message": "Terakhir diuji: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ laporan",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Lihat di CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Lihat di AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Cari di CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Tidak ada data."
+  },
+  "yourVersion": {
+    "message": "versimu"
+  },
+  "approxMatch": {
+    "message": "kecocokan perkiraan: “$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Salah cocok?"
+  },
+  "acLinuxNote": {
+    "message": "Data Linux/Proton — indikatif untuk CrossOver. "
+  },
+  "refresh": {
+    "message": "↻ Segarkan data"
+  },
+  "refreshTitle": {
+    "message": "Hapus cache game ini dan periksa ulang semua sumber"
+  },
+  "attribution": {
+    "message": "Data: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Tidak berafiliasi."
+  },
+  "pickMatch": {
+    "message": "Ada beberapa kemungkinan kecocokan di CodeWeavers — pilih yang benar:"
+  },
+  "noneOfThese": {
+    "message": "Bukan salah satunya — cari di CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Ada beberapa kemungkinan halaman di AppleGamingWiki — pilih yang benar:"
+  },
+  "agwNoneOfThese": {
+    "message": "Bukan salah satunya — cari di AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Kemungkinan kecocokan di AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "$N$ kecocokan ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "tidak ada data"
+  },
+  "starsAria": {
+    "message": "$N$ dari $MAX$ bintang",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "belum ada rating"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — rating CrossOver di CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(kecocokan perkiraan)"
+  },
+  "badgeMatches": {
+    "message": "$N$ kemungkinan kecocokan di CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "Pengaturan CrosTem"
+  },
+  "optSurfaces": {
+    "message": "Tempat menampilkan kompatibilitas"
+  },
+  "optSurfaceApp": {
+    "message": "Widget halaman game"
+  },
+  "optSurfaceCapsules": {
+    "message": "Overlay bintang di kapsul toko"
+  },
+  "optSurfaceSearch": {
+    "message": "Lencana hasil pencarian"
+  },
+  "optSurfaceWishlist": {
+    "message": "Lencana wishlist"
+  },
+  "optSources": {
+    "message": "Sumber data"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (rating CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (status anticheat)"
+  },
+  "optCxVersion": {
+    "message": "Versi CrossOver-mu"
+  },
+  "optCxVersionNote": {
+    "message": "Rating versi tersebut akan disorot di widget (mis. 26)."
+  },
+  "optCache": {
+    "message": "Cache"
+  },
+  "optCacheTtl": {
+    "message": "Simpan hasil di cache selama (hari)"
+  },
+  "optCacheClear": {
+    "message": "Hapus cache"
+  },
+  "optCacheCleared": {
+    "message": "Cache dihapus."
+  },
+  "optCacheCount": {
+    "message": "$N$ entri cache",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Koreksi kecocokan"
+  },
+  "optChoicesCount": {
+    "message": "$N$ koreksi tersimpan",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Ekspor"
+  },
+  "optImport": {
+    "message": "Impor"
+  },
+  "optImported": {
+    "message": "Koreksi diimpor."
+  },
+  "optImportError": {
+    "message": "Berkas tidak valid."
+  },
+  "optClearChoices": {
+    "message": "Hapus semua koreksi"
+  },
+  "optReloadNote": {
+    "message": "Perubahan berlaku di tab Steam setelah dimuat ulang — gunakan “Terapkan sekarang” di bawah."
+  },
+  "optApplyNow": {
+    "message": "Terapkan ke tab Steam yang terbuka"
+  },
+  "optApplied": {
+    "message": "Diterapkan — $N$ tab Steam dimuat ulang.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Tersimpan."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Cari game di CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Tidak ada hasil."
+  },
+  "popupOptions": {
+    "message": "Pengaturan"
+  },
+  "popupError": {
+    "message": "Pencarian gagal. Coba lagi."
+  },
+  "popupCurrentTab": {
+    "message": "Tab ini"
+  },
+  "popupSurfaces": {
+    "message": "Tampilkan di Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Halaman game"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Kapsul"
+  },
+  "popupSurfaceSearch": {
+    "message": "Pencarian"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Wishlist"
+  },
+  "popupStatusSources": {
+    "message": "$N$ dari 3 sumber aktif",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Sumber data"
+  },
+  "onboardingTitle": {
+    "message": "Selamat datang di CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Ketahui apakah game Steam jalan di Mac-mu — sebelum membelinya."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Kesimpulan di setiap halaman game"
+  },
+  "onboardingWidgetBody": {
+    "message": "Widget “Jalan di Mac?” menggabungkan rating CrossOver, AppleGamingWiki, dan status anticheat menjadi satu kesimpulan yang jelas."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Bintang di seluruh toko"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Kapsul game di halaman depan mendapat overlay bintang kompatibilitas saat kamu menjelajah."
+  },
+  "onboardingSearchTitle": {
+    "message": "Lencana di pencarian dan wishlist"
+  },
+  "onboardingSearchBody": {
+    "message": "Hasil pencarian dan wishlist-mu menampilkan lencana rating ringkas — arahkan kursor untuk detail."
+  },
+  "onboardingNativeTitle": {
+    "message": "Game native, ditandai"
+  },
+  "onboardingNativeBody": {
+    "message": "Game dengan versi Mac native mendapat 5 bintang dan label arsitektur Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Buka pengaturan"
+  },
+  "onboardingHint": {
+    "message": "Pilih tempat lencana muncul dan sumber data yang digunakan."
+  },
+  "statusUnrated": {
+    "message": "Belum dinilai"
+  }
+}

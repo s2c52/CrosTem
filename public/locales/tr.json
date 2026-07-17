@@ -1,0 +1,368 @@
+{
+  "widgetTitle": {
+    "message": "Mac'te çalışır mı?"
+  },
+  "checking": {
+    "message": "Uyumluluk kaynakları kontrol ediliyor…"
+  },
+  "errorReach": {
+    "message": "Uyumluluk kaynaklarına ulaşılamadı."
+  },
+  "errorFriendly": {
+    "message": "Uyumluluk kaynakları şu anda kontrol edilemedi."
+  },
+  "retry": {
+    "message": "Tekrar dene"
+  },
+  "nativeBadge": {
+    "message": "macOS'te yerel"
+  },
+  "nativeNote": {
+    "message": "Bu oyunun yerel bir Mac sürümü var — CrossOver gerekmez."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (M'de Rosetta 2)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Mimari AppleGamingWiki'ye göre."
+  },
+  "archSourceSteam": {
+    "message": "Mimari, Steam sistem gereksinimlerinden çıkarıldı."
+  },
+  "archSourceDate": {
+    "message": "Mimari, çıkış tarihine göre tahmin edildi."
+  },
+  "verdict_green": {
+    "message": "CrossOver ile Mac'te oynanabilir"
+  },
+  "verdict_yellow": {
+    "message": "Bazı çekincelerle oynanabilir"
+  },
+  "verdict_red": {
+    "message": "Mac'te büyük olasılıkla oynanamaz"
+  },
+  "verdict_unknown": {
+    "message": "Uyumluluk verisi yok"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Hile koruması"
+  },
+  "lastTested": {
+    "message": "Son test: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ rapor",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "CodeWeavers'ta görüntüle ↗"
+  },
+  "viewOnAgw": {
+    "message": "AppleGamingWiki'de görüntüle ↗"
+  },
+  "searchCw": {
+    "message": "CodeWeavers'ta ara ↗"
+  },
+  "noData": {
+    "message": "Veri yok."
+  },
+  "yourVersion": {
+    "message": "sizin sürümünüz"
+  },
+  "approxMatch": {
+    "message": "yaklaşık eşleşme: “$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Yanlış eşleşme mi?"
+  },
+  "acLinuxNote": {
+    "message": "Linux/Proton verileri — CrossOver için fikir verir. "
+  },
+  "refresh": {
+    "message": "↻ Verileri yenile"
+  },
+  "refreshTitle": {
+    "message": "Bu oyunun önbelleğini temizle ve tüm kaynakları yeniden kontrol et"
+  },
+  "attribution": {
+    "message": "Veriler: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Bağlantılı değildir."
+  },
+  "pickMatch": {
+    "message": "CodeWeavers'ta birden fazla olası eşleşme var — doğru olanı seçin:"
+  },
+  "noneOfThese": {
+    "message": "Hiçbiri değil — CodeWeavers'ta ara ↗"
+  },
+  "agwPickMatch": {
+    "message": "AppleGamingWiki'de birden fazla olası sayfa var — doğru olanı seçin:"
+  },
+  "agwNoneOfThese": {
+    "message": "Hiçbiri değil — AppleGamingWiki'de ara ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "AppleGamingWiki'deki olası eşleşmeler…"
+  },
+  "matchesN": {
+    "message": "$N$ eşleşme ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "veri yok"
+  },
+  "starsAria": {
+    "message": "$MAX$ üzerinden $N$ yıldız",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "puan yok"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — CodeWeavers'taki CrossOver puanı",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(yaklaşık eşleşme)"
+  },
+  "badgeMatches": {
+    "message": "CodeWeavers'ta $N$ olası eşleşme",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "CrosTem ayarları"
+  },
+  "optSurfaces": {
+    "message": "Uyumluluk nerede gösterilsin"
+  },
+  "optSurfaceApp": {
+    "message": "Oyun sayfası widget'ı"
+  },
+  "optSurfaceCapsules": {
+    "message": "Mağaza kapsüllerinde yıldız katmanları"
+  },
+  "optSurfaceSearch": {
+    "message": "Arama sonuçlarında rozetler"
+  },
+  "optSurfaceWishlist": {
+    "message": "İstek listesinde rozetler"
+  },
+  "optSources": {
+    "message": "Veri kaynakları"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (CrossOver puanları)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (hile koruması durumu)"
+  },
+  "optCxVersion": {
+    "message": "CrossOver sürümünüz"
+  },
+  "optCxVersionNote": {
+    "message": "Bu sürümün puanları widget'ta vurgulanır (örn. 26)."
+  },
+  "optCache": {
+    "message": "Önbellek"
+  },
+  "optCacheTtl": {
+    "message": "Önbellekteki sonuçları sakla (gün)"
+  },
+  "optCacheClear": {
+    "message": "Önbelleği temizle"
+  },
+  "optCacheCleared": {
+    "message": "Önbellek temizlendi."
+  },
+  "optCacheCount": {
+    "message": "$N$ önbellek kaydı",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Eşleşme düzeltmeleri"
+  },
+  "optChoicesCount": {
+    "message": "$N$ kayıtlı düzeltme",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Dışa aktar"
+  },
+  "optImport": {
+    "message": "İçe aktar"
+  },
+  "optImported": {
+    "message": "Düzeltmeler içe aktarıldı."
+  },
+  "optImportError": {
+    "message": "Geçersiz dosya."
+  },
+  "optClearChoices": {
+    "message": "Tüm düzeltmeleri sil"
+  },
+  "optReloadNote": {
+    "message": "Değişiklikler Steam sekmelerine yeniden yükleme sonrası uygulanır — aşağıdaki “Şimdi uygula”yı kullanın."
+  },
+  "optApplyNow": {
+    "message": "Açık Steam sekmelerine uygula"
+  },
+  "optApplied": {
+    "message": "Uygulandı — $N$ Steam sekmesi yeniden yüklendi.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Kaydedildi."
+  },
+  "popupSearchPlaceholder": {
+    "message": "CodeWeavers'ta bir oyun arayın…"
+  },
+  "popupNoResults": {
+    "message": "Sonuç yok."
+  },
+  "popupOptions": {
+    "message": "Ayarlar"
+  },
+  "popupError": {
+    "message": "Arama başarısız oldu. Tekrar deneyin."
+  },
+  "popupCurrentTab": {
+    "message": "Bu sekme"
+  },
+  "popupSurfaces": {
+    "message": "Steam'de göster"
+  },
+  "popupSurfaceApp": {
+    "message": "Oyun sayfası"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Kapsüller"
+  },
+  "popupSurfaceSearch": {
+    "message": "Arama"
+  },
+  "popupSurfaceWishlist": {
+    "message": "İstek listesi"
+  },
+  "popupStatusSources": {
+    "message": "3 kaynaktan $N$ tanesi etkin",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Veri kaynakları"
+  },
+  "onboardingTitle": {
+    "message": "CrosTem'e hoş geldiniz"
+  },
+  "onboardingTagline": {
+    "message": "Bir Steam oyununun Mac'inizde çalışıp çalışmayacağını satın almadan önce öğrenin."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Her oyun sayfasında net bir karar"
+  },
+  "onboardingWidgetBody": {
+    "message": "“Mac'te çalışır mı?” widget'ı CrossOver puanlarını, AppleGamingWiki'yi ve hile koruması durumunu tek bir net kararda birleştirir."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Mağazanın her yerinde yıldızlar"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Gezinirken ana sayfadaki oyun kapsüllerine uyumluluk yıldızları eklenir."
+  },
+  "onboardingSearchTitle": {
+    "message": "Arama ve istek listesinde rozetler"
+  },
+  "onboardingSearchBody": {
+    "message": "Arama sonuçları ve istek listeniz kompakt puan rozetleri gösterir — ayrıntılar için üzerine gelin."
+  },
+  "onboardingNativeTitle": {
+    "message": "Yerel oyunlar işaretlenir"
+  },
+  "onboardingNativeBody": {
+    "message": "Yerel Mac sürümü olan oyunlar 5 yıldız ve Intel / M Series mimari etiketi alır."
+  },
+  "onboardingCta": {
+    "message": "Ayarları aç"
+  },
+  "onboardingHint": {
+    "message": "Rozetlerin nerede görüneceğini ve hangi veri kaynaklarının kullanılacağını seçin."
+  },
+  "statusUnrated": {
+    "message": "Puanlanmamış"
+  }
+}

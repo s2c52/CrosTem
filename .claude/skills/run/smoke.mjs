@@ -49,17 +49,20 @@ await box
 await page.goto('https://store.steampowered.com/search/?term=rimworld', {
   waitUntil: 'domcontentloaded',
 });
+// Since the a11y redesign the badge announces itself via aria-label
+// (the visual detail lives in the rich hover tooltip).
 const tag = page.locator('.crostem-badge-native').first();
 try {
   await tag.waitFor({ timeout: 30000 });
   await page.waitForFunction(
-    () => document.querySelector('.crostem-badge-native')?.getAttribute('title')?.includes('·'),
+    () =>
+      document.querySelector('.crostem-badge-native')?.getAttribute('aria-label')?.includes('·'),
     { timeout: 30000 },
   );
-  const title = await tag.getAttribute('title');
-  console.log('overlay tooltip:', JSON.stringify(title));
-  if (!/·\s*Architecture (per|inferred|estimated)/.test(title ?? '')) {
-    fails.push(`tooltip missing source: ${title}`);
+  const label = await tag.getAttribute('aria-label');
+  console.log('overlay aria-label:', JSON.stringify(label));
+  if (!/·\s*Architecture (per|inferred|estimated)/.test(label ?? '')) {
+    fails.push(`aria-label missing source: ${label}`);
   }
   await page.screenshot({ path: join(OUT, 'overlay.png') });
 } catch (e) {

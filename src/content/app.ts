@@ -8,9 +8,10 @@ import { resolveNativeArch } from '../lib/arch';
 import * as cache from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
 import { logDebug, logWarn } from '../lib/log';
-import { t } from '../lib/i18n';
+import { initI18n, persistUiLang, t } from '../lib/i18n';
 import { resolveGame } from '../lib/resolve';
 import { getSettings } from '../lib/settings';
+import { detectPageLocale } from '../lib/steam-lang';
 import {
   renderAppWidget,
   renderCandidateList,
@@ -145,6 +146,8 @@ if (appidFromPath && nameFromDom) {
   };
 
   void (async () => {
+    await initI18n(detectPageLocale());
+    void persistUiLang();
     if (!(await getSettings()).surfaces.app) return;
     if (!mount()) return;
     if (isNativeMac()) {

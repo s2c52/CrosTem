@@ -134,15 +134,15 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
       slug: cwOutcome.slug,
       cwName: cwOutcome.cwName,
       approximate: cwOutcome.approximate,
-      level: verdict.level,
+      level: verdict,
     };
   }
   if (cwOutcome.type === 'ambiguous') {
-    return { kind: 'ambiguous', count: cwOutcome.count, query: name, level: verdict.level };
+    return { kind: 'ambiguous', count: cwOutcome.count, query: name, level: verdict };
   }
   // No CodeWeavers but with an AGW/anticheat signal: the traffic light alone.
-  if (verdict.level !== 'unknown') {
-    return { kind: 'dot', level: verdict.level, title: verdict.label };
+  if (verdict !== 'unknown') {
+    return { kind: 'dot', level: verdict };
   }
   return { kind: 'none' };
 }
