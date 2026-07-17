@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Toimiiko Macilla?"
+  },
+  "checking": {
+    "message": "Tarkistetaan yhteensopivuuslähteitä…"
+  },
+  "errorReach": {
+    "message": "Yhteensopivuuslähteisiin ei saatu yhteyttä."
+  },
+  "errorFriendly": {
+    "message": "Yhteensopivuuslähteitä ei juuri nyt voitu tarkistaa."
+  },
+  "retry": {
+    "message": "Yritä uudelleen"
+  },
+  "nativeBadge": {
+    "message": "Natiivi macOS:llä"
+  },
+  "nativeNote": {
+    "message": "Tällä pelillä on natiivi Mac-versio — CrossOveria ei tarvita."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 M:llä)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Arkkitehtuuri AppleGamingWikin mukaan."
+  },
+  "archSourceSteam": {
+    "message": "Arkkitehtuuri päätelty Steamin järjestelmävaatimuksista."
+  },
+  "archSourceDate": {
+    "message": "Arkkitehtuuri arvioitu julkaisupäivän perusteella."
+  },
+  "verdict_green": {
+    "message": "Pelattavissa Macilla CrossOverin kautta"
+  },
+  "verdict_yellow": {
+    "message": "Pelattavissa varauksin"
+  },
+  "verdict_red": {
+    "message": "Todennäköisesti ei pelattavissa Macilla"
+  },
+  "verdict_unknown": {
+    "message": "Ei yhteensopivuustietoja"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Huijauksenesto"
+  },
+  "lastTested": {
+    "message": "Viimeksi testattu: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ raporttia",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Näytä CodeWeaversissa ↗"
+  },
+  "viewOnAgw": {
+    "message": "Näytä AppleGamingWikissä ↗"
+  },
+  "searchCw": {
+    "message": "Hae CodeWeaversista ↗"
+  },
+  "noData": {
+    "message": "Ei tietoja."
+  },
+  "yourVersion": {
+    "message": "oma versiosi"
+  },
+  "approxMatch": {
+    "message": "likimääräinen osuma: ”$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Väärä osuma?"
+  },
+  "acLinuxNote": {
+    "message": "Linux/Proton-tiedot — suuntaa antavia CrossOverille. "
+  },
+  "refresh": {
+    "message": "↻ Päivitä tiedot"
+  },
+  "refreshTitle": {
+    "message": "Tyhjennä tämän pelin välimuisti ja tarkista kaikki lähteet uudelleen"
+  },
+  "attribution": {
+    "message": "Tiedot: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Ei sidoksia."
+  },
+  "pickMatch": {
+    "message": "Useita mahdollisia osumia CodeWeaversissa — valitse oikea:"
+  },
+  "noneOfThese": {
+    "message": "Ei mikään näistä — hae CodeWeaversista ↗"
+  },
+  "agwPickMatch": {
+    "message": "Useita mahdollisia sivuja AppleGamingWikissä — valitse oikea:"
+  },
+  "agwNoneOfThese": {
+    "message": "Ei mikään näistä — hae AppleGamingWikistä ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Mahdollisia osumia AppleGamingWikissä…"
+  },
+  "matchesN": {
+    "message": "$N$ osumaa ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "ei tietoja"
+  },
+  "starsAria": {
+    "message": "$N$/$MAX$ tähteä",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "ei arvosanaa"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — CrossOver-arvosana CodeWeaversissa",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(likimääräinen osuma)"
+  },
+  "badgeMatches": {
+    "message": "$N$ mahdollista osumaa CodeWeaversissa",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "CrosTemin asetukset"
+  },
+  "optSurfaces": {
+    "message": "Missä yhteensopivuus näytetään"
+  },
+  "optSurfaceApp": {
+    "message": "Pelisivun widget"
+  },
+  "optSurfaceCapsules": {
+    "message": "Tähtipeittokuvat kaupan kapseleissa"
+  },
+  "optSurfaceSearch": {
+    "message": "Merkit hakutuloksissa"
+  },
+  "optSurfaceWishlist": {
+    "message": "Merkit toivelistalla"
+  },
+  "optLanguage": {
+    "message": "Kieli"
+  },
+  "optLangAuto": {
+    "message": "Automaattinen (Steamin mukaan)"
+  },
+  "optSources": {
+    "message": "Tietolähteet"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (CrossOver-arvosanat)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (huijaukseneston tila)"
+  },
+  "optCxVersion": {
+    "message": "CrossOver-versiosi"
+  },
+  "optCxVersionNote": {
+    "message": "Kyseisen version arvosanat korostetaan widgetissä (esim. 26)."
+  },
+  "optCache": {
+    "message": "Välimuisti"
+  },
+  "optCacheTtl": {
+    "message": "Säilytä tulokset välimuistissa (päivää)"
+  },
+  "optCacheClear": {
+    "message": "Tyhjennä välimuisti"
+  },
+  "optCacheCleared": {
+    "message": "Välimuisti tyhjennetty."
+  },
+  "optCacheCount": {
+    "message": "$N$ merkintää välimuistissa",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Osumakorjaukset"
+  },
+  "optChoicesCount": {
+    "message": "$N$ tallennettua korjausta",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Vie"
+  },
+  "optImport": {
+    "message": "Tuo"
+  },
+  "optImported": {
+    "message": "Korjaukset tuotu."
+  },
+  "optImportError": {
+    "message": "Virheellinen tiedosto."
+  },
+  "optClearChoices": {
+    "message": "Poista kaikki korjaukset"
+  },
+  "optReloadNote": {
+    "message": "Muutokset tulevat voimaan Steam-välilehdissä uudelleenlatauksen jälkeen — käytä alla olevaa ”Ota käyttöön nyt” -painiketta."
+  },
+  "optApplyNow": {
+    "message": "Ota käyttöön avoimissa Steam-välilehdissä"
+  },
+  "optApplied": {
+    "message": "Otettu käyttöön — $N$ Steam-välilehteä ladattu uudelleen.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Tallennettu."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Hae peliä CodeWeaversista…"
+  },
+  "popupNoResults": {
+    "message": "Ei tuloksia."
+  },
+  "popupOptions": {
+    "message": "Asetukset"
+  },
+  "popupError": {
+    "message": "Haku epäonnistui. Yritä uudelleen."
+  },
+  "popupCurrentTab": {
+    "message": "Tämä välilehti"
+  },
+  "popupSurfaces": {
+    "message": "Näytä Steamissa"
+  },
+  "popupSurfaceApp": {
+    "message": "Pelisivu"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Kapselit"
+  },
+  "popupSurfaceSearch": {
+    "message": "Haku"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Toivelista"
+  },
+  "popupStatusSources": {
+    "message": "$N$/3 lähdettä käytössä",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Tietolähteet"
+  },
+  "onboardingTitle": {
+    "message": "Tervetuloa CrosTemiin"
+  },
+  "onboardingTagline": {
+    "message": "Tiedä, toimiiko Steam-peli Macillasi — jo ennen ostamista."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Tuomio jokaisella pelisivulla"
+  },
+  "onboardingWidgetBody": {
+    "message": "”Toimiiko Macilla?” -widget yhdistää CrossOver-arvosanat, AppleGamingWikin ja huijaukseneston tilan yhdeksi selkeäksi tuomioksi."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Tähtiä kaikkialla kaupassa"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Etusivun pelikapselit saavat yhteensopivuuden tähtipeittokuvan, kun selaat kauppaa."
+  },
+  "onboardingSearchTitle": {
+    "message": "Merkit haussa ja toivelistalla"
+  },
+  "onboardingSearchBody": {
+    "message": "Hakutulokset ja toivelistasi näyttävät kompaktit arvosanamerkit — vie hiiri päälle nähdäksesi lisätiedot."
+  },
+  "onboardingNativeTitle": {
+    "message": "Natiivipelit merkittyinä"
+  },
+  "onboardingNativeBody": {
+    "message": "Pelit, joilla on natiivi Mac-versio, saavat 5 tähteä ja Intel / M Series -arkkitehtuuritunnisteen."
+  },
+  "onboardingCta": {
+    "message": "Avaa asetukset"
+  },
+  "onboardingHint": {
+    "message": "Valitse, missä merkit näkyvät ja mitä tietolähteitä käytetään."
+  },
+  "statusUnrated": {
+    "message": "Ei arvioitu"
+  }
+}

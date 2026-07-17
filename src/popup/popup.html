@@ -7,13 +7,51 @@
     <title>CrosTem</title>
     <link rel="stylesheet" href="./popup.css" />
   </head>
-  <body>
+  <body class="ct-page">
     <header>
       <span class="logo"></span> <strong>CrosTem</strong>
       <a href="#" id="open-options"></a>
     </header>
+
+    <section id="current-game" hidden>
+      <h2 data-i18n="popupCurrentTab"></h2>
+      <div id="current-game-body"></div>
+    </section>
+
     <input type="search" id="query" autofocus />
     <div id="results"></div>
+
+    <section id="surfaces">
+      <h2 data-i18n="popupSurfaces"></h2>
+      <div class="switch-grid">
+        <label class="ct-switch">
+          <input type="checkbox" id="surface-app" />
+          <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+          <span data-i18n="popupSurfaceApp"></span>
+        </label>
+        <label class="ct-switch">
+          <input type="checkbox" id="surface-capsules" />
+          <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+          <span data-i18n="popupSurfaceCapsules"></span>
+        </label>
+        <label class="ct-switch">
+          <input type="checkbox" id="surface-search" />
+          <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+          <span data-i18n="popupSurfaceSearch"></span>
+        </label>
+        <label class="ct-switch">
+          <input type="checkbox" id="surface-wishlist" />
+          <span class="ct-switch-track"><span class="ct-switch-thumb"></span></span>
+          <span data-i18n="popupSurfaceWishlist"></span>
+        </label>
+      </div>
+    </section>
+
+    <footer>
+      <div id="ext-status" class="muted" role="status"></div>
+      <nav id="quick-links"></nav>
+    </footer>
+
     <script type="module" src="./popup.ts"></script>
   </body>
 </html>

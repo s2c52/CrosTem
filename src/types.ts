@@ -65,6 +65,8 @@ export interface ArchInfo {
   /** true = inferred (marked with "~", like approximate matching). */
   approximate: boolean;
   source: 'agw' | 'steam-reqs' | 'date';
+  /** AGW page name, only when source === 'agw' (enables linking to it). */
+  agwPage?: string;
 }
 
 /** Result of the automatic resolution of a badge/overlay. */
@@ -79,7 +81,7 @@ export type ResolveResult =
       level: VerdictLevel;
     }
   | { kind: 'ambiguous'; count: number; query: string; level: VerdictLevel }
-  | { kind: 'dot'; level: VerdictLevel; title: string }
+  | { kind: 'dot'; level: VerdictLevel }
   | { kind: 'none' };
 
 export interface AutoAttachOpts {
@@ -114,12 +116,6 @@ export interface AnticheatInfo {
 }
 
 export type VerdictLevel = 'green' | 'yellow' | 'red' | 'unknown';
-
-export interface Verdict {
-  level: VerdictLevel;
-  label: string;
-  reasons: string[];
-}
 
 /** CodeWeavers signal for the verdict: the full app page or just the
  * stars from the search row (overlays case). */

@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Macで動く？"
+  },
+  "checking": {
+    "message": "互換性ソースを確認中…"
+  },
+  "errorReach": {
+    "message": "互換性ソースに接続できませんでした。"
+  },
+  "errorFriendly": {
+    "message": "現在、互換性ソースを確認できません。"
+  },
+  "retry": {
+    "message": "再試行"
+  },
+  "nativeBadge": {
+    "message": "macOSネイティブ対応"
+  },
+  "nativeNote": {
+    "message": "このゲームにはMacネイティブ版が付属しています — CrossOverは不要です。"
+  },
+  "archM": {
+    "message": "M Series（Apple Silicon）"
+  },
+  "archIntel": {
+    "message": "Intel（MではRosetta 2）"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "アーキテクチャはAppleGamingWikiに基づく。"
+  },
+  "archSourceSteam": {
+    "message": "アーキテクチャはSteamのシステム要件から推定。"
+  },
+  "archSourceDate": {
+    "message": "アーキテクチャはリリース日から推定。"
+  },
+  "verdict_green": {
+    "message": "CrossOver経由でMacでプレイ可能"
+  },
+  "verdict_yellow": {
+    "message": "プレイ可能（注意点あり）"
+  },
+  "verdict_red": {
+    "message": "Macではプレイできない可能性大"
+  },
+  "verdict_unknown": {
+    "message": "互換性データなし"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "アンチチート"
+  },
+  "lastTested": {
+    "message": "最終テスト：$VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$件のレポート",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "CodeWeaversで見る ↗"
+  },
+  "viewOnAgw": {
+    "message": "AppleGamingWikiで見る ↗"
+  },
+  "searchCw": {
+    "message": "CodeWeaversで検索 ↗"
+  },
+  "noData": {
+    "message": "データなし。"
+  },
+  "yourVersion": {
+    "message": "お使いのバージョン"
+  },
+  "approxMatch": {
+    "message": "近似一致：「$NAME$」",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "一致が違う？"
+  },
+  "acLinuxNote": {
+    "message": "Linux/Protonのデータ — CrossOverの参考値。 "
+  },
+  "refresh": {
+    "message": "↻ データを更新"
+  },
+  "refreshTitle": {
+    "message": "このゲームのキャッシュを消去してすべてのソースを再確認"
+  },
+  "attribution": {
+    "message": "データ：CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet。各サービスとは無関係です。"
+  },
+  "pickMatch": {
+    "message": "CodeWeaversに複数の候補があります — 正しいものを選択してください："
+  },
+  "noneOfThese": {
+    "message": "どれでもない — CodeWeaversで検索 ↗"
+  },
+  "agwPickMatch": {
+    "message": "AppleGamingWikiに複数の候補ページがあります — 正しいものを選択してください："
+  },
+  "agwNoneOfThese": {
+    "message": "どれでもない — AppleGamingWikiで検索 ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "AppleGamingWikiの候補…"
+  },
+  "matchesN": {
+    "message": "$N$件の一致 ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "データなし"
+  },
+  "starsAria": {
+    "message": "$MAX$つ星中$N$つ",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "評価なし"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — CodeWeaversのCrossOver評価",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "（近似一致）"
+  },
+  "badgeMatches": {
+    "message": "CodeWeaversに$N$件の候補",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "CrosTemの設定"
+  },
+  "optSurfaces": {
+    "message": "互換性を表示する場所"
+  },
+  "optSurfaceApp": {
+    "message": "ゲームページのウィジェット"
+  },
+  "optSurfaceCapsules": {
+    "message": "ストアカプセルの星オーバーレイ"
+  },
+  "optSurfaceSearch": {
+    "message": "検索結果のバッジ"
+  },
+  "optSurfaceWishlist": {
+    "message": "ウィッシュリストのバッジ"
+  },
+  "optLanguage": {
+    "message": "言語"
+  },
+  "optLangAuto": {
+    "message": "自動（Steam に合わせる）"
+  },
+  "optSources": {
+    "message": "データソース"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers（CrossOver評価）"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki（CrossOver/Parallels/Rosetta）"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet（アンチチート状況）"
+  },
+  "optCxVersion": {
+    "message": "お使いのCrossOverバージョン"
+  },
+  "optCxVersionNote": {
+    "message": "そのバージョンの評価がウィジェットで強調表示されます（例：26）。"
+  },
+  "optCache": {
+    "message": "キャッシュ"
+  },
+  "optCacheTtl": {
+    "message": "キャッシュの保持期間（日）"
+  },
+  "optCacheClear": {
+    "message": "キャッシュを消去"
+  },
+  "optCacheCleared": {
+    "message": "キャッシュを消去しました。"
+  },
+  "optCacheCount": {
+    "message": "キャッシュ$N$件",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "一致の修正"
+  },
+  "optChoicesCount": {
+    "message": "保存済みの修正$N$件",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "エクスポート"
+  },
+  "optImport": {
+    "message": "インポート"
+  },
+  "optImported": {
+    "message": "修正をインポートしました。"
+  },
+  "optImportError": {
+    "message": "無効なファイルです。"
+  },
+  "optClearChoices": {
+    "message": "すべての修正を削除"
+  },
+  "optReloadNote": {
+    "message": "変更はSteamタブの再読み込み後に反映されます — 下の「今すぐ適用」をご利用ください。"
+  },
+  "optApplyNow": {
+    "message": "開いているSteamタブに適用"
+  },
+  "optApplied": {
+    "message": "適用しました — Steamタブ$N$件を再読み込みしました。",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "CodeWeavers $CW$件 · AppleGamingWiki $AGW$件",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "保存しました。"
+  },
+  "popupSearchPlaceholder": {
+    "message": "CodeWeaversでゲームを検索…"
+  },
+  "popupNoResults": {
+    "message": "結果なし。"
+  },
+  "popupOptions": {
+    "message": "設定"
+  },
+  "popupError": {
+    "message": "検索に失敗しました。再試行してください。"
+  },
+  "popupCurrentTab": {
+    "message": "このタブ"
+  },
+  "popupSurfaces": {
+    "message": "Steamでの表示"
+  },
+  "popupSurfaceApp": {
+    "message": "ゲームページ"
+  },
+  "popupSurfaceCapsules": {
+    "message": "カプセル"
+  },
+  "popupSurfaceSearch": {
+    "message": "検索"
+  },
+  "popupSurfaceWishlist": {
+    "message": "ウィッシュリスト"
+  },
+  "popupStatusSources": {
+    "message": "3ソース中$N$件が有効",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "データソース"
+  },
+  "onboardingTitle": {
+    "message": "CrosTemへようこそ"
+  },
+  "onboardingTagline": {
+    "message": "SteamのゲームがあなたのMacで動くか、購入前にわかります。"
+  },
+  "onboardingWidgetTitle": {
+    "message": "すべてのゲームページに判定を表示"
+  },
+  "onboardingWidgetBody": {
+    "message": "「Macで動く？」ウィジェットが、CrossOver評価・AppleGamingWiki・アンチチート状況をひとつの明確な判定にまとめます。"
+  },
+  "onboardingCapsulesTitle": {
+    "message": "ストア全体に星を表示"
+  },
+  "onboardingCapsulesBody": {
+    "message": "閲覧中、トップページのゲームカプセルに互換性の星オーバーレイが表示されます。"
+  },
+  "onboardingSearchTitle": {
+    "message": "検索とウィッシュリストにバッジ"
+  },
+  "onboardingSearchBody": {
+    "message": "検索結果とウィッシュリストにコンパクトな評価バッジを表示 — ホバーで詳細を確認できます。"
+  },
+  "onboardingNativeTitle": {
+    "message": "ネイティブ対応ゲームを明示"
+  },
+  "onboardingNativeBody": {
+    "message": "Macネイティブ版があるゲームには星5と、Intel / M Seriesのアーキテクチャタグが付きます。"
+  },
+  "onboardingCta": {
+    "message": "設定を開く"
+  },
+  "onboardingHint": {
+    "message": "バッジの表示場所と使用するデータソースを選べます。"
+  },
+  "statusUnrated": {
+    "message": "未評価"
+  }
+}

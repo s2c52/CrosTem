@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist/', 'node_modules/', 'e2e-results/', 'store-assets/', 'scripts/'] },
+  { ignores: ['dist/', 'node_modules/', 'e2e-results/', 'store-assets/', 'scripts/', '.claude/'] },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   prettier,

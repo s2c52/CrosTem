@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Mac 上能玩吗？"
+  },
+  "checking": {
+    "message": "正在查询兼容性数据源…"
+  },
+  "errorReach": {
+    "message": "无法连接兼容性数据源。"
+  },
+  "errorFriendly": {
+    "message": "暂时无法查询兼容性数据源。"
+  },
+  "retry": {
+    "message": "重试"
+  },
+  "nativeBadge": {
+    "message": "macOS 原生支持"
+  },
+  "nativeNote": {
+    "message": "该游戏自带 Mac 原生版本，无需 CrossOver。"
+  },
+  "archM": {
+    "message": "M Series（Apple Silicon）"
+  },
+  "archIntel": {
+    "message": "Intel（M 芯片上经 Rosetta 2）"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "架构信息来自 AppleGamingWiki。"
+  },
+  "archSourceSteam": {
+    "message": "架构由 Steam 系统需求推断。"
+  },
+  "archSourceDate": {
+    "message": "架构由发行日期估算。"
+  },
+  "verdict_green": {
+    "message": "可通过 CrossOver 在 Mac 上游玩"
+  },
+  "verdict_yellow": {
+    "message": "可玩，但有注意事项"
+  },
+  "verdict_red": {
+    "message": "可能无法在 Mac 上游玩"
+  },
+  "verdict_unknown": {
+    "message": "暂无兼容性数据"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "反作弊"
+  },
+  "lastTested": {
+    "message": "最近测试：$VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ 条报告",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "在 CodeWeavers 查看 ↗"
+  },
+  "viewOnAgw": {
+    "message": "在 AppleGamingWiki 查看 ↗"
+  },
+  "searchCw": {
+    "message": "在 CodeWeavers 搜索 ↗"
+  },
+  "noData": {
+    "message": "暂无数据。"
+  },
+  "yourVersion": {
+    "message": "你的版本"
+  },
+  "approxMatch": {
+    "message": "近似匹配：“$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "匹配有误？"
+  },
+  "acLinuxNote": {
+    "message": "Linux/Proton 数据，可供 CrossOver 参考。 "
+  },
+  "refresh": {
+    "message": "↻ 刷新数据"
+  },
+  "refreshTitle": {
+    "message": "清除该游戏的缓存并重新查询所有数据源"
+  },
+  "attribution": {
+    "message": "数据：CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet。无官方关联。"
+  },
+  "pickMatch": {
+    "message": "CodeWeavers 上有多个可能的匹配项，请选择正确的一项："
+  },
+  "noneOfThese": {
+    "message": "都不是，去 CodeWeavers 搜索 ↗"
+  },
+  "agwPickMatch": {
+    "message": "AppleGamingWiki 上有多个可能的页面，请选择正确的一项："
+  },
+  "agwNoneOfThese": {
+    "message": "都不是，去 AppleGamingWiki 搜索 ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "AppleGamingWiki 上的可能匹配…"
+  },
+  "matchesN": {
+    "message": "$N$ 个匹配 ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "暂无数据"
+  },
+  "starsAria": {
+    "message": "$N$ 星（满分 $MAX$ 星）",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "暂无评分"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — CodeWeavers 上的 CrossOver 评分",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "（近似匹配）"
+  },
+  "badgeMatches": {
+    "message": "CodeWeavers 上有 $N$ 个可能匹配",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "CrosTem 设置"
+  },
+  "optSurfaces": {
+    "message": "在哪些位置显示兼容性"
+  },
+  "optSurfaceApp": {
+    "message": "游戏页面小组件"
+  },
+  "optSurfaceCapsules": {
+    "message": "商店胶囊图上的星级叠加"
+  },
+  "optSurfaceSearch": {
+    "message": "搜索结果徽章"
+  },
+  "optSurfaceWishlist": {
+    "message": "愿望单徽章"
+  },
+  "optLanguage": {
+    "message": "语言"
+  },
+  "optLangAuto": {
+    "message": "自动（跟随 Steam）"
+  },
+  "optSources": {
+    "message": "数据源"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers（CrossOver 评分）"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki（CrossOver/Parallels/Rosetta）"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet（反作弊状态）"
+  },
+  "optCxVersion": {
+    "message": "你的 CrossOver 版本"
+  },
+  "optCxVersionNote": {
+    "message": "对应版本的评分会在小组件中高亮显示（如 26）。"
+  },
+  "optCache": {
+    "message": "缓存"
+  },
+  "optCacheTtl": {
+    "message": "缓存结果保留时间（天）"
+  },
+  "optCacheClear": {
+    "message": "清除缓存"
+  },
+  "optCacheCleared": {
+    "message": "缓存已清除。"
+  },
+  "optCacheCount": {
+    "message": "$N$ 条缓存记录",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "匹配更正"
+  },
+  "optChoicesCount": {
+    "message": "$N$ 条已保存的更正",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "导出"
+  },
+  "optImport": {
+    "message": "导入"
+  },
+  "optImported": {
+    "message": "更正已导入。"
+  },
+  "optImportError": {
+    "message": "文件无效。"
+  },
+  "optClearChoices": {
+    "message": "删除所有更正"
+  },
+  "optReloadNote": {
+    "message": "更改将在 Steam 标签页重新加载后生效，可使用下方的“立即应用”。"
+  },
+  "optApplyNow": {
+    "message": "应用到已打开的 Steam 标签页"
+  },
+  "optApplied": {
+    "message": "已应用，已重新加载 $N$ 个 Steam 标签页。",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ 条 CodeWeavers · $AGW$ 条 AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "已保存。"
+  },
+  "popupSearchPlaceholder": {
+    "message": "在 CodeWeavers 搜索游戏…"
+  },
+  "popupNoResults": {
+    "message": "无结果。"
+  },
+  "popupOptions": {
+    "message": "设置"
+  },
+  "popupError": {
+    "message": "搜索失败，请重试。"
+  },
+  "popupCurrentTab": {
+    "message": "当前标签页"
+  },
+  "popupSurfaces": {
+    "message": "在 Steam 上显示"
+  },
+  "popupSurfaceApp": {
+    "message": "游戏页面"
+  },
+  "popupSurfaceCapsules": {
+    "message": "胶囊图"
+  },
+  "popupSurfaceSearch": {
+    "message": "搜索"
+  },
+  "popupSurfaceWishlist": {
+    "message": "愿望单"
+  },
+  "popupStatusSources": {
+    "message": "3 个数据源中已启用 $N$ 个",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "数据源"
+  },
+  "onboardingTitle": {
+    "message": "欢迎使用 CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "购买前就知道一款 Steam 游戏能否在你的 Mac 上运行。"
+  },
+  "onboardingWidgetTitle": {
+    "message": "每个游戏页面都有结论"
+  },
+  "onboardingWidgetBody": {
+    "message": "“Mac 上能玩吗？”小组件将 CrossOver 评分、AppleGamingWiki 与反作弊状态汇总为一个清晰的结论。"
+  },
+  "onboardingCapsulesTitle": {
+    "message": "星级遍布整个商店"
+  },
+  "onboardingCapsulesBody": {
+    "message": "浏览时，商店首页的游戏胶囊图会叠加显示兼容性星级。"
+  },
+  "onboardingSearchTitle": {
+    "message": "搜索和愿望单中的徽章"
+  },
+  "onboardingSearchBody": {
+    "message": "搜索结果和你的愿望单会显示紧凑的评分徽章，悬停即可查看详情。"
+  },
+  "onboardingNativeTitle": {
+    "message": "原生游戏，一目了然"
+  },
+  "onboardingNativeBody": {
+    "message": "拥有 Mac 原生版本的游戏会获得 5 星以及 Intel / M Series 架构标签。"
+  },
+  "onboardingCta": {
+    "message": "打开设置"
+  },
+  "onboardingHint": {
+    "message": "选择徽章的显示位置以及要使用的数据源。"
+  },
+  "statusUnrated": {
+    "message": "未评分"
+  }
+}

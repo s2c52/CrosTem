@@ -1,6 +1,6 @@
 {
   "name": "crostem",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "CrosTem — Mac compatibility for Steam (browser extension)",
   "author": "Sacha Gennari (s2c52)",

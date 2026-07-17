@@ -4,6 +4,8 @@
 // User settings. Stored in chrome.storage.sync (travels with the browser
 // account); memoized per context and refreshed via storage.onChanged.
 
+import { normalizeToSupported } from './steam-lang';
+
 export interface Settings {
   surfaces: {
     app: boolean; // widget on the game page
@@ -20,6 +22,8 @@ export interface Settings {
   crossoverVersion: string;
   /** Result cache TTL, in days (1-30). */
   cacheTtlDays: number;
+  /** UI language: 'auto' follows the Steam page, else a supported locale. */
+  language: string;
 }
 
 export const DEFAULTS: Settings = {
@@ -27,6 +31,7 @@ export const DEFAULTS: Settings = {
   sources: { cw: true, agw: true, anticheat: true },
   crossoverVersion: '26',
   cacheTtlDays: 7,
+  language: 'auto',
 };
 
 const KEY = 'settings';
@@ -49,6 +54,11 @@ export function mergeSettings(stored: unknown): Settings {
       typeof s.cacheTtlDays === 'number' && Number.isFinite(s.cacheTtlDays) && s.cacheTtlDays > 0
         ? Math.min(CACHE_TTL_MAX_DAYS, Math.max(CACHE_TTL_MIN_DAYS, Math.round(s.cacheTtlDays)))
         : DEFAULTS.cacheTtlDays,
+    language:
+      s.language === 'auto'
+        ? 'auto'
+        : ((typeof s.language === 'string' ? normalizeToSupported(s.language) : null) ??
+          DEFAULTS.language),
   };
 }
 

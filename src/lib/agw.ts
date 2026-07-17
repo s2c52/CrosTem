@@ -10,12 +10,16 @@ import { fetchExt } from './client';
 import { asString, isRecord } from './guards';
 import { logDebug } from './log';
 import { baseName, rank } from './matcher';
-import type { AgwCompat, AgwStatus, CwSearchResult } from '../types';
+import type { AgwCompat, AgwStatus, CwSearchResult, RankedResult } from '../types';
 
 const AGW_API = 'https://www.applegamingwiki.com/w/api.php';
 
 export function agwPageUrl(page: string): string {
   return 'https://www.applegamingwiki.com/wiki/' + encodeURIComponent(page.replace(/ /g, '_'));
+}
+
+export function agwSearchUrl(name: string): string {
+  return 'https://www.applegamingwiki.com/w/index.php?' + String(new URLSearchParams({ search: name }));
 }
 
 function toStatus(v: string | undefined): AgwStatus {
@@ -83,13 +87,24 @@ function sqlQuote(value: string): string {
   return "'" + value.replace(/\\/g, '\\\\').replace(/'/g, "''") + "'";
 }
 
+export interface AgwLookup {
+  result: AgwCompat | null;
+  /** Plausible pages (picker fodder for the "wrong match?" correction). */
+  candidates: RankedResult[];
+}
+
+const EMPTY_LOOKUP: AgwLookup = { result: null, candidates: [] };
+
 /**
- * Looks up a game's AGW compatibility by name. Returns null if no page
- * matches with confidence.
+ * Looks up a game's AGW compatibility by name, keeping the plausible
+ * candidate pages so the widget can offer a correction picker.
  */
-export async function agwLookup(name: string, appid?: string | null): Promise<AgwCompat | null> {
+export async function agwLookupDetailed(
+  name: string,
+  appid?: string | null,
+): Promise<AgwLookup> {
   const base = baseName(name);
-  if (!base) return null;
+  if (!base) return EMPTY_LOOKUP;
 
   // User correction (by appid) — the chosen page is stored.
   if (appid) {
@@ -97,15 +112,21 @@ export async function agwLookup(name: string, appid?: string | null): Promise<Ag
     if (chosen) {
       const rows = await cachedQuery(`_pageName=${sqlQuote(chosen)}`, 1, 'agw:page:' + chosen);
       const row = rows[0];
-      if (row) return row;
+      if (row) return { result: row, candidates: [] };
     }
   }
 
   const cacheKey = 'agw:' + base;
-  const cached = await cache.get<AgwCompat | null>(cacheKey);
-  if (cached !== undefined) return cached;
+  const cached = await cache.get<unknown>(cacheKey);
+  if (cached !== undefined) {
+    if (isRecord(cached) && 'result' in cached && 'candidates' in cached) {
+      return cached as unknown as AgwLookup;
+    }
+    // Legacy cache entry (bare result, no candidates).
+    return { result: cached as AgwCompat | null, candidates: [] };
+  }
 
-  let result: AgwCompat | null;
+  let lookup: AgwLookup;
   try {
     const rows = await cargoQuery(`_pageName LIKE ${sqlQuote(likePattern(name))}`, 10);
     // Reuses the matcher ranking by treating pages as candidates.
@@ -118,14 +139,20 @@ export async function agwLookup(name: string, appid?: string | null): Promise<Ag
     }));
     const ranked = rank(name, asResults);
     const pick = ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
-    result = pick ? (rows.find((r) => r.page === pick.slug) ?? null) : null;
+    const result = pick ? (rows.find((r) => r.page === pick.slug) ?? null) : null;
+    lookup = { result, candidates: ranked.candidates };
   } catch (e) {
-    result = null; // AGW being down must not break the widget
+    lookup = EMPTY_LOOKUP; // AGW being down must not break the widget
     logDebug('AGW query failed', e);
   }
 
-  await cache.set(cacheKey, result, result ? await cache.ttlResult() : cache.TTL_NEGATIVE);
-  return result;
+  await cache.set(cacheKey, lookup, lookup.result ? await cache.ttlResult() : cache.TTL_NEGATIVE);
+  return lookup;
+}
+
+/** Result-only variant kept for callers that don't need candidates. */
+export async function agwLookup(name: string, appid?: string | null): Promise<AgwCompat | null> {
+  return (await agwLookupDetailed(name, appid)).result;
 }
 
 async function cachedQuery(where: string, limit: number, key: string): Promise<AgwCompat[]> {

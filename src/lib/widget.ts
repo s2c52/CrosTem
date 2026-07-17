@@ -9,13 +9,13 @@ import { AWACY_SITE } from './awacy';
 import { appUrl, searchUrl } from './client';
 import { MAX_VERSION_ROWS } from './constants';
 import { t } from './i18n';
+import { ctLogo } from './logo';
 import type {
   AgwCompat,
   AnticheatInfo,
   ArchInfo,
   CwAppPage,
   RankedResult,
-  Verdict,
   VerdictLevel,
 } from '../types';
 
@@ -28,12 +28,19 @@ function el(tag: string, className?: string, text?: string): HTMLElement {
 
 export function starsEl(n: number | null, max = 5): HTMLElement {
   const span = el('span', 'crostem-stars');
+  span.setAttribute('role', 'img');
   if (n == null) {
     span.textContent = '—';
+    span.setAttribute('aria-label', t('starsNone'));
     return span;
   }
-  span.appendChild(el('span', 'crostem-stars-filled', '★'.repeat(n)));
-  span.appendChild(el('span', 'crostem-stars-empty', '☆'.repeat(Math.max(0, max - n))));
+  span.setAttribute('aria-label', t('starsAria', [String(n), String(max)]));
+  const filled = el('span', 'crostem-stars-filled', '★'.repeat(n));
+  const empty = el('span', 'crostem-stars-empty', '☆'.repeat(Math.max(0, max - n)));
+  filled.setAttribute('aria-hidden', 'true');
+  empty.setAttribute('aria-hidden', 'true');
+  span.appendChild(filled);
+  span.appendChild(empty);
   return span;
 }
 
@@ -72,13 +79,13 @@ function linkEl(href: string, text: string, className = 'crostem-link'): HTMLAnc
 function box(): HTMLElement {
   const root = el('div', 'crostem-box');
   const header = el('div', 'crostem-header');
-  header.appendChild(el('span', 'crostem-logo', ''));
+  header.appendChild(ctLogo(14));
   header.appendChild(el('span', undefined, t('widgetTitle')));
   root.appendChild(header);
   return root;
 }
 
-const ARCH_SOURCE_KEYS = {
+export const ARCH_SOURCE_KEYS = {
   agw: 'archSourceAgw',
   'steam-reqs': 'archSourceSteam',
   date: 'archSourceDate',
@@ -95,23 +102,49 @@ export function renderNativeBadge(arch: ArchInfo | null = null): HTMLElement {
     const label =
       t(arch.arch === 'm-series' ? 'archM' : 'archIntel') + (arch.approximate ? ' ~' : '');
     body.appendChild(el('div', 'crostem-arch-line', label));
-    body.appendChild(el('div', 'crostem-muted crostem-small', t(ARCH_SOURCE_KEYS[arch.source])));
+    const sourceLine = el('div', 'crostem-muted crostem-small');
+    if (arch.source === 'agw' && arch.agwPage) {
+      // Link to the game's AGW page so the claim can be verified.
+      sourceLine.appendChild(
+        linkEl(agwPageUrl(arch.agwPage), t(ARCH_SOURCE_KEYS.agw), 'crostem-link crostem-small'),
+      );
+    } else {
+      sourceLine.textContent = t(ARCH_SOURCE_KEYS[arch.source]);
+    }
+    body.appendChild(sourceLine);
   }
   body.appendChild(el('div', 'crostem-muted crostem-small', t('nativeNote')));
   root.appendChild(body);
   return root;
 }
 
+/** Skeleton with the final widget's shape, so the layout doesn't jump. */
 export function renderLoading(): HTMLElement {
   const root = box();
-  root.appendChild(el('div', 'crostem-body crostem-muted', t('checking')));
+  const body = el('div', 'crostem-body crostem-skeleton-body');
+  body.setAttribute('role', 'status');
+  body.setAttribute('aria-label', t('checking'));
+  body.appendChild(el('div', 'crostem-skeleton crostem-skeleton-banner'));
+  for (let i = 0; i < 3; i++) {
+    body.appendChild(el('div', 'crostem-skeleton crostem-skeleton-row'));
+  }
+  root.appendChild(body);
   return root;
 }
 
-export function renderError(message?: string): HTMLElement {
+export function renderError(
+  message?: string,
+  onRetry?: () => void | Promise<void>,
+): HTMLElement {
   const root = box();
-  const body = el('div', 'crostem-body');
+  const body = el('div', 'crostem-body crostem-error');
   body.appendChild(el('div', 'crostem-muted', message ?? t('errorReach')));
+  if (onRetry) {
+    const btn = el('button', 'crostem-retry', t('retry')) as HTMLButtonElement;
+    btn.type = 'button';
+    btn.addEventListener('click', () => void onRetry());
+    body.appendChild(btn);
+  }
   root.appendChild(body);
   return root;
 }
@@ -121,7 +154,7 @@ export interface FullCompat {
   cwSlug: string | null;
   agw: AgwCompat | null;
   ac: AnticheatInfo | null;
-  verdict: Verdict;
+  verdict: VerdictLevel;
 }
 
 export interface AppWidgetOpts {
@@ -131,14 +164,79 @@ export interface AppWidgetOpts {
   /** User's CrossOver branch to highlight (e.g. "26"). */
   cxVersion?: string | undefined;
   onChangeMatch?: (() => void | Promise<void>) | undefined;
+  /** Opens the AppleGamingWiki correction picker. */
+  onChangeAgwMatch?: (() => void | Promise<void>) | undefined;
   onRefresh?: (() => void | Promise<void>) | undefined;
 }
 
-function section(root: HTMLElement, title: string): HTMLElement {
-  const sec = el('div', 'crostem-section');
-  sec.appendChild(el('div', 'crostem-section-title', title));
+function inlineAction(label: string, onClick: () => void | Promise<void>): HTMLAnchorElement {
+  const a = el('a', 'crostem-link crostem-small', label) as HTMLAnchorElement;
+  a.href = '#';
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    void onClick();
+  });
+  return a;
+}
+
+const VERDICT_GLYPHS: Record<VerdictLevel, string> = {
+  green: '✓',
+  yellow: '～',
+  red: '✕',
+  unknown: '?',
+};
+
+/** Verdict banner: soft verdict-tinted strip readable at a glance. */
+function bannerEl(verdict: VerdictLevel): HTMLElement {
+  const banner = el('div', 'crostem-banner crostem-banner-' + verdict);
+  banner.setAttribute('role', 'status');
+  const dot = el('span', 'crostem-dot crostem-dot-' + verdict + ' crostem-banner-dot');
+  dot.appendChild(el('span', 'crostem-banner-glyph', VERDICT_GLYPHS[verdict]));
+  banner.appendChild(dot);
+  banner.appendChild(
+    el('span', 'crostem-banner-label crostem-verdict-' + verdict, t('verdict_' + verdict)),
+  );
+  return banner;
+}
+
+/**
+ * Compact one-line source row. With `detail` nodes the row becomes a
+ * disclosure button (aria-expanded) that unfolds the detail panel; the
+ * detail stays in the DOM either way, only its height is animated.
+ */
+function sourceRow(
+  root: HTMLElement,
+  title: string,
+  summary: HTMLElement[],
+  detail?: HTMLElement[],
+): void {
+  const sec = el('div', 'crostem-source');
+  const hasDetail = !!detail && detail.length > 0;
+  const row = el(
+    hasDetail ? 'button' : 'div',
+    'crostem-source-row' + (hasDetail ? ' crostem-source-toggle' : ''),
+  );
+  row.appendChild(el('span', 'crostem-source-name', title));
+  const sum = el('span', 'crostem-source-summary');
+  for (const node of summary) sum.appendChild(node);
+  row.appendChild(sum);
+  sec.appendChild(row);
+
+  if (hasDetail) {
+    (row as HTMLButtonElement).type = 'button';
+    row.setAttribute('aria-expanded', 'false');
+    row.appendChild(el('span', 'crostem-chevron', '▸'));
+    const panel = el('div', 'crostem-source-detail');
+    const inner = el('div', 'crostem-source-detail-inner');
+    for (const node of detail) inner.appendChild(node);
+    panel.appendChild(inner);
+    row.addEventListener('click', () => {
+      const open = sec.classList.toggle('crostem-open');
+      row.setAttribute('aria-expanded', String(open));
+    });
+    sec.appendChild(panel);
+  }
   root.appendChild(sec);
-  return sec;
 }
 
 function isUserVersion(version: string, cxVersion?: string): boolean {
@@ -146,38 +244,25 @@ function isUserVersion(version: string, cxVersion?: string): boolean {
   return version === cxVersion || version.startsWith(cxVersion + '.');
 }
 
-/** Full widget for the game page: verdict + per-source breakdown. */
+/** Full widget for the game page: verdict banner + per-source breakdown. */
 export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElement {
   const root = box();
+  root.appendChild(bannerEl(data.verdict));
   const body = el('div', 'crostem-body');
-
-  // Synthesized verdict
-  const headline = el('div', 'crostem-headline');
-  headline.appendChild(dotEl(data.verdict.level));
-  headline.appendChild(
-    el(
-      'span',
-      'crostem-verdict-label crostem-verdict-' + data.verdict.level,
-      t('verdict_' + data.verdict.level),
-    ),
-  );
-  body.appendChild(headline);
 
   // CodeWeavers
   const mac = data.cw?.mac ?? null;
   if (mac && data.cwSlug) {
-    const sec = section(body, t('sectionCw'));
-    const line = el('div', 'crostem-headline');
-    line.appendChild(starsEl(mac.stars));
-    line.appendChild(
-      el('span', 'crostem-status ' + statusClass(mac.status), mac.status || 'Unrated'),
-    );
-    sec.appendChild(line);
+    const summary = [
+      starsEl(mac.stars),
+      el('span', 'crostem-status ' + statusClass(mac.status), mac.status || t('statusUnrated')),
+    ];
+    const detail: HTMLElement[] = [];
     if (mac.lastTested) {
       const testedLine =
         t('lastTested', mac.lastTested) +
         (mac.reportCount ? ` (${t('reports', String(mac.reportCount))})` : '');
-      sec.appendChild(el('div', 'crostem-muted crostem-small', testedLine));
+      detail.push(el('div', 'crostem-muted crostem-small', testedLine));
     }
     const macVersions = (data.cw?.versions ?? [])
       .filter((v) => v.platform === 'macOS')
@@ -193,7 +278,7 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
         row.appendChild(starsEl(v.stars));
         table.appendChild(row);
       }
-      sec.appendChild(table);
+      detail.push(table);
     }
     const foot = el('div', 'crostem-small');
     foot.appendChild(linkEl(appUrl(data.cwSlug), t('viewOnCw'), 'crostem-link crostem-small'));
@@ -216,44 +301,70 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
       });
       foot.appendChild(change);
     }
-    sec.appendChild(foot);
+    detail.push(foot);
+    sourceRow(body, t('sectionCw'), summary, detail);
   } else {
-    const sec = section(body, t('sectionCw'));
-    sec.appendChild(el('div', 'crostem-muted crostem-small', t('noData')));
-    sec.appendChild(linkEl(searchUrl(opts.gameName), t('searchCw'), 'crostem-link crostem-small'));
+    sourceRow(
+      body,
+      t('sectionCw'),
+      [el('span', 'crostem-muted crostem-small', t('noData'))],
+      [linkEl(searchUrl(opts.gameName), t('searchCw'), 'crostem-link crostem-small')],
+    );
   }
 
   // AppleGamingWiki
   if (data.agw) {
-    const sec = section(body, t('sectionAgw'));
     const rows: Array<[string, string]> = [
       ['CrossOver', data.agw.crossover],
       ['Parallels', data.agw.parallels],
       ['Rosetta 2', data.agw.rosetta2],
     ];
-    for (const [label, status] of rows) {
-      if (status === 'na' || status === 'unknown') continue;
+    const meaningful = rows.filter(([, status]) => status !== 'na' && status !== 'unknown');
+    const first = meaningful[0];
+    const summary = first
+      ? [el('span', agwStatusClass(first[1]), `${first[0]}: ${first[1]}`)]
+      : [el('span', 'crostem-muted crostem-small', t('noData'))];
+    const detail: HTMLElement[] = [];
+    for (const [label, status] of meaningful) {
       const row = el('div', 'crostem-version-row');
       row.appendChild(el('span', 'crostem-version-label', label));
       row.appendChild(el('span', agwStatusClass(status), status));
-      sec.appendChild(row);
+      detail.push(row);
     }
-    sec.appendChild(
-      linkEl(agwPageUrl(data.agw.page), t('viewOnAgw'), 'crostem-link crostem-small'),
+    const foot = el('div', 'crostem-small');
+    foot.appendChild(linkEl(agwPageUrl(data.agw.page), t('viewOnAgw'), 'crostem-link crostem-small'));
+    if (opts.onChangeAgwMatch) {
+      foot.appendChild(document.createTextNode(' · '));
+      foot.appendChild(inlineAction(t('wrongMatch'), opts.onChangeAgwMatch));
+    }
+    detail.push(foot);
+    sourceRow(body, t('sectionAgw'), summary, detail);
+  } else if (opts.onChangeAgwMatch) {
+    // No confident AGW match, but there are plausible pages to pick from.
+    sourceRow(
+      body,
+      t('sectionAgw'),
+      [el('span', 'crostem-muted crostem-small', t('noData'))],
+      [inlineAction(t('agwCandidatesLink'), opts.onChangeAgwMatch)],
     );
   }
 
   // Anticheat
   if (data.ac) {
-    const sec = section(body, t('sectionAc'));
     const blocked = data.ac.status === 'Denied' || data.ac.status === 'Broken';
-    const line = el('div', blocked ? 'crostem-status-bad' : 'crostem-small');
-    line.textContent = `${blocked ? '⚠ ' : ''}${data.ac.anticheats.join(', ') || 'Anticheat'}: ${data.ac.status}`;
-    sec.appendChild(line);
+    const summary = [
+      el(
+        'span',
+        blocked ? 'crostem-status-bad' : 'crostem-small',
+        `${blocked ? '⚠ ' : ''}${data.ac.status}`,
+      ),
+    ];
+    const line = el('div', blocked ? 'crostem-status-bad crostem-small' : 'crostem-small');
+    line.textContent = `${data.ac.anticheats.join(', ') || t('sectionAc')}: ${data.ac.status}`;
     const note = el('div', 'crostem-muted crostem-small');
     note.textContent = t('acLinuxNote');
     note.appendChild(linkEl(AWACY_SITE, 'AreWeAntiCheatYet ↗', 'crostem-link crostem-small'));
-    sec.appendChild(note);
+    sourceRow(body, t('sectionAc'), summary, [line, note]);
   }
 
   // Footer: refresh + attribution
@@ -276,27 +387,42 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
   return root;
 }
 
-/** Candidate picker when name matching is ambiguous. */
+export interface CandidateListOpts {
+  /** Prompt above the list; defaults to the CodeWeavers wording. */
+  prompt?: string;
+  /** "None of these" escape hatch; defaults to CodeWeavers search. */
+  searchHref?: string;
+  searchLabel?: string;
+}
+
+/** Candidate picker when name matching is ambiguous (CW or AGW). */
 export function renderCandidateList(
   candidates: RankedResult[],
   gameName: string,
   onPick: (picked: RankedResult) => void | Promise<void>,
+  opts: CandidateListOpts = {},
 ): HTMLElement {
   const root = box();
   const body = el('div', 'crostem-body');
-  body.appendChild(el('div', 'crostem-muted crostem-small', t('pickMatch')));
+  body.appendChild(el('div', 'crostem-muted crostem-small', opts.prompt ?? t('pickMatch')));
   const list = el('div', 'crostem-candidates');
   for (const c of candidates) {
     const btn = el('button', 'crostem-candidate');
     btn.appendChild(el('div', 'crostem-candidate-name', c.name));
     const bottom = el('div', 'crostem-muted crostem-small', c.company ? c.company + ' · ' : '');
-    bottom.appendChild(starsEl(c.stars));
+    if (c.stars != null) bottom.appendChild(starsEl(c.stars));
     btn.appendChild(bottom);
     btn.addEventListener('click', () => void onPick(c));
     list.appendChild(btn);
   }
   body.appendChild(list);
-  body.appendChild(linkEl(searchUrl(gameName), t('noneOfThese'), 'crostem-link crostem-small'));
+  body.appendChild(
+    linkEl(
+      opts.searchHref ?? searchUrl(gameName),
+      opts.searchLabel ?? t('noneOfThese'),
+      'crostem-link crostem-small',
+    ),
+  );
   root.appendChild(body);
   return root;
 }

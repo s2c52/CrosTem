@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Chạy được trên Mac?"
+  },
+  "checking": {
+    "message": "Đang kiểm tra các nguồn dữ liệu tương thích…"
+  },
+  "errorReach": {
+    "message": "Không thể kết nối với các nguồn dữ liệu tương thích."
+  },
+  "errorFriendly": {
+    "message": "Hiện không thể kiểm tra các nguồn dữ liệu tương thích."
+  },
+  "retry": {
+    "message": "Thử lại"
+  },
+  "nativeBadge": {
+    "message": "Native trên macOS"
+  },
+  "nativeNote": {
+    "message": "Trò chơi này có sẵn bản Mac native — không cần CrossOver."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 trên M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Kiến trúc theo AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Kiến trúc suy ra từ yêu cầu hệ thống trên Steam."
+  },
+  "archSourceDate": {
+    "message": "Kiến trúc ước tính theo ngày phát hành."
+  },
+  "verdict_green": {
+    "message": "Chơi được trên Mac qua CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Chơi được nhưng có lưu ý"
+  },
+  "verdict_red": {
+    "message": "Nhiều khả năng không chơi được trên Mac"
+  },
+  "verdict_unknown": {
+    "message": "Chưa có dữ liệu tương thích"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Chống gian lận"
+  },
+  "lastTested": {
+    "message": "Thử nghiệm gần nhất: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ báo cáo",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Xem trên CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Xem trên AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Tìm trên CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Chưa có dữ liệu."
+  },
+  "yourVersion": {
+    "message": "phiên bản của bạn"
+  },
+  "approxMatch": {
+    "message": "khớp gần đúng: “$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Khớp sai?"
+  },
+  "acLinuxNote": {
+    "message": "Dữ liệu Linux/Proton — mang tính tham khảo cho CrossOver. "
+  },
+  "refresh": {
+    "message": "↻ Làm mới dữ liệu"
+  },
+  "refreshTitle": {
+    "message": "Xóa dữ liệu đã lưu của trò chơi này và kiểm tra lại mọi nguồn"
+  },
+  "attribution": {
+    "message": "Dữ liệu: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Không liên kết."
+  },
+  "pickMatch": {
+    "message": "Có nhiều kết quả khớp khả dĩ trên CodeWeavers — hãy chọn đúng mục:"
+  },
+  "noneOfThese": {
+    "message": "Không phải các mục này — tìm trên CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Có nhiều trang khả dĩ trên AppleGamingWiki — hãy chọn đúng trang:"
+  },
+  "agwNoneOfThese": {
+    "message": "Không phải các mục này — tìm trên AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Các kết quả khớp khả dĩ trên AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "$N$ kết quả khớp ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "chưa có dữ liệu"
+  },
+  "starsAria": {
+    "message": "$N$ trên $MAX$ sao",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "chưa có đánh giá"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — đánh giá CrossOver trên CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(khớp gần đúng)"
+  },
+  "badgeMatches": {
+    "message": "$N$ kết quả khớp khả dĩ trên CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "Cài đặt CrosTem"
+  },
+  "optSurfaces": {
+    "message": "Hiển thị mức tương thích ở đâu"
+  },
+  "optSurfaceApp": {
+    "message": "Widget trên trang trò chơi"
+  },
+  "optSurfaceCapsules": {
+    "message": "Lớp phủ sao trên capsule cửa hàng"
+  },
+  "optSurfaceSearch": {
+    "message": "Huy hiệu trong kết quả tìm kiếm"
+  },
+  "optSurfaceWishlist": {
+    "message": "Huy hiệu trong danh sách ước"
+  },
+  "optLanguage": {
+    "message": "Ngôn ngữ"
+  },
+  "optLangAuto": {
+    "message": "Tự động (theo Steam)"
+  },
+  "optSources": {
+    "message": "Nguồn dữ liệu"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (đánh giá CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (tình trạng chống gian lận)"
+  },
+  "optCxVersion": {
+    "message": "Phiên bản CrossOver của bạn"
+  },
+  "optCxVersionNote": {
+    "message": "Đánh giá của phiên bản này sẽ được làm nổi bật trong widget (vd: 26)."
+  },
+  "optCache": {
+    "message": "Bộ nhớ đệm"
+  },
+  "optCacheTtl": {
+    "message": "Giữ kết quả trong bộ nhớ đệm (ngày)"
+  },
+  "optCacheClear": {
+    "message": "Xóa bộ nhớ đệm"
+  },
+  "optCacheCleared": {
+    "message": "Đã xóa bộ nhớ đệm."
+  },
+  "optCacheCount": {
+    "message": "$N$ mục trong bộ nhớ đệm",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Sửa kết quả khớp"
+  },
+  "optChoicesCount": {
+    "message": "$N$ chỉnh sửa đã lưu",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Xuất"
+  },
+  "optImport": {
+    "message": "Nhập"
+  },
+  "optImported": {
+    "message": "Đã nhập các chỉnh sửa."
+  },
+  "optImportError": {
+    "message": "Tệp không hợp lệ."
+  },
+  "optClearChoices": {
+    "message": "Xóa tất cả chỉnh sửa"
+  },
+  "optReloadNote": {
+    "message": "Thay đổi áp dụng cho các thẻ Steam sau khi tải lại — dùng “Áp dụng ngay” bên dưới."
+  },
+  "optApplyNow": {
+    "message": "Áp dụng cho các thẻ Steam đang mở"
+  },
+  "optApplied": {
+    "message": "Đã áp dụng — đã tải lại $N$ thẻ Steam.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ từ CodeWeavers · $AGW$ từ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Đã lưu."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Tìm trò chơi trên CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Không có kết quả."
+  },
+  "popupOptions": {
+    "message": "Cài đặt"
+  },
+  "popupError": {
+    "message": "Tìm kiếm thất bại. Hãy thử lại."
+  },
+  "popupCurrentTab": {
+    "message": "Thẻ này"
+  },
+  "popupSurfaces": {
+    "message": "Hiển thị trên Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Trang trò chơi"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Capsule"
+  },
+  "popupSurfaceSearch": {
+    "message": "Tìm kiếm"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Danh sách ước"
+  },
+  "popupStatusSources": {
+    "message": "$N$/3 nguồn đang bật",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Nguồn dữ liệu"
+  },
+  "onboardingTitle": {
+    "message": "Chào mừng đến với CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Biết trò chơi Steam có chạy trên Mac của bạn không — trước khi mua."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Kết luận trên mọi trang trò chơi"
+  },
+  "onboardingWidgetBody": {
+    "message": "Widget “Chạy được trên Mac?” tổng hợp đánh giá CrossOver, AppleGamingWiki và tình trạng chống gian lận thành một kết luận rõ ràng."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Sao trên khắp cửa hàng"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Các capsule trò chơi ở trang chủ hiển thị lớp phủ sao tương thích khi bạn duyệt."
+  },
+  "onboardingSearchTitle": {
+    "message": "Huy hiệu trong tìm kiếm và danh sách ước"
+  },
+  "onboardingSearchBody": {
+    "message": "Kết quả tìm kiếm và danh sách ước hiển thị huy hiệu đánh giá gọn nhẹ — di chuột để xem chi tiết."
+  },
+  "onboardingNativeTitle": {
+    "message": "Game native, được đánh dấu"
+  },
+  "onboardingNativeBody": {
+    "message": "Trò chơi có bản Mac native sẽ nhận 5 sao cùng nhãn kiến trúc Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Mở cài đặt"
+  },
+  "onboardingHint": {
+    "message": "Chọn nơi hiển thị huy hiệu và nguồn dữ liệu sẽ dùng."
+  },
+  "statusUnrated": {
+    "message": "Chưa đánh giá"
+  }
+}

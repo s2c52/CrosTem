@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Τρέχει σε Mac;"
+  },
+  "checking": {
+    "message": "Έλεγχος πηγών συμβατότητας…"
+  },
+  "errorReach": {
+    "message": "Δεν ήταν δυνατή η επικοινωνία με τις πηγές συμβατότητας."
+  },
+  "errorFriendly": {
+    "message": "Δεν μπορέσαμε να ελέγξουμε τις πηγές συμβατότητας αυτήν τη στιγμή."
+  },
+  "retry": {
+    "message": "Δοκιμή ξανά"
+  },
+  "nativeBadge": {
+    "message": "Εγγενές σε macOS"
+  },
+  "nativeNote": {
+    "message": "Αυτό το παιχνίδι έχει εγγενή έκδοση για Mac — δεν χρειάζεται CrossOver."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 σε M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Αρχιτεκτονική σύμφωνα με το AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Αρχιτεκτονική βάσει των απαιτήσεων συστήματος του Steam."
+  },
+  "archSourceDate": {
+    "message": "Αρχιτεκτονική κατ' εκτίμηση από την ημερομηνία κυκλοφορίας."
+  },
+  "verdict_green": {
+    "message": "Παίζεται σε Mac μέσω CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Παίζεται με επιφυλάξεις"
+  },
+  "verdict_red": {
+    "message": "Μάλλον δεν παίζεται σε Mac"
+  },
+  "verdict_unknown": {
+    "message": "Χωρίς δεδομένα συμβατότητας"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Anticheat"
+  },
+  "lastTested": {
+    "message": "Τελευταία δοκιμή: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ αναφορές",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Προβολή στο CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Προβολή στο AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Αναζήτηση στο CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Χωρίς δεδομένα."
+  },
+  "yourVersion": {
+    "message": "η έκδοσή σου"
+  },
+  "approxMatch": {
+    "message": "κατά προσέγγιση αντιστοιχία: «$NAME$»",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Λάθος αντιστοιχία;"
+  },
+  "acLinuxNote": {
+    "message": "Δεδομένα Linux/Proton — ενδεικτικά για το CrossOver. "
+  },
+  "refresh": {
+    "message": "↻ Ανανέωση δεδομένων"
+  },
+  "refreshTitle": {
+    "message": "Καθαρισμός των αποθηκευμένων δεδομένων για αυτό το παιχνίδι και επανέλεγχος όλων των πηγών"
+  },
+  "attribution": {
+    "message": "Δεδομένα: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Χωρίς σχέση συνεργασίας."
+  },
+  "pickMatch": {
+    "message": "Πολλές πιθανές αντιστοιχίες στο CodeWeavers — διάλεξε τη σωστή:"
+  },
+  "noneOfThese": {
+    "message": "Καμία από αυτές — αναζήτηση στο CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Πολλές πιθανές σελίδες στο AppleGamingWiki — διάλεξε τη σωστή:"
+  },
+  "agwNoneOfThese": {
+    "message": "Καμία από αυτές — αναζήτηση στο AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Πιθανές αντιστοιχίες στο AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "$N$ αντιστοιχίες ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "χωρίς δεδομένα"
+  },
+  "starsAria": {
+    "message": "$N$ από $MAX$ αστέρια",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "χωρίς βαθμολογία"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — βαθμολογία CrossOver στο CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(κατά προσέγγιση αντιστοιχία)"
+  },
+  "badgeMatches": {
+    "message": "$N$ πιθανές αντιστοιχίες στο CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "Ρυθμίσεις CrosTem"
+  },
+  "optSurfaces": {
+    "message": "Πού θα εμφανίζεται η συμβατότητα"
+  },
+  "optSurfaceApp": {
+    "message": "Widget στη σελίδα του παιχνιδιού"
+  },
+  "optSurfaceCapsules": {
+    "message": "Επικαλύψεις αστεριών στις κάψουλες του καταστήματος"
+  },
+  "optSurfaceSearch": {
+    "message": "Σήματα στα αποτελέσματα αναζήτησης"
+  },
+  "optSurfaceWishlist": {
+    "message": "Σήματα στη λίστα επιθυμιών"
+  },
+  "optLanguage": {
+    "message": "Γλώσσα"
+  },
+  "optLangAuto": {
+    "message": "Αυτόματα (όπως το Steam)"
+  },
+  "optSources": {
+    "message": "Πηγές δεδομένων"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (βαθμολογίες CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (κατάσταση anticheat)"
+  },
+  "optCxVersion": {
+    "message": "Η έκδοση CrossOver σου"
+  },
+  "optCxVersionNote": {
+    "message": "Οι βαθμολογίες για την έκδοσή σου επισημαίνονται στο widget (π.χ. 26)."
+  },
+  "optCache": {
+    "message": "Προσωρινή μνήμη"
+  },
+  "optCacheTtl": {
+    "message": "Διατήρηση αποτελεσμάτων στην προσωρινή μνήμη για (ημέρες)"
+  },
+  "optCacheClear": {
+    "message": "Καθαρισμός προσωρινής μνήμης"
+  },
+  "optCacheCleared": {
+    "message": "Η προσωρινή μνήμη καθαρίστηκε."
+  },
+  "optCacheCount": {
+    "message": "$N$ καταχωρίσεις στην προσωρινή μνήμη",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Διορθώσεις αντιστοιχιών"
+  },
+  "optChoicesCount": {
+    "message": "$N$ αποθηκευμένες διορθώσεις",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Εξαγωγή"
+  },
+  "optImport": {
+    "message": "Εισαγωγή"
+  },
+  "optImported": {
+    "message": "Οι διορθώσεις εισήχθησαν."
+  },
+  "optImportError": {
+    "message": "Μη έγκυρο αρχείο."
+  },
+  "optClearChoices": {
+    "message": "Διαγραφή όλων των διορθώσεων"
+  },
+  "optReloadNote": {
+    "message": "Οι αλλαγές ισχύουν στις καρτέλες Steam μετά από επαναφόρτωση — χρησιμοποίησε το «Εφαρμογή τώρα» παρακάτω."
+  },
+  "optApplyNow": {
+    "message": "Εφαρμογή στις ανοιχτές καρτέλες Steam"
+  },
+  "optApplied": {
+    "message": "Εφαρμόστηκε — $N$ καρτέλες Steam επαναφορτώθηκαν.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ CodeWeavers · $AGW$ AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Αποθηκεύτηκε."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Αναζήτησε ένα παιχνίδι στο CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Κανένα αποτέλεσμα."
+  },
+  "popupOptions": {
+    "message": "Ρυθμίσεις"
+  },
+  "popupError": {
+    "message": "Η αναζήτηση απέτυχε. Δοκίμασε ξανά."
+  },
+  "popupCurrentTab": {
+    "message": "Αυτή η καρτέλα"
+  },
+  "popupSurfaces": {
+    "message": "Εμφάνιση στο Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Σελίδα παιχνιδιού"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Κάψουλες"
+  },
+  "popupSurfaceSearch": {
+    "message": "Αναζήτηση"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Λίστα επιθυμιών"
+  },
+  "popupStatusSources": {
+    "message": "$N$ από 3 πηγές ενεργές",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Πηγές δεδομένων"
+  },
+  "onboardingTitle": {
+    "message": "Καλώς ήρθες στο CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Μάθε αν ένα παιχνίδι του Steam τρέχει στο Mac σου — πριν το αγοράσεις."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Ετυμηγορία σε κάθε σελίδα παιχνιδιού"
+  },
+  "onboardingWidgetBody": {
+    "message": "Ένα widget «Τρέχει σε Mac;» συνδυάζει τις βαθμολογίες CrossOver, το AppleGamingWiki και την κατάσταση anticheat σε μία ξεκάθαρη ετυμηγορία."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Αστέρια σε όλο το κατάστημα"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Οι κάψουλες παιχνιδιών στην αρχική σελίδα αποκτούν επικάλυψη αστεριών συμβατότητας καθώς περιηγείσαι."
+  },
+  "onboardingSearchTitle": {
+    "message": "Σήματα σε αναζήτηση και λίστα επιθυμιών"
+  },
+  "onboardingSearchBody": {
+    "message": "Τα αποτελέσματα αναζήτησης και η λίστα επιθυμιών σου δείχνουν συμπαγή σήματα βαθμολογίας — πέρασε το ποντίκι από πάνω για λεπτομέρειες."
+  },
+  "onboardingNativeTitle": {
+    "message": "Εγγενή παιχνίδια, επισημασμένα"
+  },
+  "onboardingNativeBody": {
+    "message": "Τα παιχνίδια με εγγενή έκδοση για Mac παίρνουν 5 αστέρια και ετικέτα αρχιτεκτονικής Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Άνοιγμα ρυθμίσεων"
+  },
+  "onboardingHint": {
+    "message": "Διάλεξε πού εμφανίζονται τα σήματα και ποιες πηγές δεδομένων θα χρησιμοποιούνται."
+  },
+  "statusUnrated": {
+    "message": "Χωρίς αξιολόγηση"
+  }
+}

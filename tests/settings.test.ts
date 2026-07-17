@@ -28,6 +28,16 @@ describe('mergeSettings', () => {
     );
   });
 
+  it('valida el idioma de la UI', () => {
+    expect(mergeSettings({}).language).toBe('auto');
+    expect(mergeSettings({ language: 'auto' }).language).toBe('auto');
+    expect(mergeSettings({ language: 'ja' }).language).toBe('ja');
+    expect(mergeSettings({ language: 'ES' }).language).toBe('es');
+    expect(mergeSettings({ language: 'pt' }).language).toBe('pt-PT');
+    expect(mergeSettings({ language: 'xx' }).language).toBe('auto');
+    expect(mergeSettings({ language: 42 }).language).toBe('auto');
+  });
+
   it('acota el TTL a 1-30 días y redondea', () => {
     expect(mergeSettings({ cacheTtlDays: 3.7 }).cacheTtlDays).toBe(4);
     expect(mergeSettings({ cacheTtlDays: 0 }).cacheTtlDays).toBe(DEFAULTS.cacheTtlDays);

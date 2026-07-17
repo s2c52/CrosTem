@@ -1,0 +1,70 @@
+<!-- Copyright (C) 2026 Sacha Gennari -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CrosTem</title>
+    <link rel="stylesheet" href="./onboarding.css" />
+  </head>
+  <body class="ct-page">
+    <main>
+      <header class="hero">
+        <span class="logo"></span>
+        <h1>CrosTem</h1>
+        <p class="tagline" data-i18n="onboardingTagline"></p>
+      </header>
+
+      <div class="surface-grid">
+        <section class="card">
+          <div class="card-demo">
+            <span class="demo-banner"
+              ><span class="demo-dot"></span> <span data-i18n="verdict_green"></span
+            ></span>
+          </div>
+          <h2 data-i18n="onboardingWidgetTitle"></h2>
+          <p data-i18n="onboardingWidgetBody"></p>
+        </section>
+
+        <section class="card">
+          <div class="card-demo">
+            <span class="demo-pill"
+              ><span class="demo-stars">★★★★</span><span class="demo-stars-empty">☆</span></span
+            >
+          </div>
+          <h2 data-i18n="onboardingCapsulesTitle"></h2>
+          <p data-i18n="onboardingCapsulesBody"></p>
+        </section>
+
+        <section class="card">
+          <div class="card-demo">
+            <span class="demo-row"
+              ><span class="demo-dot"></span><span class="demo-stars">★★★★</span
+              ><span class="demo-stars-empty">☆</span></span
+            >
+          </div>
+          <h2 data-i18n="onboardingSearchTitle"></h2>
+          <p data-i18n="onboardingSearchBody"></p>
+        </section>
+
+        <section class="card">
+          <div class="card-demo">
+            <span class="demo-native" data-i18n="nativeBadge"></span>
+          </div>
+          <h2 data-i18n="onboardingNativeTitle"></h2>
+          <p data-i18n="onboardingNativeBody"></p>
+        </section>
+      </div>
+
+      <div class="cta">
+        <button id="open-options" data-i18n="onboardingCta"></button>
+        <p class="muted" data-i18n="onboardingHint"></p>
+      </div>
+
+      <footer>
+        <p class="muted" data-i18n="attribution"></p>
+      </footer>
+    </main>
+    <script type="module" src="./onboarding.ts"></script>
+  </body>
+</html>

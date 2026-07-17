@@ -9,14 +9,13 @@
 import { agwLookup } from './agw';
 import { resolveNativeArch } from './arch';
 import { anticheatLookup } from './awacy';
-import { appUrl, searchUrl, steamDetails } from './client';
+import { steamDetails } from './client';
 import { LAZY_ROOT_MARGIN } from './constants';
 import { resolveCw } from './cw';
 import { logDebug, logWarn } from './log';
 import { computeVerdict } from './verdict';
 import { getSettings } from './settings';
-import { t } from './i18n';
-import { dotEl, starsEl } from './widget';
+import { renderBadge } from './badge';
 import type {
   AutoAttachOpts,
   CwSignal,
@@ -43,7 +42,7 @@ export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
   if (opts.native === true) {
     // Immediate provisional badge (5★ without architecture); the architecture
     // is resolved lazily via the observer if there are hints to query the sources.
-    render(el, { kind: 'native', arch: null }, opts);
+    renderBadge(el, { kind: 'native', arch: null }, opts);
     if (!opts.appid && !opts.name) return;
   }
   registry.set(el, opts);
@@ -52,11 +51,11 @@ export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
 
 async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<void> {
   try {
-    render(el, await resolve(opts), opts);
+    renderBadge(el, await resolve(opts), opts);
   } catch (e) {
     logWarn('badge resolution failed', e);
     // Never remove the provisional native badge because of a network failure.
-    render(el, opts.native === true ? { kind: 'native', arch: null } : { kind: 'none' }, opts);
+    renderBadge(el, opts.native === true ? { kind: 'native', arch: null } : { kind: 'none' }, opts);
   }
 }
 
@@ -135,96 +134,16 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
       slug: cwOutcome.slug,
       cwName: cwOutcome.cwName,
       approximate: cwOutcome.approximate,
-      level: verdict.level,
+      level: verdict,
     };
   }
   if (cwOutcome.type === 'ambiguous') {
-    return { kind: 'ambiguous', count: cwOutcome.count, query: name, level: verdict.level };
+    return { kind: 'ambiguous', count: cwOutcome.count, query: name, level: verdict };
   }
   // No CodeWeavers but with an AGW/anticheat signal: the traffic light alone.
-  if (verdict.level !== 'unknown') {
-    return { kind: 'dot', level: verdict.level, title: verdict.label };
+  if (verdict !== 'unknown') {
+    return { kind: 'dot', level: verdict };
   }
   return { kind: 'none' };
 }
 
-function cwLink(href: string, title?: string): HTMLAnchorElement {
-  const a = document.createElement('a');
-  a.href = href;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  a.className = 'crostem-badge-result';
-  if (title) a.title = title;
-  // Capsules/rows are themselves links with JS handlers; this click is ours.
-  a.addEventListener('click', (e) => e.stopPropagation());
-  return a;
-}
-
-function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): void {
-  el.textContent = '';
-  const overlay = opts.mode === 'overlay';
-
-  switch (result.kind) {
-    case 'native': {
-      const span = document.createElement('span');
-      span.className = 'crostem-badge-native';
-      span.appendChild(starsEl(5));
-      const arch = result.arch;
-      if (arch) {
-        const tag = document.createElement('span');
-        tag.className = 'crostem-arch-tag';
-        tag.textContent =
-          t(arch.arch === 'm-series' ? 'archMShort' : 'archIntelShort') +
-          (arch.approximate ? '~' : '');
-        span.appendChild(tag);
-      }
-      span.title =
-        t('nativeBadge') +
-        (arch
-          ? ' — ' +
-            t(arch.arch === 'm-series' ? 'archM' : 'archIntel') +
-            (arch.approximate ? ' ~' : '')
-          : '');
-      el.appendChild(span);
-      break;
-    }
-    case 'stars': {
-      const a = cwLink(
-        appUrl(result.slug),
-        `${result.cwName} — CrossOver rating on CodeWeavers` +
-          (result.approximate ? ' (approximate match)' : ''),
-      );
-      a.appendChild(dotEl(result.level));
-      a.appendChild(starsEl(result.stars));
-      if (result.approximate) {
-        const tilde = document.createElement('span');
-        tilde.className = 'crostem-small';
-        tilde.textContent = '~';
-        a.appendChild(tilde);
-      }
-      el.appendChild(a);
-      break;
-    }
-    case 'ambiguous': {
-      const a = cwLink(searchUrl(result.query), `${result.count} possible matches on CodeWeavers`);
-      if (result.level !== 'unknown') a.appendChild(dotEl(result.level));
-      a.appendChild(document.createTextNode(overlay ? '?' : t('matchesN', String(result.count))));
-      el.appendChild(a);
-      break;
-    }
-    case 'dot': {
-      el.appendChild(dotEl(result.level, t('verdict_' + result.level)));
-      break;
-    }
-    default: {
-      if (overlay) {
-        el.remove();
-      } else {
-        const span = document.createElement('span');
-        span.className = 'crostem-muted crostem-small';
-        span.textContent = t('noDataInline');
-        el.appendChild(span);
-      }
-    }
-  }
-}

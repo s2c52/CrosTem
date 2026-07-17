@@ -31,6 +31,13 @@ function enqueueFetch(url: string): Promise<ExtFetchResponse> {
   return queue.run(url, () => doFetch(url));
 }
 
+// First install: open the welcome page (tabs.create needs no permission).
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install') {
+    void chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/onboarding.html') });
+  }
+});
+
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
   // Defense in depth: only our own content scripts/pages may request
   // fetches (the URL allowlist limits impact either way).

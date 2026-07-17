@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Corre no Mac?"
+  },
+  "checking": {
+    "message": "A consultar as fontes de compatibilidade…"
+  },
+  "errorReach": {
+    "message": "Não foi possível contactar as fontes de compatibilidade."
+  },
+  "errorFriendly": {
+    "message": "De momento não conseguimos consultar as fontes de compatibilidade."
+  },
+  "retry": {
+    "message": "Tentar novamente"
+  },
+  "nativeBadge": {
+    "message": "Nativo no macOS"
+  },
+  "nativeNote": {
+    "message": "Este jogo tem versão nativa para Mac — não é preciso CrossOver."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 no M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Arquitetura segundo o AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Arquitetura inferida dos requisitos de sistema do Steam."
+  },
+  "archSourceDate": {
+    "message": "Arquitetura estimada a partir da data de lançamento."
+  },
+  "verdict_green": {
+    "message": "Jogável no Mac via CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Jogável com ressalvas"
+  },
+  "verdict_red": {
+    "message": "Provavelmente injogável no Mac"
+  },
+  "verdict_unknown": {
+    "message": "Sem dados de compatibilidade"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Anticheat"
+  },
+  "lastTested": {
+    "message": "Último teste: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ relatos",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Ver no CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Ver no AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Pesquisar no CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Sem dados."
+  },
+  "yourVersion": {
+    "message": "a tua versão"
+  },
+  "approxMatch": {
+    "message": "correspondência aproximada: “$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Correspondência errada?"
+  },
+  "acLinuxNote": {
+    "message": "Dados de Linux/Proton — indicativos para o CrossOver. "
+  },
+  "refresh": {
+    "message": "↻ Atualizar dados"
+  },
+  "refreshTitle": {
+    "message": "Limpa a cache deste jogo e volta a consultar todas as fontes"
+  },
+  "attribution": {
+    "message": "Dados: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Sem afiliação."
+  },
+  "pickMatch": {
+    "message": "Há várias correspondências possíveis no CodeWeavers — escolhe a certa:"
+  },
+  "noneOfThese": {
+    "message": "Nenhuma destas — pesquisar no CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Várias páginas possíveis no AppleGamingWiki — escolhe a certa:"
+  },
+  "agwNoneOfThese": {
+    "message": "Nenhuma destas — pesquisar no AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Correspondências possíveis no AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "$N$ correspondências ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "sem dados"
+  },
+  "starsAria": {
+    "message": "$N$ de $MAX$ estrelas",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "sem classificação"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — classificação do CrossOver no CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(correspondência aproximada)"
+  },
+  "badgeMatches": {
+    "message": "$N$ correspondências possíveis no CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "Definições do CrosTem"
+  },
+  "optSurfaces": {
+    "message": "Onde mostrar a compatibilidade"
+  },
+  "optSurfaceApp": {
+    "message": "Widget na página do jogo"
+  },
+  "optSurfaceCapsules": {
+    "message": "Sobreposições de estrelas nas cápsulas da loja"
+  },
+  "optSurfaceSearch": {
+    "message": "Emblemas nos resultados de pesquisa"
+  },
+  "optSurfaceWishlist": {
+    "message": "Emblemas na lista de desejos"
+  },
+  "optLanguage": {
+    "message": "Idioma"
+  },
+  "optLangAuto": {
+    "message": "Automático (igual ao Steam)"
+  },
+  "optSources": {
+    "message": "Fontes de dados"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (classificações do CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (estado do anticheat)"
+  },
+  "optCxVersion": {
+    "message": "A tua versão do CrossOver"
+  },
+  "optCxVersionNote": {
+    "message": "As classificações dela são destacadas no widget (ex.: 26)."
+  },
+  "optCache": {
+    "message": "Cache"
+  },
+  "optCacheTtl": {
+    "message": "Manter resultados em cache durante (dias)"
+  },
+  "optCacheClear": {
+    "message": "Limpar cache"
+  },
+  "optCacheCleared": {
+    "message": "Cache limpa."
+  },
+  "optCacheCount": {
+    "message": "$N$ entradas em cache",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Correções de correspondência"
+  },
+  "optChoicesCount": {
+    "message": "$N$ correções guardadas",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Exportar"
+  },
+  "optImport": {
+    "message": "Importar"
+  },
+  "optImported": {
+    "message": "Correções importadas."
+  },
+  "optImportError": {
+    "message": "Ficheiro inválido."
+  },
+  "optClearChoices": {
+    "message": "Eliminar todas as correções"
+  },
+  "optReloadNote": {
+    "message": "As alterações aplicam-se aos separadores do Steam depois de os recarregar — usa “Aplicar agora” abaixo."
+  },
+  "optApplyNow": {
+    "message": "Aplicar aos separadores do Steam abertos"
+  },
+  "optApplied": {
+    "message": "Aplicado — $N$ separadores do Steam recarregados.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ do CodeWeavers · $AGW$ do AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Guardado."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Pesquisa um jogo no CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Sem resultados."
+  },
+  "popupOptions": {
+    "message": "Definições"
+  },
+  "popupError": {
+    "message": "A pesquisa falhou. Tenta novamente."
+  },
+  "popupCurrentTab": {
+    "message": "Este separador"
+  },
+  "popupSurfaces": {
+    "message": "Mostrar no Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Página do jogo"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Cápsulas"
+  },
+  "popupSurfaceSearch": {
+    "message": "Pesquisa"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Lista de desejos"
+  },
+  "popupStatusSources": {
+    "message": "$N$ de 3 fontes ativas",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Fontes de dados"
+  },
+  "onboardingTitle": {
+    "message": "Bem-vindo ao CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Fica a saber se um jogo do Steam corre no teu Mac — antes de o comprares."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Veredicto em cada página de jogo"
+  },
+  "onboardingWidgetBody": {
+    "message": "Um widget “Corre no Mac?” combina as classificações do CrossOver, o AppleGamingWiki e o estado do anticheat num veredicto claro."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Estrelas por toda a loja"
+  },
+  "onboardingCapsulesBody": {
+    "message": "As cápsulas de jogos na página inicial recebem uma sobreposição de estrelas de compatibilidade enquanto navegas."
+  },
+  "onboardingSearchTitle": {
+    "message": "Emblemas na pesquisa e na lista de desejos"
+  },
+  "onboardingSearchBody": {
+    "message": "Os resultados de pesquisa e a tua lista de desejos mostram emblemas compactos de classificação — passa o rato para veres os detalhes."
+  },
+  "onboardingNativeTitle": {
+    "message": "Jogos nativos, assinalados"
+  },
+  "onboardingNativeBody": {
+    "message": "Os jogos com versão nativa para Mac recebem 5 estrelas e uma etiqueta de arquitetura Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Abrir definições"
+  },
+  "onboardingHint": {
+    "message": "Escolhe onde aparecem os emblemas e que fontes de dados usar."
+  },
+  "statusUnrated": {
+    "message": "Sem classificação"
+  }
+}

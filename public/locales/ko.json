@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Mac에서 실행될까?"
+  },
+  "checking": {
+    "message": "호환성 소스 확인 중…"
+  },
+  "errorReach": {
+    "message": "호환성 소스에 연결할 수 없습니다."
+  },
+  "errorFriendly": {
+    "message": "지금은 호환성 소스를 확인할 수 없습니다."
+  },
+  "retry": {
+    "message": "다시 시도"
+  },
+  "nativeBadge": {
+    "message": "macOS 네이티브 지원"
+  },
+  "nativeNote": {
+    "message": "이 게임은 Mac 네이티브 버전을 제공합니다 — CrossOver가 필요 없습니다."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (M에서는 Rosetta 2)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "AppleGamingWiki 기준 아키텍처입니다."
+  },
+  "archSourceSteam": {
+    "message": "Steam 시스템 요구 사항에서 추정한 아키텍처입니다."
+  },
+  "archSourceDate": {
+    "message": "출시일로 추정한 아키텍처입니다."
+  },
+  "verdict_green": {
+    "message": "CrossOver로 Mac에서 플레이 가능"
+  },
+  "verdict_yellow": {
+    "message": "플레이 가능 (주의 사항 있음)"
+  },
+  "verdict_red": {
+    "message": "Mac에서 플레이 불가능할 가능성 높음"
+  },
+  "verdict_unknown": {
+    "message": "호환성 데이터 없음"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "안티치트"
+  },
+  "lastTested": {
+    "message": "최근 테스트: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "리포트 $N$건",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "CodeWeavers에서 보기 ↗"
+  },
+  "viewOnAgw": {
+    "message": "AppleGamingWiki에서 보기 ↗"
+  },
+  "searchCw": {
+    "message": "CodeWeavers에서 검색 ↗"
+  },
+  "noData": {
+    "message": "데이터 없음."
+  },
+  "yourVersion": {
+    "message": "내 버전"
+  },
+  "approxMatch": {
+    "message": "유사 일치: “$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "일치 항목이 잘못됐나요?"
+  },
+  "acLinuxNote": {
+    "message": "Linux/Proton 데이터 — CrossOver 참고용. "
+  },
+  "refresh": {
+    "message": "↻ 데이터 새로고침"
+  },
+  "refreshTitle": {
+    "message": "이 게임의 캐시를 지우고 모든 소스를 다시 확인"
+  },
+  "attribution": {
+    "message": "데이터: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. 제휴 관계 없음."
+  },
+  "pickMatch": {
+    "message": "CodeWeavers에 일치 가능한 항목이 여러 개 있습니다 — 올바른 항목을 선택하세요:"
+  },
+  "noneOfThese": {
+    "message": "모두 아님 — CodeWeavers에서 검색 ↗"
+  },
+  "agwPickMatch": {
+    "message": "AppleGamingWiki에 가능한 페이지가 여러 개 있습니다 — 올바른 페이지를 선택하세요:"
+  },
+  "agwNoneOfThese": {
+    "message": "모두 아님 — AppleGamingWiki에서 검색 ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "AppleGamingWiki의 일치 후보…"
+  },
+  "matchesN": {
+    "message": "일치 $N$건 ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "데이터 없음"
+  },
+  "starsAria": {
+    "message": "별 $MAX$개 중 $N$개",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "평가 없음"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — CodeWeavers의 CrossOver 평가",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(유사 일치)"
+  },
+  "badgeMatches": {
+    "message": "CodeWeavers에 일치 후보 $N$건",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "CrosTem 설정"
+  },
+  "optSurfaces": {
+    "message": "호환성 표시 위치"
+  },
+  "optSurfaceApp": {
+    "message": "게임 페이지 위젯"
+  },
+  "optSurfaceCapsules": {
+    "message": "상점 캡슐의 별점 오버레이"
+  },
+  "optSurfaceSearch": {
+    "message": "검색 결과 배지"
+  },
+  "optSurfaceWishlist": {
+    "message": "찜 목록 배지"
+  },
+  "optLanguage": {
+    "message": "언어"
+  },
+  "optLangAuto": {
+    "message": "자동 (Steam에 맞춤)"
+  },
+  "optSources": {
+    "message": "데이터 소스"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (CrossOver 평가)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (안티치트 상태)"
+  },
+  "optCxVersion": {
+    "message": "내 CrossOver 버전"
+  },
+  "optCxVersionNote": {
+    "message": "해당 버전의 평가가 위젯에서 강조 표시됩니다 (예: 26)."
+  },
+  "optCache": {
+    "message": "캐시"
+  },
+  "optCacheTtl": {
+    "message": "캐시 결과 보관 기간 (일)"
+  },
+  "optCacheClear": {
+    "message": "캐시 지우기"
+  },
+  "optCacheCleared": {
+    "message": "캐시를 지웠습니다."
+  },
+  "optCacheCount": {
+    "message": "캐시 항목 $N$개",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "일치 수정"
+  },
+  "optChoicesCount": {
+    "message": "저장된 수정 $N$개",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "내보내기"
+  },
+  "optImport": {
+    "message": "가져오기"
+  },
+  "optImported": {
+    "message": "수정 항목을 가져왔습니다."
+  },
+  "optImportError": {
+    "message": "잘못된 파일입니다."
+  },
+  "optClearChoices": {
+    "message": "모든 수정 삭제"
+  },
+  "optReloadNote": {
+    "message": "변경 사항은 Steam 탭을 새로고침한 뒤 적용됩니다 — 아래 “지금 적용”을 사용하세요."
+  },
+  "optApplyNow": {
+    "message": "열려 있는 Steam 탭에 적용"
+  },
+  "optApplied": {
+    "message": "적용됨 — Steam 탭 $N$개를 새로고침했습니다.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "CodeWeavers $CW$개 · AppleGamingWiki $AGW$개",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "저장했습니다."
+  },
+  "popupSearchPlaceholder": {
+    "message": "CodeWeavers에서 게임 검색…"
+  },
+  "popupNoResults": {
+    "message": "결과 없음."
+  },
+  "popupOptions": {
+    "message": "설정"
+  },
+  "popupError": {
+    "message": "검색에 실패했습니다. 다시 시도하세요."
+  },
+  "popupCurrentTab": {
+    "message": "현재 탭"
+  },
+  "popupSurfaces": {
+    "message": "Steam에 표시"
+  },
+  "popupSurfaceApp": {
+    "message": "게임 페이지"
+  },
+  "popupSurfaceCapsules": {
+    "message": "캡슐"
+  },
+  "popupSurfaceSearch": {
+    "message": "검색"
+  },
+  "popupSurfaceWishlist": {
+    "message": "찜 목록"
+  },
+  "popupStatusSources": {
+    "message": "소스 3개 중 $N$개 활성",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "데이터 소스"
+  },
+  "onboardingTitle": {
+    "message": "CrosTem에 오신 것을 환영합니다"
+  },
+  "onboardingTagline": {
+    "message": "Steam 게임이 내 Mac에서 돌아가는지, 구매 전에 확인하세요."
+  },
+  "onboardingWidgetTitle": {
+    "message": "모든 게임 페이지에 결론 표시"
+  },
+  "onboardingWidgetBody": {
+    "message": "“Mac에서 실행될까?” 위젯이 CrossOver 평가, AppleGamingWiki, 안티치트 상태를 하나의 명확한 결론으로 정리합니다."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "상점 곳곳에 별점 표시"
+  },
+  "onboardingCapsulesBody": {
+    "message": "둘러보는 동안 메인 페이지의 게임 캡슐에 호환성 별점 오버레이가 표시됩니다."
+  },
+  "onboardingSearchTitle": {
+    "message": "검색과 찜 목록에 배지"
+  },
+  "onboardingSearchBody": {
+    "message": "검색 결과와 찜 목록에 간결한 평가 배지가 표시됩니다 — 마우스를 올리면 자세히 볼 수 있습니다."
+  },
+  "onboardingNativeTitle": {
+    "message": "네이티브 게임 표시"
+  },
+  "onboardingNativeBody": {
+    "message": "Mac 네이티브 버전이 있는 게임에는 별 5개와 Intel / M Series 아키텍처 태그가 붙습니다."
+  },
+  "onboardingCta": {
+    "message": "설정 열기"
+  },
+  "onboardingHint": {
+    "message": "배지 표시 위치와 사용할 데이터 소스를 선택하세요."
+  },
+  "statusUnrated": {
+    "message": "미평가"
+  }
+}

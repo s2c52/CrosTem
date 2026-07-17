@@ -1,0 +1,152 @@
+/* Copyright (C) 2026 Sacha Gennari */
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+
+/* CrosTem design tokens. Single source of truth for every surface:
+   injected Steam widgets (styles.css), popup, options and onboarding.
+   All names are prefixed --ct- so they never collide with Steam's own
+   custom properties when injected into store pages. */
+
+:root {
+  /* Backgrounds */
+  --ct-bg-deep: #16202d;
+  --ct-bg: #1b2838;
+  --ct-bg-gradient: linear-gradient(135deg, #1b2838 0%, #16202d 100%);
+  --ct-bg-raised: #2a3f5a;
+  --ct-bg-hover: #3d5a80;
+  --ct-bg-row-hover: #1b2c42;
+
+  /* Borders */
+  --ct-border: #2a3f5a;
+  --ct-border-hi: #3d5a80;
+  --ct-border-soft: #22354c;
+
+  /* Text */
+  --ct-text: #c6d4df;
+  --ct-text-bright: #ffffff;
+  --ct-text-muted: #8f98a0;
+
+  /* Accent (Steam blue) */
+  --ct-accent: #66c0f4;
+  --ct-accent-hi: #a4d7f5;
+
+  /* Stars */
+  --ct-star: #ffc82c;
+  --ct-star-hi: #ffd75e;
+  --ct-star-empty: #4b5b6c;
+
+  /* Verdict traffic light */
+  --ct-green: #7bc144;
+  --ct-green-bright: #a3cf06;
+  --ct-green-dim: #6fa720;
+  --ct-amber: #e5b567;
+  --ct-red: #d94126;
+  --ct-unknown: #6b7a8a;
+
+  /* Soft verdict tints for banner backgrounds (explicit rgba: reliable
+     inside content scripts, no color-mix support concerns) */
+  --ct-green-soft: rgba(123, 193, 68, 0.14);
+  --ct-amber-soft: rgba(229, 181, 103, 0.14);
+  --ct-red-soft: rgba(217, 65, 38, 0.14);
+  --ct-unknown-soft: rgba(107, 122, 138, 0.14);
+
+  /* Native badge */
+  --ct-native-bg: #5c7e10;
+  --ct-native-text: #d2efa9;
+
+  /* Typography. Injected surfaces chameleon into Steam (Motiva Sans is
+     already loaded by the store); extension pages use the system stack. */
+  --ct-font-steam: 'Motiva Sans', Arial, Helvetica, sans-serif;
+  --ct-font-ui:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, Helvetica, Arial, sans-serif;
+  --ct-font-mono: 'SF Mono', 'Courier New', monospace;
+
+  /* Motion */
+  --ct-dur-fast: 150ms;
+  --ct-dur: 180ms;
+  --ct-dur-slow: 320ms;
+  --ct-ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+
+  /* Shape */
+  --ct-radius-sm: 3px;
+  --ct-radius: 4px;
+  --ct-radius-lg: 8px;
+  --ct-radius-pill: 999px;
+}
+
+/* Accessible switch: the real checkbox stays focusable (visually hidden),
+   the track/thumb animate on :checked. Shared by popup and options. */
+
+.ct-switch {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+}
+
+.ct-switch input {
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.ct-switch-track {
+  background: var(--ct-bg-raised);
+  border: 1px solid var(--ct-border-hi);
+  border-radius: var(--ct-radius-pill);
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  height: 20px;
+  padding: 2px;
+  transition:
+    background var(--ct-dur) var(--ct-ease),
+    border-color var(--ct-dur) var(--ct-ease);
+  width: 34px;
+}
+
+.ct-switch-thumb {
+  background: var(--ct-text-muted);
+  border-radius: 50%;
+  height: 14px;
+  transition:
+    transform var(--ct-dur) var(--ct-ease),
+    background var(--ct-dur) var(--ct-ease);
+  width: 14px;
+}
+
+.ct-switch input:checked + .ct-switch-track {
+  background: var(--ct-accent);
+  border-color: var(--ct-accent);
+}
+
+.ct-switch input:checked + .ct-switch-track .ct-switch-thumb {
+  background: var(--ct-bg-deep);
+  transform: translateX(14px);
+}
+
+.ct-switch input:focus-visible + .ct-switch-track {
+  outline: 2px solid var(--ct-accent);
+  outline-offset: 2px;
+}
+
+.ct-switch:hover .ct-switch-track {
+  border-color: var(--ct-accent);
+}
+
+/* Kill all CrosTem motion when the user prefers reduced motion. Scoped to
+   our own elements (.crostem-* injected into Steam, .ct-page on extension
+   pages) so the host page's transitions are never touched. */
+@media (prefers-reduced-motion: reduce) {
+  [class*='crostem-'],
+  [class*='crostem-']::before,
+  [class*='crostem-']::after,
+  .ct-page,
+  .ct-page *,
+  .ct-page *::before,
+  .ct-page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

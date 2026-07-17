@@ -1,0 +1,374 @@
+{
+  "widgetTitle": {
+    "message": "Merge pe Mac?"
+  },
+  "checking": {
+    "message": "Se verifică sursele de compatibilitate…"
+  },
+  "errorReach": {
+    "message": "Sursele de compatibilitate nu au putut fi contactate."
+  },
+  "errorFriendly": {
+    "message": "Momentan nu am putut consulta sursele de compatibilitate."
+  },
+  "retry": {
+    "message": "Reîncearcă"
+  },
+  "nativeBadge": {
+    "message": "Nativ pe macOS"
+  },
+  "nativeNote": {
+    "message": "Acest joc are o versiune nativă pentru Mac — nu e nevoie de CrossOver."
+  },
+  "archM": {
+    "message": "M Series (Apple Silicon)"
+  },
+  "archIntel": {
+    "message": "Intel (Rosetta 2 pe M)"
+  },
+  "archMShort": {
+    "message": "M"
+  },
+  "archIntelShort": {
+    "message": "Intel"
+  },
+  "archSourceAgw": {
+    "message": "Arhitectură conform AppleGamingWiki."
+  },
+  "archSourceSteam": {
+    "message": "Arhitectură dedusă din cerințele de sistem de pe Steam."
+  },
+  "archSourceDate": {
+    "message": "Arhitectură estimată după data lansării."
+  },
+  "verdict_green": {
+    "message": "Jucabil pe Mac prin CrossOver"
+  },
+  "verdict_yellow": {
+    "message": "Jucabil, cu rezerve"
+  },
+  "verdict_red": {
+    "message": "Probabil nejucabil pe Mac"
+  },
+  "verdict_unknown": {
+    "message": "Fără date de compatibilitate"
+  },
+  "sectionCw": {
+    "message": "CrossOver — CodeWeavers"
+  },
+  "sectionAgw": {
+    "message": "AppleGamingWiki"
+  },
+  "sectionAc": {
+    "message": "Anticheat"
+  },
+  "lastTested": {
+    "message": "Ultimul test: $VER$",
+    "placeholders": {
+      "VER": {
+        "content": "$1"
+      }
+    }
+  },
+  "reports": {
+    "message": "$N$ rapoarte",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "viewOnCw": {
+    "message": "Vezi pe CodeWeavers ↗"
+  },
+  "viewOnAgw": {
+    "message": "Vezi pe AppleGamingWiki ↗"
+  },
+  "searchCw": {
+    "message": "Caută pe CodeWeavers ↗"
+  },
+  "noData": {
+    "message": "Fără date."
+  },
+  "yourVersion": {
+    "message": "versiunea ta"
+  },
+  "approxMatch": {
+    "message": "potrivire aproximativă: „$NAME$”",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "wrongMatch": {
+    "message": "Potrivire greșită?"
+  },
+  "acLinuxNote": {
+    "message": "Date Linux/Proton — orientative pentru CrossOver. "
+  },
+  "refresh": {
+    "message": "↻ Reîmprospătează datele"
+  },
+  "refreshTitle": {
+    "message": "Șterge datele din cache pentru acest joc și verifică din nou toate sursele"
+  },
+  "attribution": {
+    "message": "Date: CodeWeavers · AppleGamingWiki · AreWeAntiCheatYet. Fără afiliere."
+  },
+  "pickMatch": {
+    "message": "Mai multe potriviri posibile pe CodeWeavers — alege-o pe cea corectă:"
+  },
+  "noneOfThese": {
+    "message": "Niciuna dintre acestea — caută pe CodeWeavers ↗"
+  },
+  "agwPickMatch": {
+    "message": "Mai multe pagini posibile pe AppleGamingWiki — alege-o pe cea corectă:"
+  },
+  "agwNoneOfThese": {
+    "message": "Niciuna dintre acestea — caută pe AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Potriviri posibile pe AppleGamingWiki…"
+  },
+  "matchesN": {
+    "message": "$N$ potriviri ↗",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataInline": {
+    "message": "fără date"
+  },
+  "starsAria": {
+    "message": "$N$ din $MAX$ stele",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "fără evaluare"
+  },
+  "badgeCwRating": {
+    "message": "$NAME$ — evaluare CrossOver pe CodeWeavers",
+    "placeholders": {
+      "NAME": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeApprox": {
+    "message": "(potrivire aproximativă)"
+  },
+  "badgeMatches": {
+    "message": "$N$ potriviri posibile pe CodeWeavers",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsTitle": {
+    "message": "Setări CrosTem"
+  },
+  "optSurfaces": {
+    "message": "Unde se afișează compatibilitatea"
+  },
+  "optSurfaceApp": {
+    "message": "Widget pe pagina jocului"
+  },
+  "optSurfaceCapsules": {
+    "message": "Stele suprapuse pe capsulele din magazin"
+  },
+  "optSurfaceSearch": {
+    "message": "Insigne în rezultatele căutării"
+  },
+  "optSurfaceWishlist": {
+    "message": "Insigne în lista de dorințe"
+  },
+  "optLanguage": {
+    "message": "Limbă"
+  },
+  "optLangAuto": {
+    "message": "Automat (ca Steam)"
+  },
+  "optSources": {
+    "message": "Surse de date"
+  },
+  "optSourceCw": {
+    "message": "CodeWeavers (evaluări CrossOver)"
+  },
+  "optSourceAgw": {
+    "message": "AppleGamingWiki (CrossOver/Parallels/Rosetta)"
+  },
+  "optSourceAc": {
+    "message": "AreWeAntiCheatYet (stare anticheat)"
+  },
+  "optCxVersion": {
+    "message": "Versiunea ta de CrossOver"
+  },
+  "optCxVersionNote": {
+    "message": "Evaluările ei sunt evidențiate în widget (ex. 26)."
+  },
+  "optCache": {
+    "message": "Cache"
+  },
+  "optCacheTtl": {
+    "message": "Păstrează rezultatele în cache timp de (zile)"
+  },
+  "optCacheClear": {
+    "message": "Golește cache-ul"
+  },
+  "optCacheCleared": {
+    "message": "Cache golit."
+  },
+  "optCacheCount": {
+    "message": "$N$ intrări în cache",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoices": {
+    "message": "Corecții de potrivire"
+  },
+  "optChoicesCount": {
+    "message": "$N$ corecții salvate",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optExport": {
+    "message": "Exportă"
+  },
+  "optImport": {
+    "message": "Importă"
+  },
+  "optImported": {
+    "message": "Corecții importate."
+  },
+  "optImportError": {
+    "message": "Fișier nevalid."
+  },
+  "optClearChoices": {
+    "message": "Șterge toate corecțiile"
+  },
+  "optReloadNote": {
+    "message": "Modificările se aplică filelor Steam după reîncărcare — folosește „Aplică acum” mai jos."
+  },
+  "optApplyNow": {
+    "message": "Aplică în filele Steam deschise"
+  },
+  "optApplied": {
+    "message": "Aplicat — $N$ file Steam reîncărcate.",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "optChoicesSplit": {
+    "message": "$CW$ de la CodeWeavers · $AGW$ de la AppleGamingWiki",
+    "placeholders": {
+      "CW": {
+        "content": "$1"
+      },
+      "AGW": {
+        "content": "$2"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Salvat."
+  },
+  "popupSearchPlaceholder": {
+    "message": "Caută un joc pe CodeWeavers…"
+  },
+  "popupNoResults": {
+    "message": "Niciun rezultat."
+  },
+  "popupOptions": {
+    "message": "Setări"
+  },
+  "popupError": {
+    "message": "Căutarea a eșuat. Încearcă din nou."
+  },
+  "popupCurrentTab": {
+    "message": "Fila curentă"
+  },
+  "popupSurfaces": {
+    "message": "Afișează pe Steam"
+  },
+  "popupSurfaceApp": {
+    "message": "Pagina jocului"
+  },
+  "popupSurfaceCapsules": {
+    "message": "Capsule"
+  },
+  "popupSurfaceSearch": {
+    "message": "Căutare"
+  },
+  "popupSurfaceWishlist": {
+    "message": "Lista de dorințe"
+  },
+  "popupStatusSources": {
+    "message": "$N$ din 3 surse active",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupLinks": {
+    "message": "Surse de date"
+  },
+  "onboardingTitle": {
+    "message": "Bun venit la CrosTem"
+  },
+  "onboardingTagline": {
+    "message": "Află dacă un joc de pe Steam merge pe Mac-ul tău — înainte să-l cumperi."
+  },
+  "onboardingWidgetTitle": {
+    "message": "Verdict pe fiecare pagină de joc"
+  },
+  "onboardingWidgetBody": {
+    "message": "Un widget „Merge pe Mac?” combină evaluările CrossOver, AppleGamingWiki și starea anticheat într-un verdict clar."
+  },
+  "onboardingCapsulesTitle": {
+    "message": "Stele în tot magazinul"
+  },
+  "onboardingCapsulesBody": {
+    "message": "Capsulele jocurilor de pe prima pagină primesc stele de compatibilitate suprapuse în timp ce navighezi."
+  },
+  "onboardingSearchTitle": {
+    "message": "Insigne în căutare și în lista de dorințe"
+  },
+  "onboardingSearchBody": {
+    "message": "Rezultatele căutării și lista ta de dorințe afișează insigne compacte de evaluare — treci cu mouse-ul pentru detalii."
+  },
+  "onboardingNativeTitle": {
+    "message": "Jocuri native, marcate"
+  },
+  "onboardingNativeBody": {
+    "message": "Jocurile cu versiune nativă pentru Mac primesc 5 stele și o etichetă de arhitectură Intel / M Series."
+  },
+  "onboardingCta": {
+    "message": "Deschide setările"
+  },
+  "onboardingHint": {
+    "message": "Alege unde apar insignele și ce surse de date se folosesc."
+  },
+  "statusUnrated": {
+    "message": "Neevaluat"
+  }
+}

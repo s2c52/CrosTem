@@ -4,7 +4,7 @@
 // Steam search results: automatic CrossOver badge per row
 // (loads when the row becomes visible, via the lib/auto observer).
 import { attach } from '../lib/auto';
-import { getSettings } from '../lib/settings';
+import { initContentI18n } from '../lib/i18n';
 import '../styles.css';
 
 function processRow(row: HTMLElement): void {
@@ -34,7 +34,8 @@ function scan(root: ParentNode = document): void {
 }
 
 void (async () => {
-  if (!(await getSettings()).surfaces.search) return;
+  const settings = await initContentI18n();
+  if (!settings.surfaces.search) return;
   scan();
 
   // Steam loads more rows via AJAX (infinite scroll / pagination).
