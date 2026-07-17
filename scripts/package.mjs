@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Packages dist/ into a zip ready to upload to the Chrome Web Store.
 // Usage: npm run package  →  crostem-v<version>.zip at the repo root.
 import { execFileSync } from 'node:child_process';

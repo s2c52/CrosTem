@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Native Mac binary architecture detection: AGW mapping, inference
 // from Steam requirements and year heuristic, plus their precedence.
 import { describe, expect, it } from 'vitest';
@@ -10,16 +13,32 @@ function agw(native: AgwStatus, rosetta2: AgwStatus): AgwCompat {
 
 describe('archFromAgw', () => {
   it('native positivo → M Series exacto', () => {
-    expect(archFromAgw(agw('perfect', 'na'))).toEqual({ arch: 'm-series', approximate: false, source: 'agw' });
-    expect(archFromAgw(agw('menu', 'unknown'))).toEqual({ arch: 'm-series', approximate: false, source: 'agw' });
+    expect(archFromAgw(agw('perfect', 'na'))).toEqual({
+      arch: 'm-series',
+      approximate: false,
+      source: 'agw',
+    });
+    expect(archFromAgw(agw('menu', 'unknown'))).toEqual({
+      arch: 'm-series',
+      approximate: false,
+      source: 'agw',
+    });
   });
 
   it('native negativo + rosetta2 positivo → Intel exacto', () => {
-    expect(archFromAgw(agw('na', 'playable'))).toEqual({ arch: 'intel', approximate: false, source: 'agw' });
+    expect(archFromAgw(agw('na', 'playable'))).toEqual({
+      arch: 'intel',
+      approximate: false,
+      source: 'agw',
+    });
   });
 
   it('native unknown + rosetta2 positivo → Intel aproximado', () => {
-    expect(archFromAgw(agw('unknown', 'runs'))).toEqual({ arch: 'intel', approximate: true, source: 'agw' });
+    expect(archFromAgw(agw('unknown', 'runs'))).toEqual({
+      arch: 'intel',
+      approximate: true,
+      source: 'agw',
+    });
   });
 
   it('sin señal positiva → null', () => {
@@ -37,16 +56,28 @@ describe('archFromSteamReqs', () => {
       'CPU: arm64',
       'Intel or Apple Silicon', // universal counts as M Series
     ]) {
-      expect(archFromSteamReqs(reqs)).toEqual({ arch: 'm-series', approximate: true, source: 'steam-reqs' });
+      expect(archFromSteamReqs(reqs)).toEqual({
+        arch: 'm-series',
+        approximate: true,
+        source: 'steam-reqs',
+      });
     }
   });
 
   it('menciona Intel/x86 → Intel~', () => {
-    expect(archFromSteamReqs('Processor: Intel Core i5')).toEqual({ arch: 'intel', approximate: true, source: 'steam-reqs' });
+    expect(archFromSteamReqs('Processor: Intel Core i5')).toEqual({
+      arch: 'intel',
+      approximate: true,
+      source: 'steam-reqs',
+    });
   });
 
   it('Rosetta gana aunque cite M1', () => {
-    expect(archFromSteamReqs('Runs via Rosetta 2 on M1 Macs')).toEqual({ arch: 'intel', approximate: true, source: 'steam-reqs' });
+    expect(archFromSteamReqs('Runs via Rosetta 2 on M1 Macs')).toEqual({
+      arch: 'intel',
+      approximate: true,
+      source: 'steam-reqs',
+    });
   });
 
   it('sin señal o vacío → null', () => {
@@ -63,8 +94,16 @@ describe('archFromSteamReqs', () => {
 
 describe('archFromReleaseYear', () => {
   it('≥2021 → M Series~, <2021 → Intel~', () => {
-    expect(archFromReleaseYear(2021)).toEqual({ arch: 'm-series', approximate: true, source: 'date' });
-    expect(archFromReleaseYear(2026)).toEqual({ arch: 'm-series', approximate: true, source: 'date' });
+    expect(archFromReleaseYear(2021)).toEqual({
+      arch: 'm-series',
+      approximate: true,
+      source: 'date',
+    });
+    expect(archFromReleaseYear(2026)).toEqual({
+      arch: 'm-series',
+      approximate: true,
+      source: 'date',
+    });
     expect(archFromReleaseYear(2020)).toEqual({ arch: 'intel', approximate: true, source: 'date' });
     expect(archFromReleaseYear(1998)).toEqual({ arch: 'intel', approximate: true, source: 'date' });
   });
@@ -79,18 +118,25 @@ describe('detectArch (precedencia AGW → reqs → fecha)', () => {
   const steam = { name: 'X', mac: true, macRequirements: 'Apple Silicon only', releaseYear: 2019 };
 
   it('AGW gana a los requisitos de Steam', () => {
-    expect(detectArch(agw('na', 'perfect'), steam))
-      .toEqual({ arch: 'intel', approximate: false, source: 'agw' });
+    expect(detectArch(agw('na', 'perfect'), steam)).toEqual({
+      arch: 'intel',
+      approximate: false,
+      source: 'agw',
+    });
   });
 
   it('sin AGW, requisitos ganan a la fecha', () => {
-    expect(detectArch(null, steam))
-      .toEqual({ arch: 'm-series', approximate: true, source: 'steam-reqs' });
+    expect(detectArch(null, steam)).toEqual({
+      arch: 'm-series',
+      approximate: true,
+      source: 'steam-reqs',
+    });
   });
 
   it('solo fecha como último recurso', () => {
-    expect(detectArch(null, { name: 'X', mac: true, macRequirements: null, releaseYear: 2019 }))
-      .toEqual({ arch: 'intel', approximate: true, source: 'date' });
+    expect(
+      detectArch(null, { name: 'X', mac: true, macRequirements: null, releaseYear: 2019 }),
+    ).toEqual({ arch: 'intel', approximate: true, source: 'date' });
   });
 
   it('shape viejo de caché (sin campos nuevos) no rompe', () => {

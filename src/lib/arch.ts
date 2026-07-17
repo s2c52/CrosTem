@@ -1,9 +1,14 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Detection of the native Mac binary architecture (M Series vs Intel).
 // Signal chain: AppleGamingWiki (native/rosetta2, explicit) →
 // Steam Mac requirements (text, inferred) → release year (heuristic).
 // Everything inferred carries approximate=true and is rendered with "~".
 import { agwLookup } from './agw';
 import { steamDetails } from './client';
+import { APPLE_SILICON_YEAR } from './constants';
+import { logDebug } from './log';
 import { getSettings } from './settings';
 import type { AgwCompat, AgwStatus, ArchInfo, SteamDetails } from '../types';
 
@@ -41,14 +46,20 @@ export function archFromSteamReqs(reqs: string | null | undefined): ArchInfo | n
 // M-series Macs shipped in late 2020: before that only Intel binaries existed.
 export function archFromReleaseYear(year: number | null | undefined): ArchInfo | null {
   if (!year) return null;
-  return { arch: year >= 2021 ? 'm-series' : 'intel', approximate: true, source: 'date' };
+  return {
+    arch: year >= APPLE_SILICON_YEAR ? 'm-series' : 'intel',
+    approximate: true,
+    source: 'date',
+  };
 }
 
 /** Pure signal chain: AGW → Steam requirements → date. */
 export function detectArch(agw: AgwCompat | null, steam: SteamDetails | null): ArchInfo | null {
-  return archFromAgw(agw)
-    ?? archFromSteamReqs(steam?.macRequirements)
-    ?? archFromReleaseYear(steam?.releaseYear);
+  return (
+    archFromAgw(agw) ??
+    archFromSteamReqs(steam?.macRequirements) ??
+    archFromReleaseYear(steam?.releaseYear)
+  );
 }
 
 /**
@@ -62,12 +73,22 @@ export async function resolveNativeArch(
   preloaded?: SteamDetails | null,
 ): Promise<ArchInfo | null> {
   const settings = await getSettings();
-  const agw = settings.sources.agw && name
-    ? await agwLookup(name, appid).catch(() => null)
-    : null;
+  const agw =
+    settings.sources.agw && name
+      ? await agwLookup(name, appid).catch((e: unknown) => {
+          logDebug('arch: AGW lookup failed', e);
+          return null;
+        })
+      : null;
   const fromAgw = archFromAgw(agw);
   if (fromAgw) return fromAgw;
-  const details = preloaded ??
-    (appid ? await steamDetails(appid).catch(() => null) : null);
+  const details =
+    preloaded ??
+    (appid
+      ? await steamDetails(appid).catch((e: unknown) => {
+          logDebug('arch: Steam details failed', e);
+          return null;
+        })
+      : null);
   return archFromSteamReqs(details?.macRequirements) ?? archFromReleaseYear(details?.releaseYear);
 }

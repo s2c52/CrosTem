@@ -1,17 +1,19 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // User settings. Stored in chrome.storage.sync (travels with the browser
-// account); content scripts read them once at startup —
-// changes require reloading the Steam tabs.
+// account); memoized per context and refreshed via storage.onChanged.
 
 export interface Settings {
   surfaces: {
-    app: boolean;      // widget on the game page
+    app: boolean; // widget on the game page
     capsules: boolean; // overlays on capsules
-    search: boolean;   // badges in search results
+    search: boolean; // badges in search results
     wishlist: boolean; // badges on the wishlist
   };
   sources: {
-    cw: boolean;        // CodeWeavers
-    agw: boolean;       // AppleGamingWiki
+    cw: boolean; // CodeWeavers
+    agw: boolean; // AppleGamingWiki
     anticheat: boolean; // AreWeAntiCheatYet
   };
   /** User's CrossOver branch (highlighted in the widget), e.g. "26". */
@@ -29,22 +31,40 @@ export const DEFAULTS: Settings = {
 
 const KEY = 'settings';
 
+/** Valid range for the cache TTL, in days. */
+export const CACHE_TTL_MIN_DAYS = 1;
+export const CACHE_TTL_MAX_DAYS = 30;
+
 /** Merges stored values with the defaults (new fields stay covered). */
 export function mergeSettings(stored: unknown): Settings {
   const s = (stored ?? {}) as Partial<Settings>;
   return {
     surfaces: { ...DEFAULTS.surfaces, ...(s.surfaces ?? {}) },
     sources: { ...DEFAULTS.sources, ...(s.sources ?? {}) },
-    crossoverVersion: typeof s.crossoverVersion === 'string' && s.crossoverVersion.trim()
-      ? s.crossoverVersion.trim()
-      : DEFAULTS.crossoverVersion,
-    cacheTtlDays: typeof s.cacheTtlDays === 'number' && s.cacheTtlDays >= 1 && s.cacheTtlDays <= 30
-      ? Math.round(s.cacheTtlDays)
-      : DEFAULTS.cacheTtlDays,
+    crossoverVersion:
+      typeof s.crossoverVersion === 'string' && s.crossoverVersion.trim()
+        ? s.crossoverVersion.trim()
+        : DEFAULTS.crossoverVersion,
+    cacheTtlDays:
+      typeof s.cacheTtlDays === 'number' && Number.isFinite(s.cacheTtlDays) && s.cacheTtlDays > 0
+        ? Math.min(CACHE_TTL_MAX_DAYS, Math.max(CACHE_TTL_MIN_DAYS, Math.round(s.cacheTtlDays)))
+        : DEFAULTS.cacheTtlDays,
   };
 }
 
 let cached: Settings | null = null;
+
+// Settings changes propagate without reloading Steam tabs: the memo is
+// refreshed on every chrome.storage.sync change. Already-rendered badges
+// keep their DOM; new resolutions pick up the new values.
+// (typeof guard: this module is also imported by unit tests without chrome.)
+if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && KEY in changes) {
+      cached = mergeSettings(changes[KEY]?.newValue);
+    }
+  });
+}
 
 export async function getSettings(): Promise<Settings> {
   if (cached) return cached;

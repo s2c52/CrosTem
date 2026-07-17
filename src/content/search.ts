@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Steam search results: automatic CrossOver badge per row
 // (loads when the row becomes visible, via the lib/auto observer).
 import { attach } from '../lib/auto';
@@ -35,8 +38,12 @@ void (async () => {
   scan();
 
   // Steam loads more rows via AJAX (infinite scroll / pagination).
-  const resultsContainer = document.getElementById('search_resultsRows') ??
-    document.getElementById('search_results') ?? document.body;
-  new MutationObserver(() => scan(resultsContainer))
-    .observe(resultsContainer, { childList: true, subtree: true });
+  const resultsContainer =
+    document.getElementById('search_resultsRows') ??
+    document.getElementById('search_results') ??
+    document.body;
+  new MutationObserver(() => scan(resultsContainer)).observe(resultsContainer, {
+    childList: true,
+    subtree: true,
+  });
 })();

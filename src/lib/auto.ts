@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Automatic badge resolution shared by capsules, search and wishlist.
 // Elements are registered with attach(); a shared IntersectionObserver
 // only resolves the ones that become visible, minimizing requests
@@ -6,26 +9,35 @@
 import { agwLookup } from './agw';
 import { resolveNativeArch } from './arch';
 import { anticheatLookup } from './awacy';
-import * as cache from './cache';
-import { appUrl, getApp, search, searchUrl, steamDetails } from './client';
-import { rank } from './matcher';
+import { appUrl, searchUrl, steamDetails } from './client';
+import { LAZY_ROOT_MARGIN } from './constants';
+import { resolveCw } from './cw';
+import { logDebug, logWarn } from './log';
 import { computeVerdict } from './verdict';
 import { getSettings } from './settings';
 import { t } from './i18n';
 import { dotEl, starsEl } from './widget';
-import type { AutoAttachOpts, CwSignal, ResolveResult, SteamDetails as SteamDetailsT } from '../types';
+import type {
+  AutoAttachOpts,
+  CwSignal,
+  ResolveResult,
+  SteamDetails as SteamDetailsT,
+} from '../types';
 
 const registry = new WeakMap<Element, AutoAttachOpts>();
 
-const io = new IntersectionObserver((entries) => {
-  for (const entry of entries) {
-    if (!entry.isIntersecting) continue;
-    io.unobserve(entry.target);
-    const opts = registry.get(entry.target);
-    registry.delete(entry.target);
-    if (opts) void resolveAndRender(entry.target as HTMLElement, opts);
-  }
-}, { rootMargin: '150px' });
+const io = new IntersectionObserver(
+  (entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      io.unobserve(entry.target);
+      const opts = registry.get(entry.target);
+      registry.delete(entry.target);
+      if (opts) void resolveAndRender(entry.target as HTMLElement, opts);
+    }
+  },
+  { rootMargin: LAZY_ROOT_MARGIN },
+);
 
 export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
   if (opts.native === true) {
@@ -41,7 +53,8 @@ export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
 async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<void> {
   try {
     render(el, await resolve(opts), opts);
-  } catch {
+  } catch (e) {
+    logWarn('badge resolution failed', e);
     // Never remove the provisional native badge because of a network failure.
     render(el, opts.native === true ? { kind: 'native', arch: null } : { kind: 'none' }, opts);
   }
@@ -59,8 +72,9 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
         if (name == null) name = details.name;
         if (native == null) native = details.mac;
       }
-    } catch {
-      // Steam failed; carry on with what we have
+    } catch (e) {
+      // Steam failed; carry on with what we have.
+      logDebug('steam details unavailable', e);
     }
   }
 
@@ -74,10 +88,16 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
   // Secondary sources in parallel with the CodeWeavers resolution
   // (each can be disabled in the options).
   const agwPromise = settings.sources.agw
-    ? agwLookup(name, opts.appid).catch(() => null)
+    ? agwLookup(name, opts.appid).catch((e: unknown) => {
+        logDebug('AGW lookup failed', e);
+        return null;
+      })
     : Promise.resolve(null);
   const acPromise = settings.sources.anticheat
-    ? anticheatLookup(opts.appid, name).catch(() => null)
+    ? anticheatLookup(opts.appid, name).catch((e: unknown) => {
+        logDebug('anticheat lookup failed', e);
+        return null;
+      })
     : Promise.resolve(null);
 
   // CodeWeavers: user choice > name matching.
@@ -88,24 +108,20 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
     | { type: 'none' } = { type: 'none' };
 
   if (settings.sources.cw) {
-    const savedSlug = opts.appid ? await cache.getSourceChoice('cw', opts.appid) : undefined;
-    if (savedSlug) {
-      const app = await getApp(savedSlug);
-      if (app?.mac) {
-        cwSignal = { stars: app.mac.stars, status: app.mac.status };
-        cwOutcome = { type: 'hit', stars: app.mac.stars, slug: savedSlug, cwName: name, approximate: false };
-      }
-    }
-    if (cwOutcome.type === 'none') {
-      const results = await search(name);
-      const ranked = rank(name, results);
-      const pick = ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
-      if (pick) {
-        cwSignal = { stars: pick.stars };
-        cwOutcome = { type: 'hit', stars: pick.stars, slug: pick.slug, cwName: pick.name, approximate: pick.score < 1 };
-      } else if (ranked.candidates.length > 1) {
-        cwOutcome = { type: 'ambiguous', count: ranked.candidates.length };
-      }
+    const res = await resolveCw(name, opts.appid);
+    if (res.kind === 'hit') {
+      cwSignal = res.app?.mac
+        ? { stars: res.stars, status: res.app.mac.status }
+        : { stars: res.stars };
+      cwOutcome = {
+        type: 'hit',
+        stars: res.stars,
+        slug: res.slug,
+        cwName: res.cwName,
+        approximate: res.approximate,
+      };
+    } else if (res.kind === 'ambiguous') {
+      cwOutcome = { type: 'ambiguous', count: res.candidates.length };
     }
   }
 
@@ -157,20 +173,27 @@ function render(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): v
       if (arch) {
         const tag = document.createElement('span');
         tag.className = 'crostem-arch-tag';
-        tag.textContent = t(arch.arch === 'm-series' ? 'archMShort' : 'archIntelShort') +
+        tag.textContent =
+          t(arch.arch === 'm-series' ? 'archMShort' : 'archIntelShort') +
           (arch.approximate ? '~' : '');
         span.appendChild(tag);
       }
-      span.title = t('nativeBadge') + (arch
-        ? ' — ' + t(arch.arch === 'm-series' ? 'archM' : 'archIntel') + (arch.approximate ? ' ~' : '')
-        : '');
+      span.title =
+        t('nativeBadge') +
+        (arch
+          ? ' — ' +
+            t(arch.arch === 'm-series' ? 'archM' : 'archIntel') +
+            (arch.approximate ? ' ~' : '')
+          : '');
       el.appendChild(span);
       break;
     }
     case 'stars': {
-      const a = cwLink(appUrl(result.slug),
+      const a = cwLink(
+        appUrl(result.slug),
         `${result.cwName} — CrossOver rating on CodeWeavers` +
-        (result.approximate ? ' (approximate match)' : ''));
+          (result.approximate ? ' (approximate match)' : ''),
+      );
       a.appendChild(dotEl(result.level));
       a.appendChild(starsEl(result.stars));
       if (result.approximate) {

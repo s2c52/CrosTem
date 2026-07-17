@@ -1,11 +1,23 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // DOM builders for the app-page widget and common elements. The UI chrome
 // is translated via i18n; statuses reported by the sources ("Runs
 // Great", "playable"…) are kept as-is, as a quote from the source.
 import { agwPageUrl } from './agw';
 import { AWACY_SITE } from './awacy';
 import { appUrl, searchUrl } from './client';
+import { MAX_VERSION_ROWS } from './constants';
 import { t } from './i18n';
-import type { AgwCompat, AnticheatInfo, ArchInfo, CwAppPage, RankedResult, Verdict, VerdictLevel } from '../types';
+import type {
+  AgwCompat,
+  AnticheatInfo,
+  ArchInfo,
+  CwAppPage,
+  RankedResult,
+  Verdict,
+  VerdictLevel,
+} from '../types';
 
 function el(tag: string, className?: string, text?: string): HTMLElement {
   const node = document.createElement(tag);
@@ -80,8 +92,8 @@ export function renderNativeBadge(arch: ArchInfo | null = null): HTMLElement {
   line.appendChild(el('span', 'crostem-native-badge', t('nativeBadge')));
   body.appendChild(line);
   if (arch) {
-    const label = t(arch.arch === 'm-series' ? 'archM' : 'archIntel') +
-      (arch.approximate ? ' ~' : '');
+    const label =
+      t(arch.arch === 'm-series' ? 'archM' : 'archIntel') + (arch.approximate ? ' ~' : '');
     body.appendChild(el('div', 'crostem-arch-line', label));
     body.appendChild(el('div', 'crostem-muted crostem-small', t(ARCH_SOURCE_KEYS[arch.source])));
   }
@@ -114,12 +126,12 @@ export interface FullCompat {
 
 export interface AppWidgetOpts {
   gameName: string;
-  cwName?: string;
+  cwName?: string | undefined;
   approximate: boolean;
   /** User's CrossOver branch to highlight (e.g. "26"). */
-  cxVersion?: string;
-  onChangeMatch?: () => void;
-  onRefresh?: () => void;
+  cxVersion?: string | undefined;
+  onChangeMatch?: (() => void | Promise<void>) | undefined;
+  onRefresh?: (() => void | Promise<void>) | undefined;
 }
 
 function section(root: HTMLElement, title: string): HTMLElement {
@@ -142,8 +154,13 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
   // Synthesized verdict
   const headline = el('div', 'crostem-headline');
   headline.appendChild(dotEl(data.verdict.level));
-  headline.appendChild(el('span', 'crostem-verdict-label crostem-verdict-' + data.verdict.level,
-    t('verdict_' + data.verdict.level)));
+  headline.appendChild(
+    el(
+      'span',
+      'crostem-verdict-label crostem-verdict-' + data.verdict.level,
+      t('verdict_' + data.verdict.level),
+    ),
+  );
   body.appendChild(headline);
 
   // CodeWeavers
@@ -152,14 +169,19 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
     const sec = section(body, t('sectionCw'));
     const line = el('div', 'crostem-headline');
     line.appendChild(starsEl(mac.stars));
-    line.appendChild(el('span', 'crostem-status ' + statusClass(mac.status), mac.status || 'Unrated'));
+    line.appendChild(
+      el('span', 'crostem-status ' + statusClass(mac.status), mac.status || 'Unrated'),
+    );
     sec.appendChild(line);
     if (mac.lastTested) {
-      const testedLine = t('lastTested', mac.lastTested) +
+      const testedLine =
+        t('lastTested', mac.lastTested) +
         (mac.reportCount ? ` (${t('reports', String(mac.reportCount))})` : '');
       sec.appendChild(el('div', 'crostem-muted crostem-small', testedLine));
     }
-    const macVersions = (data.cw?.versions ?? []).filter((v) => v.platform === 'macOS').slice(0, 3);
+    const macVersions = (data.cw?.versions ?? [])
+      .filter((v) => v.platform === 'macOS')
+      .slice(0, MAX_VERSION_ROWS);
     if (macVersions.length > 0) {
       const table = el('div', 'crostem-versions');
       for (const v of macVersions) {
@@ -176,14 +198,21 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
     const foot = el('div', 'crostem-small');
     foot.appendChild(linkEl(appUrl(data.cwSlug), t('viewOnCw'), 'crostem-link crostem-small'));
     if (opts.approximate && opts.cwName) {
-      foot.appendChild(el('span', 'crostem-muted crostem-small', ' · ' + t('approxMatch', opts.cwName)));
+      foot.appendChild(
+        el('span', 'crostem-muted crostem-small', ' · ' + t('approxMatch', opts.cwName)),
+      );
     }
-    if (opts.onChangeMatch) {
-      const change = el('a', 'crostem-link crostem-small', ' · ' + t('wrongMatch')) as HTMLAnchorElement;
+    const onChangeMatch = opts.onChangeMatch;
+    if (onChangeMatch) {
+      const change = el(
+        'a',
+        'crostem-link crostem-small',
+        ' · ' + t('wrongMatch'),
+      ) as HTMLAnchorElement;
       change.href = '#';
       change.addEventListener('click', (e) => {
         e.preventDefault();
-        opts.onChangeMatch!();
+        void onChangeMatch();
       });
       foot.appendChild(change);
     }
@@ -209,7 +238,9 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
       row.appendChild(el('span', agwStatusClass(status), status));
       sec.appendChild(row);
     }
-    sec.appendChild(linkEl(agwPageUrl(data.agw.page), t('viewOnAgw'), 'crostem-link crostem-small'));
+    sec.appendChild(
+      linkEl(agwPageUrl(data.agw.page), t('viewOnAgw'), 'crostem-link crostem-small'),
+    );
   }
 
   // Anticheat
@@ -227,13 +258,14 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
 
   // Footer: refresh + attribution
   const footer = el('div', 'crostem-footer');
-  if (opts.onRefresh) {
+  const onRefresh = opts.onRefresh;
+  if (onRefresh) {
     const refresh = el('a', 'crostem-link crostem-small', t('refresh')) as HTMLAnchorElement;
     refresh.href = '#';
     refresh.title = t('refreshTitle');
     refresh.addEventListener('click', (e) => {
       e.preventDefault();
-      opts.onRefresh!();
+      void onRefresh();
     });
     footer.appendChild(refresh);
   }
@@ -248,7 +280,7 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
 export function renderCandidateList(
   candidates: RankedResult[],
   gameName: string,
-  onPick: (picked: RankedResult) => void,
+  onPick: (picked: RankedResult) => void | Promise<void>,
 ): HTMLElement {
   const root = box();
   const body = el('div', 'crostem-body');
@@ -260,7 +292,7 @@ export function renderCandidateList(
     const bottom = el('div', 'crostem-muted crostem-small', c.company ? c.company + ' · ' : '');
     bottom.appendChild(starsEl(c.stars));
     btn.appendChild(bottom);
-    btn.addEventListener('click', () => onPick(c));
+    btn.addEventListener('click', () => void onPick(c));
     list.appendChild(btn);
   }
   body.appendChild(list);

@@ -1,26 +1,35 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Steam game page: "Runs on Mac?" widget with combined verdict
 // (CodeWeavers + AppleGamingWiki + anticheat) and per-source breakdown.
 import { agwCacheKey, agwLookup } from '../lib/agw';
 import { resolveNativeArch } from '../lib/arch';
 import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
-import { appCacheKey, getApp, search, searchCacheKey, steamCacheKey } from '../lib/client';
-import { rank } from '../lib/matcher';
+import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
+import { resolveCw, type CwResolution } from '../lib/cw';
+import { logWarn } from '../lib/log';
 import { computeVerdict } from '../lib/verdict';
 import { getSettings } from '../lib/settings';
 import {
-  renderAppWidget, renderCandidateList, renderError, renderLoading, renderNativeBadge,
+  renderAppWidget,
+  renderCandidateList,
+  renderError,
+  renderLoading,
+  renderNativeBadge,
 } from '../lib/widget';
-import type { CwAppPage, RankedResult } from '../types';
+import type { RankedResult } from '../types';
 import '../styles.css';
 
-const appidMatch = location.pathname.match(/\/app\/(\d+)/);
-const nameEl = document.getElementById('appHubAppName') ??
-  document.querySelector('.apphub_AppName');
+const appidFromPath = location.pathname.match(/\/app\/(\d+)/)?.[1];
+const nameEl =
+  document.getElementById('appHubAppName') ?? document.querySelector('.apphub_AppName');
+const nameFromDom = nameEl?.textContent?.trim();
 
-if (appidMatch && nameEl?.textContent?.trim()) {
-  const appid = appidMatch[1];
-  const gameName = nameEl.textContent.trim();
+if (appidFromPath && nameFromDom) {
+  const appid = appidFromPath;
+  const gameName = nameFromDom;
 
   const container = document.createElement('div');
   container.id = 'crostem-widget';
@@ -44,59 +53,32 @@ if (appidMatch && nameEl?.textContent?.trim()) {
     container.appendChild(node);
   };
 
-  const isNativeMac = (): boolean => !!document.querySelector(
-    '#game_area_purchase .game_area_purchase_platform .platform_img.mac, ' +
-    '.sysreq_tabs .sysreq_tab[data-os="mac"]',
-  );
-
-  interface CwResolution {
-    app: CwAppPage | null;
-    slug: string | null;
-    cwName?: string;
-    approximate: boolean;
-    candidates?: RankedResult[];
-  }
-
-  // Resolves the CodeWeavers part: saved choice → direct app page;
-  // otherwise, search + ranking (candidates if ambiguous).
-  const resolveCw = async (forcePicker: boolean): Promise<CwResolution> => {
-    if (!forcePicker) {
-      const savedSlug = await cache.getSourceChoice('cw', appid);
-      if (savedSlug) {
-        return { app: await getApp(savedSlug), slug: savedSlug, approximate: false };
-      }
-    }
-    const results = await search(gameName);
-    const ranked = rank(gameName, results);
-    const pick = (!forcePicker && ranked.confident) ||
-      (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
-    if (pick) {
-      return {
-        app: await getApp(pick.slug),
-        slug: pick.slug,
-        cwName: pick.name,
-        approximate: pick.score < 1,
-      };
-    }
-    if (ranked.candidates.length > 1) {
-      return { app: null, slug: null, approximate: false, candidates: ranked.candidates };
-    }
-    return { app: null, slug: null, approximate: false };
-  };
+  const isNativeMac = (): boolean =>
+    !!document.querySelector(
+      '#game_area_purchase .game_area_purchase_platform .platform_img.mac, ' +
+        '.sysreq_tabs .sysreq_tab[data-os="mac"]',
+    );
 
   const refresh = async (): Promise<void> => {
     const savedSlug = await cache.getSourceChoice('cw', appid);
-    const keys = [searchCacheKey(gameName), agwCacheKey(gameName), steamCacheKey(appid), 'awacy:index'];
+    const keys = [
+      searchCacheKey(gameName),
+      agwCacheKey(gameName),
+      steamCacheKey(appid),
+      'awacy:index',
+    ];
     if (savedSlug) keys.push(appCacheKey(savedSlug));
     await cache.remove(...keys);
     void resolveAll(false);
   };
 
   const showCandidates = (candidates: RankedResult[]): void => {
-    show(renderCandidateList(candidates, gameName, async (picked) => {
-      await cache.setSourceChoice('cw', appid, picked.slug);
-      void resolveAll(false);
-    }));
+    show(
+      renderCandidateList(candidates, gameName, async (picked) => {
+        await cache.setSourceChoice('cw', appid, picked.slug);
+        void resolveAll(false);
+      }),
+    );
   };
 
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
@@ -104,36 +86,41 @@ if (appidMatch && nameEl?.textContent?.trim()) {
     try {
       // The three sources in parallel (can be disabled in options); AGW and
       // anticheat must not break anything.
-      const sources = (await getSettings()).sources;
+      const settings = await getSettings();
+      const sources = settings.sources;
       const [cw, agw, ac] = await Promise.all([
         sources.cw
-          ? resolveCw(forcePicker)
-          : Promise.resolve({ app: null, slug: null, approximate: false } as CwResolution),
+          ? resolveCw(gameName, appid, { forcePicker, loadAppPage: true })
+          : Promise.resolve<CwResolution>({ kind: 'none' }),
         sources.agw ? agwLookup(gameName, appid).catch(() => null) : Promise.resolve(null),
-        sources.anticheat ? anticheatLookup(appid, gameName).catch(() => null) : Promise.resolve(null),
+        sources.anticheat
+          ? anticheatLookup(appid, gameName).catch(() => null)
+          : Promise.resolve(null),
       ]);
 
-      if (cw.candidates) {
+      if (cw.kind === 'ambiguous') {
         showCandidates(cw.candidates);
         return;
       }
 
-      const verdict = computeVerdict(cw.app?.mac ?? null, agw, ac);
-      const settings = await getSettings();
-      show(renderAppWidget(
-        { cw: cw.app, cwSlug: cw.slug, agw, ac, verdict },
-        {
-          gameName,
-          cwName: cw.cwName,
-          approximate: cw.approximate,
-          cxVersion: settings.crossoverVersion,
-          onChangeMatch: async () => {
-            await cache.clearSourceChoice('cw', appid);
-            void resolveAll(true);
+      const cwApp = cw.kind === 'hit' ? cw.app : null;
+      const verdict = computeVerdict(cwApp?.mac ?? null, agw, ac);
+      show(
+        renderAppWidget(
+          { cw: cwApp, cwSlug: cw.kind === 'hit' ? cw.slug : null, agw, ac, verdict },
+          {
+            gameName,
+            cwName: cw.kind === 'hit' ? cw.cwName : undefined,
+            approximate: cw.kind === 'hit' ? cw.approximate : false,
+            cxVersion: settings.crossoverVersion,
+            onChangeMatch: async () => {
+              await cache.clearSourceChoice('cw', appid);
+              void resolveAll(true);
+            },
+            onRefresh: refresh,
           },
-          onRefresh: () => void refresh(),
-        },
-      ));
+        ),
+      );
     } catch (e) {
       show(renderError(`Couldn't load compatibility data (${(e as Error).message})`));
     }
@@ -146,8 +133,10 @@ if (appidMatch && nameEl?.textContent?.trim()) {
       // Immediate badge; the architecture (M Series / Intel) arrives async.
       show(renderNativeBadge());
       void resolveNativeArch(gameName, appid)
-        .then((arch) => { if (arch) show(renderNativeBadge(arch)); })
-        .catch(() => {});
+        .then((arch) => {
+          if (arch) show(renderNativeBadge(arch));
+        })
+        .catch((e: unknown) => logWarn('native arch resolution failed', e));
       return;
     }
     void resolveAll(false);

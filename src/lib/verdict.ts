@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Combined verdict engine (traffic light). Pure, tested function: takes
 // the signals from the three sources and produces level + label + reasons.
 //
@@ -6,20 +9,21 @@
 //   from the other source and no blocked anticheat.
 // - Anticheat Denied/Broken (Linux/Proton data, indicative) lowers to 🔴.
 // - Mixed or intermediate signals → 🟡. No data → ⚪ unknown.
+import { CW_STARS_BAD, CW_STARS_GOOD } from './constants';
 import type { AgwCompat, AnticheatInfo, CwSignal, Verdict, VerdictLevel } from '../types';
 
 function cwGood(cw: CwSignal | null): boolean {
   if (!cw) return false;
   const s = (cw.status ?? '').toLowerCase();
   if (s.includes('great') || s.includes('well')) return true;
-  return cw.stars != null && cw.stars >= 4;
+  return cw.stars != null && cw.stars >= CW_STARS_GOOD;
 }
 
 function cwBad(cw: CwSignal | null): boolean {
   if (!cw) return false;
   const s = (cw.status ?? '').toLowerCase();
   if (s.includes('will not') || s.includes('not work') || s.includes("won't")) return true;
-  return cw.stars != null && cw.stars <= 1 && !cwGood(cw);
+  return cw.stars != null && cw.stars <= CW_STARS_BAD && !cwGood(cw);
 }
 
 function agwGood(agw: AgwCompat | null): boolean {
@@ -27,7 +31,10 @@ function agwGood(agw: AgwCompat | null): boolean {
 }
 
 function agwBad(agw: AgwCompat | null): boolean {
-  return agw != null && (agw.crossover === 'unplayable' || agw.crossover === "doesn't work" || agw.crossover === 'menu');
+  return (
+    agw != null &&
+    (agw.crossover === 'unplayable' || agw.crossover === "doesn't work" || agw.crossover === 'menu')
+  );
 }
 
 function acBlocked(ac: AnticheatInfo | null): boolean {
@@ -58,7 +65,9 @@ export function computeVerdict(
   else if (cw?.stars != null) reasons.push(`CodeWeavers: ${cw.stars}/5 stars`);
   if (hasAgwSignal) reasons.push(`AppleGamingWiki: CrossOver ${agw.crossover}`);
   if (ac) {
-    reasons.push(`Anticheat (${ac.anticheats.join(', ') || 'unknown'}): ${ac.status} on Linux/Proton — indicative for CrossOver`);
+    reasons.push(
+      `Anticheat (${ac.anticheats.join(', ') || 'unknown'}): ${ac.status} on Linux/Proton — indicative for CrossOver`,
+    );
   }
 
   let level: VerdictLevel;

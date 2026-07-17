@@ -1,5 +1,10 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Parsers for CodeWeavers HTML. All scraping lives here so that a site
 // redesign only requires touching this file.
+import { isRecord } from './guards';
+import { logDebug } from './log';
 import type { CwAppPage, CwRatingBox, CwSearchResult, CwVersionRating } from '../types';
 
 function parseDoc(html: string): Document {
@@ -46,11 +51,12 @@ function parseRatingBox(box: Element | null): CwRatingBox | null {
   const status = textOf(box.querySelector('span.txt_yellow'));
   const small = textOf(box.querySelector('.small'));
   const m = small.match(/Last Tested:\s*([\d.]+)\s*(?:\((\d+)\))?/i);
+  const count = m?.[2];
   return {
     stars: starsFrom(box),
     status,
-    lastTested: m ? m[1] : null,
-    reportCount: m?.[2] ? parseInt(m[2], 10) : null,
+    lastTested: m?.[1] ?? null,
+    reportCount: count ? parseInt(count, 10) : null,
   };
 }
 
@@ -71,33 +77,37 @@ export function parseAppPage(html: string): CwAppPage | null {
   // Breakdown by CrossOver version (#breakdown), most recent first.
   doc.querySelectorAll('#breakdown .breakdown-row .card-header').forEach((header) => {
     const text = textOf(header);
-    const vm = text.match(/(\d+(?:\.\d+)+)/);
-    if (!vm) return;
+    const version = text.match(/(\d+(?:\.\d+)+)/)?.[1];
+    if (!version) return;
     const platform: CwVersionRating['platform'] = header.querySelector('.fa-apple')
       ? 'macOS'
       : header.querySelector('.fa-linux') || /linux/i.test(text)
         ? 'Linux'
         : 'macOS';
-    result.versions.push({ version: vm[1], platform, stars: starsFrom(header) });
+    result.versions.push({ version, platform, stars: starsFrom(header) });
   });
 
   // Aggregate rating from the JSON-LD, if present.
   doc.querySelectorAll('script[type="application/ld+json"]').forEach((s) => {
     if (result.aggregate) return;
     try {
-      const data = JSON.parse(s.textContent ?? '');
-      const nodes: any[] = data['@graph'] ?? [data];
+      const data: unknown = JSON.parse(s.textContent ?? '');
+      const graph = isRecord(data) ? data['@graph'] : undefined;
+      const nodes: unknown[] = Array.isArray(graph) ? graph : [data];
       for (const node of nodes) {
-        if (node?.aggregateRating) {
+        if (!isRecord(node)) continue;
+        const agg = node.aggregateRating;
+        if (isRecord(agg)) {
           result.aggregate = {
-            value: Number(node.aggregateRating.ratingValue),
-            count: Number(node.aggregateRating.ratingCount),
+            value: Number(agg.ratingValue),
+            count: Number(agg.ratingCount),
           };
           break;
         }
       }
-    } catch {
-      // Malformed JSON-LD: ignored
+    } catch (e) {
+      // Malformed JSON-LD: ignored.
+      logDebug('malformed JSON-LD ignored', e);
     }
   });
 

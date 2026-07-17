@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Manual e2e suite (pre-release): loads dist/ into Brave with a temporary
 // profile and checks the real Steam surfaces. Does not run in CI (real Steam
 // is flaky there); it runs locally via `npm run e2e` and the screenshots land
@@ -13,8 +16,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const EXT = join(ROOT, 'dist');
 const OUT = join(ROOT, 'e2e-results');
 const PROFILE = join(OUT, 'brave-profile');
-const BRAVE = process.env.BRAVE_BIN ??
-  '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser';
+const BRAVE =
+  process.env.BRAVE_BIN ?? '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser';
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
@@ -52,14 +55,20 @@ async function check(label, fn) {
 }
 
 // 1. Elden Ring game page (Windows-only): full widget
-await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', { waitUntil: 'domcontentloaded' });
+await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', {
+  waitUntil: 'domcontentloaded',
+});
 await check('widget en ficha (Elden Ring)', async () => {
   const widget = page.locator('#crostem-widget .crostem-box');
   await widget.waitFor({ timeout: 25000 });
-  await page.waitForFunction(() => {
-    const w = document.querySelector('#crostem-widget');
-    return w && !/Checking/.test(w.textContent) && w.textContent.trim().length > 0;
-  }, null, { timeout: 25000 });
+  await page.waitForFunction(
+    () => {
+      const w = document.querySelector('#crostem-widget');
+      return w && !/Checking/.test(w.textContent) && w.textContent.trim().length > 0;
+    },
+    null,
+    { timeout: 25000 },
+  );
   await widget.screenshot({ path: join(OUT, 'app-widget.png') });
   const text = await widget.textContent();
   if (!/Last Tested/i.test(text)) throw new Error('sin "Last Tested": ' + text.slice(0, 120));
@@ -79,23 +88,33 @@ await check('veredicto + desglose multi-fuente (Elden Ring)', async () => {
 });
 
 // 1c. Game with blocked anticheat (Destiny 2 = Denied on AWACY): red + warning
-await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', { waitUntil: 'domcontentloaded' });
+await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', {
+  waitUntil: 'domcontentloaded',
+});
 await check('anticheat Denied baja el semáforo (Destiny 2)', async () => {
   const widget = page.locator('#crostem-widget .crostem-box');
   await widget.waitFor({ timeout: 25000 });
-  await page.waitForFunction(() => {
-    const w = document.querySelector('#crostem-widget');
-    return w && !/Checking/.test(w.textContent);
-  }, null, { timeout: 25000 });
+  await page.waitForFunction(
+    () => {
+      const w = document.querySelector('#crostem-widget');
+      return w && !/Checking/.test(w.textContent);
+    },
+    null,
+    { timeout: 25000 },
+  );
   const text = await widget.textContent();
   if (!/Anticheat/i.test(text)) throw new Error('sin sección anticheat: ' + text.slice(0, 150));
   const red = await page.locator('#crostem-widget .crostem-dot-red').count();
   await widget.screenshot({ path: join(OUT, 'anticheat.png') });
-  return red >= 1 ? 'semáforo rojo + aviso' : 'aviso presente (semáforo no rojo: ' + text.slice(0, 80) + ')';
+  return red >= 1
+    ? 'semáforo rojo + aviso'
+    : 'aviso presente (semáforo no rojo: ' + text.slice(0, 80) + ')';
 });
 
 // 2. Stardew Valley game page (Mac native): Native badge
-await page.goto('https://store.steampowered.com/app/413150/Stardew_Valley/', { waitUntil: 'domcontentloaded' });
+await page.goto('https://store.steampowered.com/app/413150/Stardew_Valley/', {
+  waitUntil: 'domcontentloaded',
+});
 await check('badge nativo (Stardew Valley)', async () => {
   const widget = page.locator('#crostem-widget .crostem-box');
   await widget.waitFor({ timeout: 20000 });
@@ -124,12 +143,17 @@ await check('overlays en portada', async () => {
 });
 
 // 5. Search
-await page.goto('https://store.steampowered.com/search/?term=dark+souls', { waitUntil: 'domcontentloaded' });
+await page.goto('https://store.steampowered.com/search/?term=dark+souls', {
+  waitUntil: 'domcontentloaded',
+});
 await check('badges en búsqueda (dark souls)', async () => {
   await page.waitForSelector('.crostem-badge:not(:empty)', { timeout: 30000 });
   await page.waitForTimeout(3000);
   const count = await page.locator('.crostem-badge:not(:empty)').count();
-  await page.locator('#search_resultsRows').screenshot({ path: join(OUT, 'search.png') }).catch(() => {});
+  await page
+    .locator('#search_resultsRows')
+    .screenshot({ path: join(OUT, 'search.png') })
+    .catch(() => {});
   return `${count} badges con contenido`;
 });
 
@@ -162,7 +186,8 @@ await check('options + toggle de cápsulas', async () => {
   await page.evaluate(() => window.scrollTo(0, 800));
   await page.waitForTimeout(8000);
   const overlays = await page.locator('.crostem-overlay').count();
-  if (overlays > 0) throw new Error(`overlays presentes con la superficie desactivada: ${overlays}`);
+  if (overlays > 0)
+    throw new Error(`overlays presentes con la superficie desactivada: ${overlays}`);
   return 'overlays desactivados correctamente';
 });
 

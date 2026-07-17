@@ -1,13 +1,22 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 import { describe, expect, it } from 'vitest';
 import { computeVerdict } from '../src/lib/verdict';
 import type { AgwCompat, AnticheatInfo, CwSignal } from '../src/types';
 
 const agw = (crossover: AgwCompat['crossover']): AgwCompat => ({
-  page: 'Test Game', crossover, parallels: 'na', native: 'na', rosetta2: 'na',
+  page: 'Test Game',
+  crossover,
+  parallels: 'na',
+  native: 'na',
+  rosetta2: 'na',
 });
 
 const ac = (status: AnticheatInfo['status']): AnticheatInfo => ({
-  name: 'Test Game', status, anticheats: ['EAC'],
+  name: 'Test Game',
+  status,
+  anticheats: ['EAC'],
 });
 
 const cwGreat: CwSignal = { stars: 5, status: 'Runs Great' };

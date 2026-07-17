@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -15,5 +18,10 @@ export default defineConfig({
       },
     },
     include: ['tests/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+      reporter: ['text', 'html'],
+    },
   },
 });

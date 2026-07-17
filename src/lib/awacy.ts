@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // AreWeAntiCheatYet client: games.json (published on GitHub) with the
 // anticheat status per game, including the Steam appid. The data is for
 // Linux/Proton — for CrossOver it is indicative, and presented as such.
@@ -5,35 +8,52 @@
 // (appid and normalized name) and cached for 7 days.
 import * as cache from './cache';
 import { fetchExt } from './client';
+import { isRecord } from './guards';
+import { logDebug } from './log';
 import { normalizeName } from './matcher';
 import type { AnticheatInfo, AnticheatStatus } from '../types';
 
-const AWACY_URL = 'https://raw.githubusercontent.com/AreWeAntiCheatYet/AreWeAntiCheatYet/HEAD/games.json';
+const AWACY_URL =
+  'https://raw.githubusercontent.com/AreWeAntiCheatYet/AreWeAntiCheatYet/HEAD/games.json';
 export const AWACY_SITE = 'https://areweanticheatyet.com/';
-
-interface AwacyGame {
-  name?: string;
-  status?: string;
-  anticheats?: string[];
-  storeIds?: { steam?: string };
-}
 
 interface AwacyIndex {
   bySteamId: Record<string, AnticheatInfo>;
   byName: Record<string, AnticheatInfo>;
 }
 
-export function buildIndex(games: AwacyGame[]): AwacyIndex {
+const STATUSES: readonly AnticheatStatus[] = [
+  'Supported',
+  'Running',
+  'Planned',
+  'Broken',
+  'Denied',
+];
+
+function toAnticheatStatus(v: unknown): AnticheatStatus | null {
+  return typeof v === 'string' && (STATUSES as readonly string[]).includes(v)
+    ? (v as AnticheatStatus)
+    : null;
+}
+
+/** Builds the index from the raw games.json entries. The dataset is
+ * untrusted input: entries are validated field by field and unknown
+ * statuses are dropped rather than flowing into the verdict. */
+export function buildIndex(games: unknown[]): AwacyIndex {
   const index: AwacyIndex = { bySteamId: {}, byName: {} };
   for (const g of games) {
-    if (!g.name || !g.status) continue;
+    if (!isRecord(g) || typeof g.name !== 'string' || !g.name) continue;
+    const status = toAnticheatStatus(g.status);
+    if (!status) continue;
     const info: AnticheatInfo = {
       name: g.name,
-      status: g.status as AnticheatStatus,
-      anticheats: g.anticheats ?? [],
+      status,
+      anticheats: Array.isArray(g.anticheats)
+        ? g.anticheats.filter((a): a is string => typeof a === 'string')
+        : [],
     };
-    const steamId = g.storeIds?.steam;
-    if (steamId) index.bySteamId[steamId] = info;
+    const steamId = isRecord(g.storeIds) ? g.storeIds.steam : undefined;
+    if (typeof steamId === 'string' && steamId) index.bySteamId[steamId] = info;
     index.byName[normalizeName(g.name)] = info;
   }
   return index;
@@ -44,11 +64,13 @@ async function getIndex(): Promise<AwacyIndex | null> {
   if (cached !== undefined) return cached;
   try {
     const body = await fetchExt(AWACY_URL);
-    const index = buildIndex(JSON.parse(body));
+    const parsed: unknown = JSON.parse(body);
+    const index = buildIndex(Array.isArray(parsed) ? parsed : []);
     await cache.set('awacy:index', index, await cache.ttlResult());
     return index;
-  } catch {
+  } catch (e) {
     // AWACY down: no anticheat data, the verdict keeps working.
+    logDebug('AWACY index unavailable', e);
     await cache.set('awacy:index', null, cache.TTL_NEGATIVE);
     return null;
   }
@@ -59,7 +81,10 @@ async function getIndex(): Promise<AwacyIndex | null> {
  * null = the game is not in AWACY (no known problematic anticheat)
  * or the dataset is unavailable.
  */
-export async function anticheatLookup(appid: string | null | undefined, name: string | null | undefined): Promise<AnticheatInfo | null> {
+export async function anticheatLookup(
+  appid: string | null | undefined,
+  name: string | null | undefined,
+): Promise<AnticheatInfo | null> {
   const index = await getIndex();
   if (!index) return null;
   if (appid && index.bySteamId[appid]) return index.bySteamId[appid];

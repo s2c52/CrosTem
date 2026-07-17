@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Sacha Gennari
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Generates the Chrome Web Store listing screenshots (exactly 1280×800)
 // with the extension loaded from dist/. Output: store-assets/*.png.
 // Usage: npm run build && npm run listing
@@ -10,8 +13,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const EXT = join(ROOT, 'dist');
 const OUT = join(ROOT, 'store-assets');
 const PROFILE = join(OUT, '.profile');
-const BRAVE = process.env.BRAVE_BIN ??
-  '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser';
+const BRAVE =
+  process.env.BRAVE_BIN ?? '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser';
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
@@ -42,21 +45,33 @@ async function shoot(name) {
 }
 
 // 1. Game page with verdict (widget in view)
-await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', { waitUntil: 'domcontentloaded' });
-await page.waitForFunction(() => {
-  const w = document.querySelector('#crostem-widget');
-  return w && !/Checking/.test(w.textContent) && w.textContent.trim().length > 0;
-}, null, { timeout: 30000 });
+await page.goto('https://store.steampowered.com/app/1245620/ELDEN_RING/', {
+  waitUntil: 'domcontentloaded',
+});
+await page.waitForFunction(
+  () => {
+    const w = document.querySelector('#crostem-widget');
+    return w && !/Checking/.test(w.textContent) && w.textContent.trim().length > 0;
+  },
+  null,
+  { timeout: 30000 },
+);
 await page.locator('#crostem-widget').scrollIntoViewIfNeeded();
 await page.waitForTimeout(800);
 await shoot('1-game-page-verdict.png');
 
 // 2. Game page with blocked anticheat
-await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', { waitUntil: 'domcontentloaded' });
-await page.waitForFunction(() => {
-  const w = document.querySelector('#crostem-widget');
-  return w && !/Checking/.test(w.textContent);
-}, null, { timeout: 30000 });
+await page.goto('https://store.steampowered.com/app/1085660/Destiny_2/', {
+  waitUntil: 'domcontentloaded',
+});
+await page.waitForFunction(
+  () => {
+    const w = document.querySelector('#crostem-widget');
+    return w && !/Checking/.test(w.textContent);
+  },
+  null,
+  { timeout: 30000 },
+);
 await page.locator('#crostem-widget').scrollIntoViewIfNeeded();
 await page.waitForTimeout(800);
 await shoot('2-anticheat-warning.png');
@@ -70,7 +85,9 @@ await page.waitForTimeout(4000);
 await shoot('3-store-overlays.png');
 
 // 4. Search with badges
-await page.goto('https://store.steampowered.com/search/?term=dark+souls', { waitUntil: 'domcontentloaded' });
+await page.goto('https://store.steampowered.com/search/?term=dark+souls', {
+  waitUntil: 'domcontentloaded',
+});
 await page.waitForSelector('.crostem-badge:not(:empty)', { timeout: 30000 }).catch(() => {});
 await page.waitForTimeout(5000);
 await shoot('4-search-badges.png');
