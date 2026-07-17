@@ -3,8 +3,11 @@
 
 // Steam search results: automatic CrossOver badge per row
 // (loads when the row becomes visible, via the lib/auto observer).
-import { attach } from '../lib/auto';
+import { attach, detach } from '../lib/auto';
+import { SCAN_DEBOUNCE_MS } from '../lib/constants';
+import { coalesce } from '../lib/debounce';
 import { initContentI18n } from '../lib/i18n';
+import { watchSurface } from '../lib/surface';
 import '../styles.css';
 
 function processRow(row: HTMLElement): void {
@@ -33,18 +36,34 @@ function scan(root: ParentNode = document): void {
   root.querySelectorAll<HTMLElement>('a.search_result_row').forEach(processRow);
 }
 
-void (async () => {
-  const settings = await initContentI18n();
-  if (!settings.surfaces.search) return;
-  scan();
+let observer: MutationObserver | null = null;
 
-  // Steam loads more rows via AJAX (infinite scroll / pagination).
-  const resultsContainer =
-    document.getElementById('search_resultsRows') ??
-    document.getElementById('search_results') ??
-    document.body;
-  new MutationObserver(() => scan(resultsContainer)).observe(resultsContainer, {
-    childList: true,
-    subtree: true,
-  });
+const surface = {
+  start(): void {
+    scan();
+    // Steam loads more rows via AJAX (infinite scroll / pagination);
+    // rescans are coalesced — the row dataset guard keeps them idempotent.
+    const resultsContainer =
+      document.getElementById('search_resultsRows') ??
+      document.getElementById('search_results') ??
+      document.body;
+    observer = new MutationObserver(coalesce(() => scan(resultsContainer), SCAN_DEBOUNCE_MS));
+    observer.observe(resultsContainer, { childList: true, subtree: true });
+  },
+  stop(): void {
+    observer?.disconnect();
+    observer = null;
+    document.querySelectorAll<HTMLElement>('.crostem-badge').forEach((badge) => {
+      detach(badge);
+      badge.remove();
+    });
+    document.querySelectorAll<HTMLElement>('a.search_result_row[data-crostem]').forEach((row) => {
+      delete row.dataset.crostem;
+    });
+  },
+};
+
+void (async () => {
+  await initContentI18n();
+  await watchSurface('search', surface);
 })();

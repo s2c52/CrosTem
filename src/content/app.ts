@@ -11,6 +11,7 @@ import { logDebug, logWarn } from '../lib/log';
 import { initContentI18n, t } from '../lib/i18n';
 import { resolveGame } from '../lib/resolve';
 import { getSettings } from '../lib/settings';
+import { watchSurface } from '../lib/surface';
 import {
   renderAppWidget,
   renderCandidateList,
@@ -144,20 +145,29 @@ if (appidFromPath && nameFromDom) {
     }
   };
 
+  const surface = {
+    start(): void {
+      if (!mount()) return;
+      if (isNativeMac()) {
+        // Immediate badge; the architecture (M Series / Intel) arrives async.
+        show(renderNativeBadge());
+        void resolveNativeArch(gameName, appid)
+          .then((arch) => {
+            if (arch) show(renderNativeBadge(arch));
+          })
+          .catch((e: unknown) => logWarn('native arch resolution failed', e));
+        return;
+      }
+      void resolveAll(false);
+    },
+    stop(): void {
+      container.remove();
+      container.textContent = '';
+    },
+  };
+
   void (async () => {
-    const settings = await initContentI18n();
-    if (!settings.surfaces.app) return;
-    if (!mount()) return;
-    if (isNativeMac()) {
-      // Immediate badge; the architecture (M Series / Intel) arrives async.
-      show(renderNativeBadge());
-      void resolveNativeArch(gameName, appid)
-        .then((arch) => {
-          if (arch) show(renderNativeBadge(arch));
-        })
-        .catch((e: unknown) => logWarn('native arch resolution failed', e));
-      return;
-    }
-    void resolveAll(false);
+    await initContentI18n();
+    await watchSurface('app', surface);
   })();
 }
