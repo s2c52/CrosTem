@@ -33,8 +33,28 @@ export const APPLE_SILICON_YEAR = 2021;
 // --- Networking ---
 /** Max parallel external fetches per queue (CodeWeavers/AGW/AWACY and Steam). */
 export const MAX_CONCURRENT_FETCHES = 2;
-/** Give up on a service-worker-proxied fetch after this long. */
-export const FETCH_TIMEOUT_MS = 10_000;
+/** Per-attempt fetch timeout by host. AWACY gets longer because its
+ * games.json is a single ~460 KB blob; Steam is same-origin and fast. */
+export const SOURCE_TIMEOUTS_MS: Readonly<Record<string, number>> = {
+  'store.steampowered.com': 5_000,
+  'www.codeweavers.com': 8_000,
+  'www.applegamingwiki.com': 8_000,
+  'raw.githubusercontent.com': 15_000,
+};
+/** Per-attempt timeout for hosts outside SOURCE_TIMEOUTS_MS. */
+export const FETCH_TIMEOUT_DEFAULT_MS = 10_000;
+/** Extra attempts after the first one (429/5xx/network/timeout only). */
+export const FETCH_MAX_RETRIES = 2;
+/** Base for the exponential backoff between retries. */
+export const RETRY_BASE_DELAY_MS = 500;
+/** Random jitter added to each backoff delay. */
+export const RETRY_JITTER_MS = 250;
+/** Upper bound honored for a server-sent Retry-After header. */
+export const RETRY_AFTER_CAP_MS = 10_000;
+/** Consecutive final failures of one origin that open its circuit breaker. */
+export const BREAKER_FAILURES = 5;
+/** How long an open breaker rejects an origin before allowing traffic again. */
+export const BREAKER_COOLDOWN_MS = 2 * 60_000;
 
 // --- UI / DOM scanning ---
 /** Coalescing window for MutationObserver-triggered rescans. */
