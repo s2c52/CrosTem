@@ -8,6 +8,7 @@
   },
   "permissions": ["storage"],
   "host_permissions": [
+    "https://store.steampowered.com/*",
     "https://www.codeweavers.com/*",
     "https://www.applegamingwiki.com/*",
     "https://raw.githubusercontent.com/AreWeAntiCheatYet/*"

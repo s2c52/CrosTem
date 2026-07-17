@@ -3,15 +3,13 @@
 
 // Steam game page: "Runs on Mac?" widget with combined verdict
 // (CodeWeavers + AppleGamingWiki + anticheat) and per-source breakdown.
-import { agwCacheKey, agwLookup } from '../lib/agw';
+import { agwCacheKey } from '../lib/agw';
 import { resolveNativeArch } from '../lib/arch';
-import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
-import { resolveCw, type CwResolution } from '../lib/cw';
 import { logDebug, logWarn } from '../lib/log';
 import { t } from '../lib/i18n';
-import { computeVerdict } from '../lib/verdict';
+import { resolveGame } from '../lib/resolve';
 import { getSettings } from '../lib/settings';
 import {
   renderAppWidget,
@@ -85,19 +83,8 @@ if (appidFromPath && nameFromDom) {
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
     show(renderLoading());
     try {
-      // The three sources in parallel (can be disabled in options); AGW and
-      // anticheat must not break anything.
       const settings = await getSettings();
-      const sources = settings.sources;
-      const [cw, agw, ac] = await Promise.all([
-        sources.cw
-          ? resolveCw(gameName, appid, { forcePicker, loadAppPage: true })
-          : Promise.resolve<CwResolution>({ kind: 'none' }),
-        sources.agw ? agwLookup(gameName, appid).catch(() => null) : Promise.resolve(null),
-        sources.anticheat
-          ? anticheatLookup(appid, gameName).catch(() => null)
-          : Promise.resolve(null),
-      ]);
+      const { cw, agw, ac, verdict } = await resolveGame(gameName, appid, { forcePicker });
 
       if (cw.kind === 'ambiguous') {
         showCandidates(cw.candidates);
@@ -105,7 +92,6 @@ if (appidFromPath && nameFromDom) {
       }
 
       const cwApp = cw.kind === 'hit' ? cw.app : null;
-      const verdict = computeVerdict(cwApp?.mac ?? null, agw, ac);
       show(
         renderAppWidget(
           { cw: cwApp, cwSlug: cw.kind === 'hit' ? cw.slug : null, agw, ac, verdict },
