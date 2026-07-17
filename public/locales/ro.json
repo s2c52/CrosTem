@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Insigne în lista de dorințe"
   },
+  "optLanguage": {
+    "message": "Limbă"
+  },
+  "optLangAuto": {
+    "message": "Automat (ca Steam)"
+  },
   "optSources": {
     "message": "Surse de date"
   },

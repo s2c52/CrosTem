@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Huy hiệu trong danh sách ước"
   },
+  "optLanguage": {
+    "message": "Ngôn ngữ"
+  },
+  "optLangAuto": {
+    "message": "Tự động (theo Steam)"
+  },
   "optSources": {
     "message": "Nguồn dữ liệu"
   },

@@ -20,6 +20,7 @@ const settings = (sources: Settings['sources']): Settings => ({
   sources,
   crossoverVersion: '',
   cacheTtlDays: 7,
+  language: 'auto',
 });
 
 const allOn = settings({ cw: true, agw: true, anticheat: true });

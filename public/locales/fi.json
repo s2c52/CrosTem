@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Merkit toivelistalla"
   },
+  "optLanguage": {
+    "message": "Kieli"
+  },
+  "optLangAuto": {
+    "message": "Automaattinen (Steamin mukaan)"
+  },
   "optSources": {
     "message": "Tietolähteet"
   },

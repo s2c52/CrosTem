@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Σήματα στη λίστα επιθυμιών"
   },
+  "optLanguage": {
+    "message": "Γλώσσα"
+  },
+  "optLangAuto": {
+    "message": "Αυτόματα (όπως το Steam)"
+  },
   "optSources": {
     "message": "Πηγές δεδομένων"
   },

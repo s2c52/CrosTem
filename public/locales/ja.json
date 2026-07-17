@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "ウィッシュリストのバッジ"
   },
+  "optLanguage": {
+    "message": "言語"
+  },
+  "optLangAuto": {
+    "message": "自動（Steam に合わせる）"
+  },
   "optSources": {
     "message": "データソース"
   },

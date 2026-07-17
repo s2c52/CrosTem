@@ -4,9 +4,10 @@
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
 import { storageKeys } from '../lib/cache';
-import { applyI18n, currentLocale, initI18n, t } from '../lib/i18n';
+import { applyI18n, currentLocale, initExtPageI18n, t } from '../lib/i18n';
 import { ctLogo } from '../lib/logo';
 import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
+import { LOCALE_NATIVE_NAMES } from '../lib/steam-lang';
 
 function $(id: string): HTMLElement {
   const node = document.getElementById(id);
@@ -17,6 +18,10 @@ function $(id: string): HTMLElement {
 
 function input(id: string): HTMLInputElement {
   return $(id) as HTMLInputElement;
+}
+
+function select(id: string): HTMLSelectElement {
+  return $(id) as HTMLSelectElement;
 }
 
 let statusTimer: ReturnType<typeof setTimeout> | undefined;
@@ -44,6 +49,7 @@ function readForm(): Settings {
     },
     crossoverVersion: input('cx-version').value,
     cacheTtlDays: Number(input('cache-ttl').value) || undefined,
+    language: select('ui-language').value,
   });
 }
 
@@ -57,6 +63,20 @@ function fillForm(s: Settings): void {
   input('source-anticheat').checked = s.sources.anticheat;
   input('cx-version').value = s.crossoverVersion;
   input('cache-ttl').value = String(s.cacheTtlDays);
+  select('ui-language').value = s.language;
+}
+
+/** Fill #ui-language with the supported locales; "auto" is already in the HTML. */
+function populateLanguageSelect(): void {
+  const node = select('ui-language');
+  Object.entries(LOCALE_NATIVE_NAMES)
+    .sort(([, a], [, b]) => a.localeCompare(b))
+    .forEach(([code, name]) => {
+      const option = document.createElement('option');
+      option.value = code;
+      option.textContent = name;
+      node.append(option);
+    });
 }
 
 async function refreshCounts(): Promise<void> {
@@ -96,10 +116,11 @@ async function applyToSteamTabs(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  await initI18n();
+  await initExtPageI18n();
   document.documentElement.lang = currentLocale();
   applyI18n('optionsTitle');
   document.querySelector('.logo')?.replaceWith(ctLogo(22));
+  populateLanguageSelect();
   fillForm(await getSettings());
   await refreshCounts();
 
@@ -107,6 +128,19 @@ async function main(): Promise<void> {
     node.addEventListener('change', () => {
       void saveSettings(readForm()).then(() => showApplyBar());
     });
+  });
+
+  // Language has its own handler: besides saving, the options page itself
+  // re-translates in place (showApplyBar last, so optSaved uses the new dict).
+  select('ui-language').addEventListener('change', () => {
+    void (async () => {
+      await saveSettings(readForm());
+      await initExtPageI18n();
+      document.documentElement.lang = currentLocale();
+      applyI18n('optionsTitle');
+      await refreshCounts();
+      showApplyBar();
+    })();
   });
 
   $('apply-now').addEventListener('click', () => void applyToSteamTabs());

@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Odznaky na seznamu přání"
   },
+  "optLanguage": {
+    "message": "Jazyk"
+  },
+  "optLangAuto": {
+    "message": "Automaticky (podle Steamu)"
+  },
   "optSources": {
     "message": "Zdroje dat"
   },

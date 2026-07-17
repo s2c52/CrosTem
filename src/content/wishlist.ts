@@ -8,9 +8,7 @@
 import { attach } from '../lib/auto';
 import { SCAN_DEBOUNCE_MS } from '../lib/constants';
 import { coalesce } from '../lib/debounce';
-import { initI18n, persistUiLang } from '../lib/i18n';
-import { getSettings } from '../lib/settings';
-import { detectPageLocale } from '../lib/steam-lang';
+import { initContentI18n } from '../lib/i18n';
 import '../styles.css';
 
 const APP_LINK = /\/app\/(\d+)/;
@@ -44,9 +42,8 @@ function scan(): void {
 const scheduleScan = coalesce(scan, SCAN_DEBOUNCE_MS);
 
 void (async () => {
-  await initI18n(detectPageLocale());
-  void persistUiLang();
-  if (!(await getSettings()).surfaces.wishlist) return;
+  const settings = await initContentI18n();
+  if (!settings.surfaces.wishlist) return;
   scan();
   new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });
 })();

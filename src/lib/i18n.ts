@@ -8,7 +8,8 @@
 // from the source (product decision); the UI chrome (labels, verdicts,
 // buttons) is translated.
 
-import { normalizeToSupported } from './steam-lang';
+import { getSettings, type Settings } from './settings';
+import { detectPageLocale, normalizeToSupported } from './steam-lang';
 
 interface RawMessage {
   message: string;
@@ -82,14 +83,38 @@ export function currentLocale(): string {
 /**
  * Remember the page locale so extension pages without a Steam page behind
  * them (popup/options/onboarding) can reuse it. Content scripts call it
- * after initI18n; writes only on change.
+ * after initI18n; writes only on change. Always stores the detected page
+ * locale, never a manual override, so "Auto" restores the last Steam
+ * language seen.
  */
-export async function persistUiLang(): Promise<void> {
+export async function persistUiLang(code: string = locale): Promise<void> {
   try {
-    if ((await storedUiLang()) !== locale) await chrome.storage.local.set({ uiLang: locale });
+    if ((await storedUiLang()) !== code) await chrome.storage.local.set({ uiLang: code });
   } catch {
     // Storage unavailable (tests/harness) — remembering the language is best-effort.
   }
+}
+
+/**
+ * Init i18n for a content script: the manual language override if set,
+ * else the Steam page language. Returns the settings so callers can check
+ * their surface without a second (memoized anyway) getSettings call.
+ */
+export async function initContentI18n(doc: Document = document): Promise<Settings> {
+  const settings = await getSettings();
+  const page = detectPageLocale(doc);
+  await initI18n(settings.language === 'auto' ? page : settings.language);
+  void persistUiLang(page);
+  return settings;
+}
+
+/**
+ * Init i18n for an extension page (popup/options/onboarding): the manual
+ * language override if set, else the stored uiLang → browser cascade.
+ */
+export async function initExtPageI18n(): Promise<void> {
+  const { language } = await getSettings();
+  await initI18n(language === 'auto' ? undefined : language);
 }
 
 /** Translate a key, with fallback to the key itself (useful in tests/harness). */
