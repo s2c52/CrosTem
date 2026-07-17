@@ -205,6 +205,19 @@
   font-size: 12px;
 }
 
+/* Inline badge inside the store's expanded hover card, below the price */
+.crostem-hovercard-badge {
+  align-items: center;
+  display: flex;
+  font-size: 12px;
+  gap: 6px;
+  margin: 6px 0 0;
+}
+
+.crostem-hovercard-badge .crostem-stars {
+  font-size: 13px;
+}
+
 /* Mini architecture tag (M / Intel) next to the native stars */
 .crostem-arch-tag {
   color: var(--ct-green-bright);
