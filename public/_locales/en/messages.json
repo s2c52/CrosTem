@@ -128,6 +128,15 @@
   "noneOfThese": {
     "message": "None of these — search CodeWeavers ↗"
   },
+  "agwPickMatch": {
+    "message": "Several possible pages on AppleGamingWiki — pick the right one:"
+  },
+  "agwNoneOfThese": {
+    "message": "None of these — search AppleGamingWiki ↗"
+  },
+  "agwCandidatesLink": {
+    "message": "Possible matches on AppleGamingWiki…"
+  },
   "matchesN": {
     "message": "$N$ matches ↗",
     "placeholders": {

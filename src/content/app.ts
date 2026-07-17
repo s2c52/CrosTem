@@ -3,7 +3,7 @@
 
 // Steam game page: "Runs on Mac?" widget with combined verdict
 // (CodeWeavers + AppleGamingWiki + anticheat) and per-source breakdown.
-import { agwCacheKey } from '../lib/agw';
+import { agwCacheKey, agwSearchUrl } from '../lib/agw';
 import { resolveNativeArch } from '../lib/arch';
 import * as cache from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
@@ -80,11 +80,33 @@ if (appidFromPath && nameFromDom) {
     );
   };
 
+  const showAgwCandidates = (candidates: RankedResult[]): void => {
+    show(
+      renderCandidateList(
+        candidates,
+        gameName,
+        async (picked) => {
+          // AGW candidates carry the page name in `slug`.
+          await cache.setSourceChoice('agw', appid, picked.slug);
+          await cache.remove(agwCacheKey(gameName));
+          void resolveAll(false);
+        },
+        {
+          prompt: t('agwPickMatch'),
+          searchHref: agwSearchUrl(gameName),
+          searchLabel: t('agwNoneOfThese'),
+        },
+      ),
+    );
+  };
+
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
     show(renderLoading());
     try {
       const settings = await getSettings();
-      const { cw, agw, ac, verdict } = await resolveGame(gameName, appid, { forcePicker });
+      const { cw, agw, agwCandidates, ac, verdict } = await resolveGame(gameName, appid, {
+        forcePicker,
+      });
 
       if (cw.kind === 'ambiguous') {
         showCandidates(cw.candidates);
@@ -104,6 +126,13 @@ if (appidFromPath && nameFromDom) {
               await cache.clearSourceChoice('cw', appid);
               void resolveAll(true);
             },
+            onChangeAgwMatch:
+              agwCandidates.length > 0
+                ? async () => {
+                    await cache.clearSourceChoice('agw', appid);
+                    showAgwCandidates(agwCandidates);
+                  }
+                : undefined,
             onRefresh: refresh,
           },
         ),

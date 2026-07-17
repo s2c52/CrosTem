@@ -5,19 +5,23 @@
 // parallel and synthesizes the combined verdict. Used by the game-page
 // widget and the popup — network access already goes through the service
 // worker (fetchExt), so this module works in any extension context.
-import { agwLookup } from './agw';
+import { agwLookupDetailed, type AgwLookup } from './agw';
 import { anticheatLookup } from './awacy';
 import { resolveCw, type CwResolution } from './cw';
 import { getSettings } from './settings';
 import { computeVerdict } from './verdict';
-import type { AgwCompat, AnticheatInfo, Verdict } from '../types';
+import type { AgwCompat, AnticheatInfo, RankedResult, Verdict } from '../types';
 
 export interface GameResolution {
   cw: CwResolution;
   agw: AgwCompat | null;
+  /** Plausible AGW pages, for the "wrong match?" correction picker. */
+  agwCandidates: RankedResult[];
   ac: AnticheatInfo | null;
   verdict: Verdict;
 }
+
+const EMPTY_AGW: AgwLookup = { result: null, candidates: [] };
 
 export interface ResolveGameOpts {
   /** Re-open the CodeWeavers candidate picker even if a match is saved. */
@@ -37,17 +41,19 @@ export async function resolveGame(
   opts: ResolveGameOpts = {},
 ): Promise<GameResolution> {
   const sources = (await getSettings()).sources;
-  const [cw, agw, ac] = await Promise.all([
+  const [cw, agwLookup, ac] = await Promise.all([
     sources.cw
       ? resolveCw(gameName, appid, {
           forcePicker: opts.forcePicker ?? false,
           loadAppPage: opts.loadAppPage ?? true,
         })
       : Promise.resolve<CwResolution>({ kind: 'none' }),
-    sources.agw ? agwLookup(gameName, appid).catch(() => null) : Promise.resolve(null),
+    sources.agw
+      ? agwLookupDetailed(gameName, appid).catch(() => EMPTY_AGW)
+      : Promise.resolve(EMPTY_AGW),
     sources.anticheat ? anticheatLookup(appid, gameName).catch(() => null) : Promise.resolve(null),
   ]);
   const cwApp = cw.kind === 'hit' ? cw.app : null;
-  const verdict = computeVerdict(cwApp?.mac ?? null, agw, ac);
-  return { cw, agw, ac, verdict };
+  const verdict = computeVerdict(cwApp?.mac ?? null, agwLookup.result, ac);
+  return { cw, agw: agwLookup.result, agwCandidates: agwLookup.candidates, ac, verdict };
 }

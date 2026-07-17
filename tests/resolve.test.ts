@@ -4,14 +4,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { resolveGame } from '../src/lib/resolve';
 import { resolveCw, type CwResolution } from '../src/lib/cw';
-import { agwLookup } from '../src/lib/agw';
+import { agwLookupDetailed } from '../src/lib/agw';
 import { anticheatLookup } from '../src/lib/awacy';
 import { getSettings } from '../src/lib/settings';
 import type { AgwCompat, CwAppPage } from '../src/types';
 import type { Settings } from '../src/lib/settings';
 
 vi.mock('../src/lib/cw', () => ({ resolveCw: vi.fn() }));
-vi.mock('../src/lib/agw', () => ({ agwLookup: vi.fn() }));
+vi.mock('../src/lib/agw', () => ({ agwLookupDetailed: vi.fn() }));
 vi.mock('../src/lib/awacy', () => ({ anticheatLookup: vi.fn() }));
 vi.mock('../src/lib/settings', () => ({ getSettings: vi.fn() }));
 
@@ -47,7 +47,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(getSettings).mockResolvedValue(allOn);
   vi.mocked(resolveCw).mockResolvedValue({ kind: 'none' });
-  vi.mocked(agwLookup).mockResolvedValue(null);
+  vi.mocked(agwLookupDetailed).mockResolvedValue({ result: null, candidates: [] });
   vi.mocked(anticheatLookup).mockResolvedValue(null);
 });
 
@@ -79,7 +79,7 @@ describe('resolveGame', () => {
     );
     const r = await resolveGame('Test Game', '10');
     expect(resolveCw).not.toHaveBeenCalled();
-    expect(agwLookup).not.toHaveBeenCalled();
+    expect(agwLookupDetailed).not.toHaveBeenCalled();
     expect(anticheatLookup).not.toHaveBeenCalled();
     expect(r.cw.kind).toBe('none');
     expect(r.agw).toBeNull();
@@ -88,7 +88,7 @@ describe('resolveGame', () => {
 
   it('AGW and anticheat failures never break the result', async () => {
     vi.mocked(resolveCw).mockResolvedValue(cwHit(5, 'Runs Great'));
-    vi.mocked(agwLookup).mockRejectedValue(new Error('network'));
+    vi.mocked(agwLookupDetailed).mockRejectedValue(new Error('network'));
     vi.mocked(anticheatLookup).mockRejectedValue(new Error('network'));
     const r = await resolveGame('Test Game', '10');
     expect(r.agw).toBeNull();
@@ -97,9 +97,18 @@ describe('resolveGame', () => {
   });
 
   it('uses AGW data when CodeWeavers has nothing', async () => {
-    vi.mocked(agwLookup).mockResolvedValue(agwPlayable);
+    vi.mocked(agwLookupDetailed).mockResolvedValue({ result: agwPlayable, candidates: [] });
     const r = await resolveGame('Test Game', '10');
     expect(r.verdict.level).toBe('green');
+  });
+
+  it('surfaces AGW candidates for the correction picker', async () => {
+    const candidates = [
+      { slug: 'Test Game II', name: 'Test Game II', company: '', lastUpdated: '', stars: null, score: 1 },
+    ];
+    vi.mocked(agwLookupDetailed).mockResolvedValue({ result: null, candidates });
+    const r = await resolveGame('Test Game', '10');
+    expect(r.agwCandidates).toEqual(candidates);
   });
 
   it('forwards forcePicker and loadAppPage to resolveCw', async () => {

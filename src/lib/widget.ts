@@ -158,7 +158,19 @@ export interface AppWidgetOpts {
   /** User's CrossOver branch to highlight (e.g. "26"). */
   cxVersion?: string | undefined;
   onChangeMatch?: (() => void | Promise<void>) | undefined;
+  /** Opens the AppleGamingWiki correction picker. */
+  onChangeAgwMatch?: (() => void | Promise<void>) | undefined;
   onRefresh?: (() => void | Promise<void>) | undefined;
+}
+
+function inlineAction(label: string, onClick: () => void | Promise<void>): HTMLAnchorElement {
+  const a = el('a', 'crostem-link crostem-small', label) as HTMLAnchorElement;
+  a.href = '#';
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    void onClick();
+  });
+  return a;
 }
 
 const VERDICT_GLYPHS: Record<VerdictLevel, string> = {
@@ -317,8 +329,22 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
       row.appendChild(el('span', agwStatusClass(status), status));
       detail.push(row);
     }
-    detail.push(linkEl(agwPageUrl(data.agw.page), t('viewOnAgw'), 'crostem-link crostem-small'));
+    const foot = el('div', 'crostem-small');
+    foot.appendChild(linkEl(agwPageUrl(data.agw.page), t('viewOnAgw'), 'crostem-link crostem-small'));
+    if (opts.onChangeAgwMatch) {
+      foot.appendChild(document.createTextNode(' · '));
+      foot.appendChild(inlineAction(t('wrongMatch'), opts.onChangeAgwMatch));
+    }
+    detail.push(foot);
     sourceRow(body, t('sectionAgw'), summary, detail);
+  } else if (opts.onChangeAgwMatch) {
+    // No confident AGW match, but there are plausible pages to pick from.
+    sourceRow(
+      body,
+      t('sectionAgw'),
+      [el('span', 'crostem-muted crostem-small', t('noData'))],
+      [inlineAction(t('agwCandidatesLink'), opts.onChangeAgwMatch)],
+    );
   }
 
   // Anticheat
@@ -359,27 +385,42 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
   return root;
 }
 
-/** Candidate picker when name matching is ambiguous. */
+export interface CandidateListOpts {
+  /** Prompt above the list; defaults to the CodeWeavers wording. */
+  prompt?: string;
+  /** "None of these" escape hatch; defaults to CodeWeavers search. */
+  searchHref?: string;
+  searchLabel?: string;
+}
+
+/** Candidate picker when name matching is ambiguous (CW or AGW). */
 export function renderCandidateList(
   candidates: RankedResult[],
   gameName: string,
   onPick: (picked: RankedResult) => void | Promise<void>,
+  opts: CandidateListOpts = {},
 ): HTMLElement {
   const root = box();
   const body = el('div', 'crostem-body');
-  body.appendChild(el('div', 'crostem-muted crostem-small', t('pickMatch')));
+  body.appendChild(el('div', 'crostem-muted crostem-small', opts.prompt ?? t('pickMatch')));
   const list = el('div', 'crostem-candidates');
   for (const c of candidates) {
     const btn = el('button', 'crostem-candidate');
     btn.appendChild(el('div', 'crostem-candidate-name', c.name));
     const bottom = el('div', 'crostem-muted crostem-small', c.company ? c.company + ' · ' : '');
-    bottom.appendChild(starsEl(c.stars));
+    if (c.stars != null) bottom.appendChild(starsEl(c.stars));
     btn.appendChild(bottom);
     btn.addEventListener('click', () => void onPick(c));
     list.appendChild(btn);
   }
   body.appendChild(list);
-  body.appendChild(linkEl(searchUrl(gameName), t('noneOfThese'), 'crostem-link crostem-small'));
+  body.appendChild(
+    linkEl(
+      opts.searchHref ?? searchUrl(gameName),
+      opts.searchLabel ?? t('noneOfThese'),
+      'crostem-link crostem-small',
+    ),
+  );
   root.appendChild(body);
   return root;
 }
