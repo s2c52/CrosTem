@@ -31,6 +31,10 @@ export const DEFAULTS: Settings = {
 
 const KEY = 'settings';
 
+/** Valid range for the cache TTL, in days. */
+export const CACHE_TTL_MIN_DAYS = 1;
+export const CACHE_TTL_MAX_DAYS = 30;
+
 /** Merges stored values with the defaults (new fields stay covered). */
 export function mergeSettings(stored: unknown): Settings {
   const s = (stored ?? {}) as Partial<Settings>;
@@ -42,8 +46,8 @@ export function mergeSettings(stored: unknown): Settings {
         ? s.crossoverVersion.trim()
         : DEFAULTS.crossoverVersion,
     cacheTtlDays:
-      typeof s.cacheTtlDays === 'number' && s.cacheTtlDays >= 1 && s.cacheTtlDays <= 30
-        ? Math.round(s.cacheTtlDays)
+      typeof s.cacheTtlDays === 'number' && Number.isFinite(s.cacheTtlDays) && s.cacheTtlDays > 0
+        ? Math.min(CACHE_TTL_MAX_DAYS, Math.max(CACHE_TTL_MIN_DAYS, Math.round(s.cacheTtlDays)))
         : DEFAULTS.cacheTtlDays,
   };
 }

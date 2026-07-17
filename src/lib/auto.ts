@@ -9,11 +9,10 @@
 import { agwLookup } from './agw';
 import { resolveNativeArch } from './arch';
 import { anticheatLookup } from './awacy';
-import * as cache from './cache';
-import { appUrl, getApp, search, searchUrl, steamDetails } from './client';
+import { appUrl, searchUrl, steamDetails } from './client';
 import { LAZY_ROOT_MARGIN } from './constants';
+import { resolveCw } from './cw';
 import { logDebug, logWarn } from './log';
-import { rank } from './matcher';
 import { computeVerdict } from './verdict';
 import { getSettings } from './settings';
 import { t } from './i18n';
@@ -109,37 +108,20 @@ async function resolve(opts: AutoAttachOpts): Promise<ResolveResult> {
     | { type: 'none' } = { type: 'none' };
 
   if (settings.sources.cw) {
-    const savedSlug = opts.appid ? await cache.getSourceChoice('cw', opts.appid) : undefined;
-    if (savedSlug) {
-      const app = await getApp(savedSlug);
-      if (app?.mac) {
-        cwSignal = { stars: app.mac.stars, status: app.mac.status };
-        cwOutcome = {
-          type: 'hit',
-          stars: app.mac.stars,
-          slug: savedSlug,
-          cwName: name,
-          approximate: false,
-        };
-      }
-    }
-    if (cwOutcome.type === 'none') {
-      const results = await search(name);
-      const ranked = rank(name, results);
-      const pick =
-        ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
-      if (pick) {
-        cwSignal = { stars: pick.stars };
-        cwOutcome = {
-          type: 'hit',
-          stars: pick.stars,
-          slug: pick.slug,
-          cwName: pick.name,
-          approximate: pick.score < 1,
-        };
-      } else if (ranked.candidates.length > 1) {
-        cwOutcome = { type: 'ambiguous', count: ranked.candidates.length };
-      }
+    const res = await resolveCw(name, opts.appid);
+    if (res.kind === 'hit') {
+      cwSignal = res.app?.mac
+        ? { stars: res.stars, status: res.app.mac.status }
+        : { stars: res.stars };
+      cwOutcome = {
+        type: 'hit',
+        stars: res.stars,
+        slug: res.slug,
+        cwName: res.cwName,
+        approximate: res.approximate,
+      };
+    } else if (res.kind === 'ambiguous') {
+      cwOutcome = { type: 'ambiguous', count: res.candidates.length };
     }
   }
 

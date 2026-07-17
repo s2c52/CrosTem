@@ -7,9 +7,9 @@ import { agwCacheKey, agwLookup } from '../lib/agw';
 import { resolveNativeArch } from '../lib/arch';
 import { anticheatLookup } from '../lib/awacy';
 import * as cache from '../lib/cache';
-import { appCacheKey, getApp, search, searchCacheKey, steamCacheKey } from '../lib/client';
+import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
+import { resolveCw, type CwResolution } from '../lib/cw';
 import { logWarn } from '../lib/log';
-import { rank } from '../lib/matcher';
 import { computeVerdict } from '../lib/verdict';
 import { getSettings } from '../lib/settings';
 import {
@@ -19,7 +19,7 @@ import {
   renderLoading,
   renderNativeBadge,
 } from '../lib/widget';
-import type { CwAppPage, RankedResult } from '../types';
+import type { RankedResult } from '../types';
 import '../styles.css';
 
 const appidFromPath = location.pathname.match(/\/app\/(\d+)/)?.[1];
@@ -59,42 +59,6 @@ if (appidFromPath && nameFromDom) {
         '.sysreq_tabs .sysreq_tab[data-os="mac"]',
     );
 
-  interface CwResolution {
-    app: CwAppPage | null;
-    slug: string | null;
-    cwName?: string;
-    approximate: boolean;
-    candidates?: RankedResult[];
-  }
-
-  // Resolves the CodeWeavers part: saved choice → direct app page;
-  // otherwise, search + ranking (candidates if ambiguous).
-  const resolveCw = async (forcePicker: boolean): Promise<CwResolution> => {
-    if (!forcePicker) {
-      const savedSlug = await cache.getSourceChoice('cw', appid);
-      if (savedSlug) {
-        return { app: await getApp(savedSlug), slug: savedSlug, approximate: false };
-      }
-    }
-    const results = await search(gameName);
-    const ranked = rank(gameName, results);
-    const pick =
-      (!forcePicker && ranked.confident) ||
-      (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
-    if (pick) {
-      return {
-        app: await getApp(pick.slug),
-        slug: pick.slug,
-        cwName: pick.name,
-        approximate: pick.score < 1,
-      };
-    }
-    if (ranked.candidates.length > 1) {
-      return { app: null, slug: null, approximate: false, candidates: ranked.candidates };
-    }
-    return { app: null, slug: null, approximate: false };
-  };
-
   const refresh = async (): Promise<void> => {
     const savedSlug = await cache.getSourceChoice('cw', appid);
     const keys = [
@@ -126,27 +90,28 @@ if (appidFromPath && nameFromDom) {
       const sources = settings.sources;
       const [cw, agw, ac] = await Promise.all([
         sources.cw
-          ? resolveCw(forcePicker)
-          : Promise.resolve({ app: null, slug: null, approximate: false } as CwResolution),
+          ? resolveCw(gameName, appid, { forcePicker, loadAppPage: true })
+          : Promise.resolve<CwResolution>({ kind: 'none' }),
         sources.agw ? agwLookup(gameName, appid).catch(() => null) : Promise.resolve(null),
         sources.anticheat
           ? anticheatLookup(appid, gameName).catch(() => null)
           : Promise.resolve(null),
       ]);
 
-      if (cw.candidates) {
+      if (cw.kind === 'ambiguous') {
         showCandidates(cw.candidates);
         return;
       }
 
-      const verdict = computeVerdict(cw.app?.mac ?? null, agw, ac);
+      const cwApp = cw.kind === 'hit' ? cw.app : null;
+      const verdict = computeVerdict(cwApp?.mac ?? null, agw, ac);
       show(
         renderAppWidget(
-          { cw: cw.app, cwSlug: cw.slug, agw, ac, verdict },
+          { cw: cwApp, cwSlug: cw.kind === 'hit' ? cw.slug : null, agw, ac, verdict },
           {
             gameName,
-            cwName: cw.cwName,
-            approximate: cw.approximate,
+            cwName: cw.kind === 'hit' ? cw.cwName : undefined,
+            approximate: cw.kind === 'hit' ? cw.approximate : false,
             cxVersion: settings.crossoverVersion,
             onChangeMatch: async () => {
               await cache.clearSourceChoice('cw', appid);

@@ -7,6 +7,8 @@ import { appUrl, search } from '../lib/client';
 import { MAX_POPUP_RESULTS, SEARCH_DEBOUNCE_MS } from '../lib/constants';
 import { debounce } from '../lib/debounce';
 import { t } from '../lib/i18n';
+import { starsEl } from '../lib/widget';
+import '../styles.css';
 
 function mustGet(id: string): HTMLElement {
   const node = document.getElementById(id);
@@ -25,22 +27,6 @@ optionsLink.addEventListener('click', (e) => {
   e.preventDefault();
   void chrome.runtime.openOptionsPage();
 });
-
-function starsSpan(n: number | null): HTMLElement {
-  const span = document.createElement('span');
-  if (n == null) {
-    span.textContent = '—';
-    return span;
-  }
-  const filled = document.createElement('span');
-  filled.className = 'stars-filled';
-  filled.textContent = '★'.repeat(n);
-  const empty = document.createElement('span');
-  empty.className = 'stars-empty';
-  empty.textContent = '☆'.repeat(Math.max(0, 5 - n));
-  span.append(filled, empty);
-  return span;
-}
 
 let lastQuery = '';
 
@@ -74,7 +60,7 @@ async function runSearch(q: string): Promise<void> {
       name.textContent = r.name;
       const meta = document.createElement('div');
       meta.className = 'meta';
-      meta.appendChild(starsSpan(r.stars));
+      meta.appendChild(starsEl(r.stars));
       meta.appendChild(document.createTextNode(r.company ? ` · ${r.company}` : ''));
       a.append(name, meta);
       resultsEl.appendChild(a);

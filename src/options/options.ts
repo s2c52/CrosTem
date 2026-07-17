@@ -4,7 +4,7 @@
 // Options page: surfaces, sources, CrossOver version, cache and
 // export/import of matching corrections. Saves on change (no button).
 import { t } from '../lib/i18n';
-import { getSettings, saveSettings, type Settings } from '../lib/settings';
+import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
 
 function $(id: string): HTMLElement {
   const node = document.getElementById(id);
@@ -35,7 +35,8 @@ function flash(msg: string): void {
 }
 
 function readForm(): Settings {
-  return {
+  // mergeSettings is the single source of truth for validation/clamping.
+  return mergeSettings({
     surfaces: {
       app: input('surface-app').checked,
       capsules: input('surface-capsules').checked,
@@ -47,9 +48,9 @@ function readForm(): Settings {
       agw: input('source-agw').checked,
       anticheat: input('source-anticheat').checked,
     },
-    crossoverVersion: input('cx-version').value.trim() || '26',
-    cacheTtlDays: Math.min(30, Math.max(1, Number(input('cache-ttl').value) || 7)),
-  };
+    crossoverVersion: input('cx-version').value,
+    cacheTtlDays: Number(input('cache-ttl').value) || undefined,
+  });
 }
 
 function fillForm(s: Settings): void {
