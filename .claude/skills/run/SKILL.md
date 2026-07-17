@@ -1,0 +1,54 @@
+---
+name: run
+description: Launch and drive the CrosTem browser extension in headless Chromium against real Steam pages — build dist, load the extension with Playwright, and smoke-check the app-page widget and list overlays.
+---
+
+# Run CrosTem (browser extension smoke test)
+
+CrosTem is an MV3 browser extension; "running" it means loading `dist/`
+into a real Chromium and visiting Steam store pages where the content
+scripts inject the widget/badges.
+
+## Steps
+
+1. Build the extension (from the repo root, on the branch under test):
+
+   ```bash
+   npm run build
+   ```
+
+2. Run the smoke driver (Playwright is already a devDependency;
+   browsers live in `~/Library/Caches/ms-playwright`):
+
+   ```bash
+   node .claude/skills/run/smoke.mjs
+   ```
+
+   It loads `dist/` in headless Chromium, opens the RimWorld app page
+   (known native-mac game, AGW-backed architecture) and a search page
+   (overlay badges), asserts the expected DOM, and writes
+   `badge.png` / `overlay.png`. Set `SMOKE_OUT=<dir>` to send the
+   screenshots somewhere else (e.g. the session scratchpad) instead of
+   next to the script.
+
+3. **Look at the screenshots.** `badge.png` must show the "RUNS ON
+   MAC?" box with stars + architecture line; `overlay.png` the search
+   results with "M"/"Intel~" tags. A `PASS` line plus sane screenshots
+   is the success criterion.
+
+## Gotchas (all hit in practice)
+
+- Extensions do NOT work in the `chromium_headless_shell`. The driver
+  must use `channel: 'chromium'` (full build) — headless is then fine.
+- Extensions require `launchPersistentContext` (a user-data-dir), not
+  `chromium.launch()`. The driver creates a throwaway profile per run.
+- The widget renders in two passes: an immediate badge, then a
+  re-render when the AppleGamingWiki lookup resolves. Wait for the
+  specific element you need (e.g. the AGW source link), not just
+  `.crostem-box`.
+- Real network: the run hits store.steampowered.com and
+  applegamingwiki.com. Allow ~30 s timeouts; a hard failure usually
+  means no network, not a code bug.
+- Steam pages for DLC (e.g. RimWorld - Biotech) resolve as `Intel~`
+  from Steam requirements — useful to eyeball the inferred path on the
+  same search page.
