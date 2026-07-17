@@ -4,10 +4,11 @@
 // High-level client used by the content scripts: fetch (via the service
 // worker, which avoids CORS), parsing and caching of CodeWeavers and Steam data.
 import * as cache from './cache';
-import { FETCH_TIMEOUT_MS, MAX_CONCURRENT_FETCHES } from './constants';
+import { MAX_CONCURRENT_FETCHES } from './constants';
 import { asString, isRecord } from './guards';
 import { logDebug } from './log';
 import { baseName } from './matcher';
+import { fetchWithPolicy, messageTimeoutMs, sourceTimeoutMs } from './net';
 import { parseAppPage, parseSearchResults } from './parser';
 import { createFetchQueue } from './queue';
 import type {
@@ -24,14 +25,19 @@ const CW_BASE = 'https://www.codeweavers.com';
  * unlike a completed response with ok:false. */
 class TransportError extends Error {}
 
+/** The worker's breaker rejected the origin: fail fast, do not retry. */
+export class BreakerOpenError extends Error {}
+
 function sendFetchMessage(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     // MV3 can kill the service worker mid-request, in which case the
     // callback never fires: without this timeout the promise (and the
-    // widget behind it) would hang forever.
+    // widget behind it) would hang forever. The budget is the worker's
+    // worst case (all attempts + waits) so we never give up on a worker
+    // that is still legitimately retrying.
     const timer = setTimeout(
       () => reject(new TransportError('extension fetch timed out')),
-      FETCH_TIMEOUT_MS,
+      messageTimeoutMs(url),
     );
     const msg: ExtFetchRequest = { type: 'extFetch', url };
     chrome.runtime.sendMessage(msg, (res: ExtFetchResponse | undefined) => {
@@ -41,7 +47,7 @@ function sendFetchMessage(url: string): Promise<string> {
       } else if (!res) {
         reject(new TransportError('no response from service worker'));
       } else if (!res.ok) {
-        reject(new Error(res.error));
+        reject(res.code === 'breaker-open' ? new BreakerOpenError(res.error) : new Error(res.error));
       } else {
         resolve(res.body);
       }
@@ -162,9 +168,14 @@ async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
     'https://store.steampowered.com/api/appdetails?appids=' +
     encodeURIComponent(appid) +
     '&filters=platforms,basic,release_date&l=english';
-  const res = await fetch(url, { credentials: 'same-origin' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const value = parseSteamDetails(await res.json(), appid);
+  const out = await fetchWithPolicy(url, {
+    timeoutMs: sourceTimeoutMs(url),
+    credentials: 'same-origin',
+  });
+  // Errors keep throwing (nothing cached): only a parsed success:false
+  // response is a cacheable negative.
+  if (!out.ok) throw new Error(out.error);
+  const value = parseSteamDetails(JSON.parse(out.body) as unknown, appid);
   await cache.set(steamCacheKey(appid), value, value ? STEAM_TTL : cache.TTL_NEGATIVE);
   return value;
 }
