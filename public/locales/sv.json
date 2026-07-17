@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Badges på önskelistan"
   },
+  "optLanguage": {
+    "message": "Språk"
+  },
+  "optLangAuto": {
+    "message": "Automatiskt (följ Steam)"
+  },
   "optSources": {
     "message": "Datakällor"
   },

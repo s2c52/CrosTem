@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Jelvények a kívánságlistán"
   },
+  "optLanguage": {
+    "message": "Nyelv"
+  },
+  "optLangAuto": {
+    "message": "Automatikus (a Steam szerint)"
+  },
   "optSources": {
     "message": "Adatforrások"
   },

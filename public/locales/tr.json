@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "İstek listesinde rozetler"
   },
+  "optLanguage": {
+    "message": "Dil"
+  },
+  "optLangAuto": {
+    "message": "Otomatik (Steam ile aynı)"
+  },
   "optSources": {
     "message": "Veri kaynakları"
   },

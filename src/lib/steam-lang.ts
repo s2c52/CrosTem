@@ -45,6 +45,45 @@ export const STEAM_TO_BCP47: Record<string, string> = {
 /** Locales we ship a dictionary for (public/locales/<code>.json). */
 export const SUPPORTED_LOCALES: readonly string[] = [...new Set(Object.values(STEAM_TO_BCP47))];
 
+/**
+ * Endonym (native name) per supported locale, for the language picker.
+ * Hardcoded instead of Intl.DisplayNames: deterministic output and polished
+ * forms for es-419, zh-CN/zh-TW and nb; endonyms are the same in every UI
+ * language.
+ */
+export const LOCALE_NATIVE_NAMES: Record<string, string> = {
+  bg: 'Български',
+  cs: 'Čeština',
+  da: 'Dansk',
+  de: 'Deutsch',
+  el: 'Ελληνικά',
+  en: 'English',
+  es: 'Español (España)',
+  'es-419': 'Español (Latinoamérica)',
+  fi: 'Suomi',
+  fr: 'Français',
+  hu: 'Magyar',
+  id: 'Bahasa Indonesia',
+  it: 'Italiano',
+  ja: '日本語',
+  ko: '한국어',
+  ms: 'Bahasa Melayu',
+  nb: 'Norsk (bokmål)',
+  nl: 'Nederlands',
+  pl: 'Polski',
+  'pt-BR': 'Português (Brasil)',
+  'pt-PT': 'Português (Portugal)',
+  ro: 'Română',
+  ru: 'Русский',
+  sv: 'Svenska',
+  th: 'ไทย',
+  tr: 'Türkçe',
+  uk: 'Українська',
+  vi: 'Tiếng Việt',
+  'zh-CN': '简体中文',
+  'zh-TW': '繁體中文',
+};
+
 // Base languages whose bare tag is not itself a supported locale.
 const BASE_FALLBACK: Record<string, string> = {
   pt: 'pt-PT',

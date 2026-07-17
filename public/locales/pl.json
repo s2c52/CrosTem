@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Plakietki na liście życzeń"
   },
+  "optLanguage": {
+    "message": "Język"
+  },
+  "optLangAuto": {
+    "message": "Automatycznie (jak Steam)"
+  },
   "optSources": {
     "message": "Źródła danych"
   },

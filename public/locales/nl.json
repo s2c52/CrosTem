@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Badges op de verlanglijst"
   },
+  "optLanguage": {
+    "message": "Taal"
+  },
+  "optLangAuto": {
+    "message": "Automatisch (zoals Steam)"
+  },
   "optSources": {
     "message": "Gegevensbronnen"
   },

@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Значки в списке желаемого"
   },
+  "optLanguage": {
+    "message": "Язык"
+  },
+  "optLangAuto": {
+    "message": "Автоматически (как в Steam)"
+  },
   "optSources": {
     "message": "Источники данных"
   },

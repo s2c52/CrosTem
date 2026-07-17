@@ -3,6 +3,7 @@
 
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
+  LOCALE_NATIVE_NAMES,
   STEAM_TO_BCP47,
   SUPPORTED_LOCALES,
   detectPageLocale,
@@ -117,6 +118,15 @@ describe('STEAM_TO_BCP47', () => {
     expect(SUPPORTED_LOCALES).toHaveLength(30);
     for (const code of Object.values(STEAM_TO_BCP47)) {
       expect(SUPPORTED_LOCALES).toContain(code);
+    }
+  });
+});
+
+describe('LOCALE_NATIVE_NAMES', () => {
+  it('tiene un endónimo no vacío para cada locale soportado, y solo para esos', () => {
+    expect(Object.keys(LOCALE_NATIVE_NAMES).sort()).toEqual([...SUPPORTED_LOCALES].sort());
+    for (const name of Object.values(LOCALE_NATIVE_NAMES)) {
+      expect(name.trim()).not.toBe('');
     }
   });
 });

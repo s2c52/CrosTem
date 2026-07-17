@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "찜 목록 배지"
   },
+  "optLanguage": {
+    "message": "언어"
+  },
+  "optLangAuto": {
+    "message": "자동 (Steam에 맞춤)"
+  },
   "optSources": {
     "message": "데이터 소스"
   },

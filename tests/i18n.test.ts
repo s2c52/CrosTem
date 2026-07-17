@@ -23,7 +23,7 @@ const DICTS: Record<string, unknown> = {
   },
 };
 
-function stubExtension(storage: Record<string, unknown> = {}) {
+function stubExtension(storage: Record<string, unknown> = {}, sync: Record<string, unknown> = {}) {
   vi.stubGlobal('chrome', {
     runtime: { getURL: (path: string) => path },
     storage: {
@@ -34,6 +34,14 @@ function stubExtension(storage: Record<string, unknown> = {}) {
           return Promise.resolve();
         },
       },
+      sync: {
+        get: (key: string) => Promise.resolve({ [key]: sync[key] }),
+        set: (items: Record<string, unknown>) => {
+          Object.assign(sync, items);
+          return Promise.resolve();
+        },
+      },
+      onChanged: { addListener: () => undefined },
     },
   });
   vi.stubGlobal('fetch', (url: string) => {
@@ -112,6 +120,56 @@ describe('initI18n + t', () => {
     await initI18n('zh-cn');
     // zh-CN no está en los stubs → cae a en, pero el intento fue normalizado.
     expect(currentLocale()).toBe('en');
+  });
+});
+
+describe('initContentI18n / initExtPageI18n', () => {
+  // settings.ts memoizes: fresh modules per test so each one sees its own sync.
+  async function freshI18n(storage: Record<string, unknown>, sync: Record<string, unknown>) {
+    vi.resetModules();
+    stubExtension(storage, sync);
+    return import('../src/lib/i18n');
+  }
+
+  function makeDoc(lang: string): Document {
+    const doc = document.implementation.createHTMLDocument('');
+    doc.documentElement.lang = lang;
+    return doc;
+  }
+
+  it('content: con override manual carga ese idioma e ignora la página', async () => {
+    const i18n = await freshI18n({}, { settings: { language: 'es' } });
+    await i18n.initContentI18n(makeDoc('en'));
+    expect(i18n.currentLocale()).toBe('es');
+    expect(i18n.t('widgetTitle')).toBe('¿Corre en Mac?');
+  });
+
+  it('content: en auto sigue el idioma de la página', async () => {
+    const i18n = await freshI18n({}, {});
+    await i18n.initContentI18n(makeDoc('es'));
+    expect(i18n.currentLocale()).toBe('es');
+  });
+
+  it('content: uiLang persiste el idioma de la página aun con override', async () => {
+    const storage: Record<string, unknown> = {};
+    const i18n = await freshI18n(storage, { settings: { language: 'es' } });
+    await i18n.initContentI18n(makeDoc('en'));
+    expect(i18n.currentLocale()).toBe('es');
+    await vi.waitFor(() => {
+      expect(storage.uiLang).toBe('en');
+    });
+  });
+
+  it('extension page: override manual gana al uiLang guardado', async () => {
+    const i18n = await freshI18n({ uiLang: 'en' }, { settings: { language: 'es' } });
+    await i18n.initExtPageI18n();
+    expect(i18n.currentLocale()).toBe('es');
+  });
+
+  it('extension page: en auto usa el uiLang guardado', async () => {
+    const i18n = await freshI18n({ uiLang: 'es' }, {});
+    await i18n.initExtPageI18n();
+    expect(i18n.currentLocale()).toBe('es');
   });
 });
 

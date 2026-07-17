@@ -10,7 +10,7 @@ import { appUrl, search, steamDetails } from '../lib/client';
 import { MAX_POPUP_RESULTS, SEARCH_DEBOUNCE_MS } from '../lib/constants';
 import { AWACY_SITE } from '../lib/awacy';
 import { debounce } from '../lib/debounce';
-import { applyI18n, currentLocale, initI18n, t } from '../lib/i18n';
+import { applyI18n, currentLocale, initExtPageI18n, t } from '../lib/i18n';
 import { logDebug } from '../lib/log';
 import { ctLogo } from '../lib/logo';
 import { resolveGame } from '../lib/resolve';
@@ -239,7 +239,7 @@ function initQuickLinks(): void {
 
 void (async () => {
   // The dictionary must be ready before anything renders text.
-  await initI18n();
+  await initExtPageI18n();
   document.documentElement.lang = currentLocale();
   applyI18n();
   queryEl.placeholder = t('popupSearchPlaceholder');

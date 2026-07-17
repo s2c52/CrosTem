@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "願望清單徽章"
   },
+  "optLanguage": {
+    "message": "語言"
+  },
+  "optLangAuto": {
+    "message": "自動（跟隨 Steam）"
+  },
   "optSources": {
     "message": "資料來源"
   },

@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Emblemas na lista de desejos"
   },
+  "optLanguage": {
+    "message": "Idioma"
+  },
+  "optLangAuto": {
+    "message": "Automático (igual ao Steam)"
+  },
   "optSources": {
     "message": "Fontes de dados"
   },

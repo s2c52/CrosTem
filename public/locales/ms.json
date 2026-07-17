@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Lencana senarai hajat"
   },
+  "optLanguage": {
+    "message": "Bahasa"
+  },
+  "optLangAuto": {
+    "message": "Automatik (ikut Steam)"
+  },
   "optSources": {
     "message": "Sumber data"
   },

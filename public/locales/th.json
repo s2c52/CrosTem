@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "ป้ายในสิ่งที่อยากได้"
   },
+  "optLanguage": {
+    "message": "ภาษา"
+  },
+  "optLangAuto": {
+    "message": "อัตโนมัติ (ตาม Steam)"
+  },
   "optSources": {
     "message": "แหล่งข้อมูล"
   },

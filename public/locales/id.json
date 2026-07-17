@@ -193,6 +193,12 @@
   "optSurfaceWishlist": {
     "message": "Lencana wishlist"
   },
+  "optLanguage": {
+    "message": "Bahasa"
+  },
+  "optLangAuto": {
+    "message": "Otomatis (ikuti Steam)"
+  },
   "optSources": {
     "message": "Sumber data"
   },
