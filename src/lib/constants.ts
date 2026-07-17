@@ -31,8 +31,10 @@ export const CW_STARS_BAD = 1;
 export const APPLE_SILICON_YEAR = 2021;
 
 // --- Networking ---
-/** Max parallel external fetches per queue (CodeWeavers/AGW/AWACY and Steam). */
-export const MAX_CONCURRENT_FETCHES = 2;
+/** Max parallel external fetches per queue (CodeWeavers/AGW/AWACY and
+ * Steam). Raised from 2 in F9: with per-source timeouts, breakers and
+ * the failure memo bounding misbehavior, 4 lanes halve cold latency. */
+export const MAX_CONCURRENT_FETCHES = 4;
 /** Per-attempt fetch timeout by host. AWACY gets longer because its
  * games.json is a single ~460 KB blob; Steam is same-origin and fast. */
 export const SOURCE_TIMEOUTS_MS: Readonly<Record<string, number>> = {
@@ -61,6 +63,11 @@ export const BREAKER_FAILURES = 5;
 export const BREAKER_COOLDOWN_MS = 2 * 60_000;
 
 // --- Cache lifecycle (cache.ts) ---
+/** Stale-while-revalidate window past `expires`: an expired entry this
+ * recent is served instantly (marked stale) while the badge revalidates
+ * in the background. Compatibility data drifts over weeks, so briefly
+ * showing last week's value and silently correcting it is invisible. */
+export const CACHE_STALE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 /** storage.local usage that triggers eviction (quota is 10MB in MV3). */
 export const CACHE_QUOTA_SOFT_BYTES = 4 * 1024 * 1024;
 /** Eviction stops once estimated usage drops below this. */
@@ -73,8 +80,9 @@ export const CACHE_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
 export const SCAN_DEBOUNCE_MS = 300;
 /** Debounce for the popup search-as-you-type input. */
 export const SEARCH_DEBOUNCE_MS = 350;
-/** IntersectionObserver margin: resolve badges just before they scroll into view. */
-export const LAZY_ROOT_MARGIN = '150px';
+/** IntersectionObserver margin: resolve badges well before they scroll
+ * into view (~1 viewport ahead), so they are already painted on arrival. */
+export const LAZY_ROOT_MARGIN = '900px';
 /** CrossOver version rows shown in the widget breakdown. */
 export const MAX_VERSION_ROWS = 3;
 /** Search results shown in the popup. */

@@ -5,7 +5,10 @@
 // invalidation, the daily sweep throttle, quota handling and soft-limit
 // eviction. The module is re-imported per test (module-level L1 state).
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CACHE_SWEEP_INTERVAL_MS } from '../src/lib/constants';
+import { CACHE_STALE_WINDOW_MS, CACHE_SWEEP_INTERVAL_MS } from '../src/lib/constants';
+
+/** An expires value already past the stale window at t=1_000_000. */
+const BEYOND_WINDOW = 1_000_000 - CACHE_STALE_WINDOW_MS - 1;
 import { stubChrome, type ChromeMock } from './chrome-mock';
 
 type CacheModule = typeof import('../src/lib/cache');
@@ -36,7 +39,38 @@ describe('get/set con TTL', () => {
     expect(await cache.get('k')).toBe('v');
     vi.setSystemTime(1_000_000 + 10_001);
     expect(await cache.get('k')).toBeUndefined();
-    expect(mock.local['cache:k']).toBeUndefined(); // lazy removal
+    // Kept in storage: it is SWR fodder while inside the stale window.
+    expect(mock.local['cache:k']).toBeDefined();
+    // Past the stale window it is lazily removed.
+    vi.setSystemTime(1_000_000 + 10_000 + CACHE_STALE_WINDOW_MS + 1);
+    expect(await cache.get('k')).toBeUndefined();
+    expect(mock.local['cache:k']).toBeUndefined();
+  });
+});
+
+describe('getSwr (stale-while-revalidate)', () => {
+  it('sirve una entrada vencida dentro de la ventana y marca la pasada', async () => {
+    await cache.set('k', 'v', 10_000);
+    vi.setSystemTime(1_000_000 + 10_001);
+    const swr = { staleServed: false };
+    expect(await cache.getSwr('k', swr)).toBe('v');
+    expect(swr.staleServed).toBe(true);
+  });
+
+  it('una entrada vigente no marca la pasada', async () => {
+    await cache.set('k', 'v', 10_000);
+    const swr = { staleServed: false };
+    expect(await cache.getSwr('k', swr)).toBe('v');
+    expect(swr.staleServed).toBe(false);
+  });
+
+  it('más allá de la ventana no sirve nada y limpia', async () => {
+    await cache.set('k', 'v', 10_000);
+    vi.setSystemTime(1_000_000 + 10_000 + CACHE_STALE_WINDOW_MS + 1);
+    const swr = { staleServed: false };
+    expect(await cache.getSwr('k', swr)).toBeUndefined();
+    expect(swr.staleServed).toBe(false);
+    expect(mock.local['cache:k']).toBeUndefined();
   });
 });
 
@@ -74,25 +108,31 @@ describe('L1 en memoria', () => {
 });
 
 describe('sweepExpired', () => {
-  it('barre solo entradas cache: expiradas o malformadas', async () => {
+  it('barre lo malformado y lo vencido más allá de la ventana stale', async () => {
     mock.local['cache:live'] = entry('a', 2_000_000);
-    mock.local['cache:dead'] = entry('b', 999_999);
+    mock.local['cache:stale'] = entry('s', 999_999); // SWR fodder: kept
+    mock.local['cache:dead'] = entry('b', BEYOND_WINDOW);
     mock.local['cache:broken'] = { value: 'c' }; // no expires
     mock.local['choice:cw:123'] = 'slug';
     mock.local['settings'] = { x: 1 };
     const swept = await cache.sweepExpired();
     expect(swept).toBe(2);
-    expect(Object.keys(mock.local).sort()).toEqual(['cache:live', 'choice:cw:123', 'settings']);
+    expect(Object.keys(mock.local).sort()).toEqual([
+      'cache:live',
+      'cache:stale',
+      'choice:cw:123',
+      'settings',
+    ]);
   });
 });
 
 describe('maybeDailyMaintenance', () => {
   it('respeta el throttle diario', async () => {
-    mock.local['cache:dead'] = entry('b', 999_999);
+    mock.local['cache:dead'] = entry('b', BEYOND_WINDOW);
     await cache.maybeDailyMaintenance();
     expect(mock.local['cache:dead']).toBeUndefined();
-    // A new expired entry within the same day is left alone.
-    mock.local['cache:dead2'] = entry('c', 999_999);
+    // A new sweepable entry within the same day is left alone.
+    mock.local['cache:dead2'] = entry('c', BEYOND_WINDOW);
     await cache.maybeDailyMaintenance();
     expect(mock.local['cache:dead2']).toBeDefined();
     // Past the interval it gets swept.
@@ -109,7 +149,7 @@ describe('maybeDailyMaintenance', () => {
 
 describe('quota en set', () => {
   it('ante quota llena purga expiradas y reintenta con éxito', async () => {
-    mock.local['cache:dead'] = entry('b', 999_999);
+    mock.local['cache:dead'] = entry('b', BEYOND_WINDOW);
     mock.failLocalSets(1);
     await cache.set('k', 'v', 10_000);
     expect(mock.local['cache:dead']).toBeUndefined(); // sweep ran

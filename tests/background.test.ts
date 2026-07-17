@@ -5,7 +5,7 @@
 // sender validation, queue dedup/cap and the per-origin circuit breaker.
 // The worker module is re-imported per test (module-level state).
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { BREAKER_FAILURES } from '../src/lib/constants';
+import { BREAKER_FAILURES, MAX_CONCURRENT_FETCHES } from '../src/lib/constants';
 import { EXTENSION_ID, stubChrome, type ChromeMock, type MessageListener } from './chrome-mock';
 
 const CW_URL = 'https://www.codeweavers.com/compatibility?name=elden';
@@ -103,7 +103,7 @@ describe('background extFetch', () => {
     expect(await p2).toMatchObject({ ok: true });
   });
 
-  it('limita la concurrencia a 2 fetches simultáneos', async () => {
+  it('limita la concurrencia al cap configurado', async () => {
     const releases: Array<(r: Response) => void> = [];
     const fetchMock = vi.fn(
       () =>
@@ -113,17 +113,17 @@ describe('background extFetch', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
     const listener = await loadWorker();
-    const urls = ['a', 'b', 'c'].map(
-      (q) => `https://www.codeweavers.com/compatibility?name=${q}`,
+    const urls = Array.from(
+      { length: MAX_CONCURRENT_FETCHES + 1 },
+      (_, i) => `https://www.codeweavers.com/compatibility?name=game${i}`,
     );
     const promises = urls.map((url) => send(listener, { type: 'extFetch', url }));
     await vi.advanceTimersByTimeAsync(0);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(MAX_CONCURRENT_FETCHES);
     releases[0]?.(okResponse());
     await vi.advanceTimersByTimeAsync(0);
-    expect(fetchMock).toHaveBeenCalledTimes(3);
-    releases[1]?.(okResponse());
-    releases[2]?.(okResponse());
+    expect(fetchMock).toHaveBeenCalledTimes(MAX_CONCURRENT_FETCHES + 1);
+    for (const release of releases) release(okResponse());
     await vi.runAllTimersAsync();
     for (const p of promises) expect(await p).toMatchObject({ ok: true });
   });
