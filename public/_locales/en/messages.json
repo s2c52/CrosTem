@@ -148,6 +148,20 @@
   "noDataInline": {
     "message": "no data"
   },
+  "starsAria": {
+    "message": "$N$ of $MAX$ stars",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "no rating"
+  },
   "badgeCwRating": {
     "message": "$NAME$ — CrossOver rating on CodeWeavers",
     "placeholders": {

@@ -654,3 +654,15 @@ button.crostem-source-toggle:hover .crostem-source-name {
 .crostem-tooltip-stars {
   margin-bottom: 2px;
 }
+
+/* Visible focus for every interactive CrosTem element injected in Steam */
+
+.crostem-link:focus-visible,
+.crostem-candidate:focus-visible,
+.crostem-retry:focus-visible,
+.crostem-badge-btn:focus-visible,
+.crostem-badge-result:focus-visible,
+button.crostem-source-toggle:focus-visible {
+  outline: 2px solid var(--ct-accent);
+  outline-offset: 2px;
+}

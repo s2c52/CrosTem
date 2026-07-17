@@ -29,12 +29,19 @@ function el(tag: string, className?: string, text?: string): HTMLElement {
 
 export function starsEl(n: number | null, max = 5): HTMLElement {
   const span = el('span', 'crostem-stars');
+  span.setAttribute('role', 'img');
   if (n == null) {
     span.textContent = '—';
+    span.setAttribute('aria-label', t('starsNone'));
     return span;
   }
-  span.appendChild(el('span', 'crostem-stars-filled', '★'.repeat(n)));
-  span.appendChild(el('span', 'crostem-stars-empty', '☆'.repeat(Math.max(0, max - n))));
+  span.setAttribute('aria-label', t('starsAria', [String(n), String(max)]));
+  const filled = el('span', 'crostem-stars-filled', '★'.repeat(n));
+  const empty = el('span', 'crostem-stars-empty', '☆'.repeat(Math.max(0, max - n)));
+  filled.setAttribute('aria-hidden', 'true');
+  empty.setAttribute('aria-hidden', 'true');
+  span.appendChild(filled);
+  span.appendChild(empty);
   return span;
 }
 

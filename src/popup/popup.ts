@@ -46,6 +46,7 @@ function applyI18n(): void {
   });
 }
 
+document.documentElement.lang = chrome.i18n.getUILanguage();
 applyI18n();
 document.querySelector('.logo')?.replaceWith(ctLogo(18));
 queryEl.placeholder = t('popupSearchPlaceholder');

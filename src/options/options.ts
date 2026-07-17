@@ -104,6 +104,7 @@ async function applyToSteamTabs(): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  document.documentElement.lang = chrome.i18n.getUILanguage();
   applyI18n();
   document.querySelector('.logo')?.replaceWith(ctLogo(22));
   fillForm(await getSettings());

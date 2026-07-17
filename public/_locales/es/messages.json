@@ -148,6 +148,20 @@
   "noDataInline": {
     "message": "sin datos"
   },
+  "starsAria": {
+    "message": "$N$ de $MAX$ estrellas",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "MAX": {
+        "content": "$2"
+      }
+    }
+  },
+  "starsNone": {
+    "message": "sin valoración"
+  },
   "badgeCwRating": {
     "message": "$NAME$ — valoración de CrossOver en CodeWeavers",
     "placeholders": {
