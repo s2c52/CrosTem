@@ -3,6 +3,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  FETCH_MAX_BODY_BYTES,
   FETCH_MAX_RETRIES,
   FETCH_TIMEOUT_DEFAULT_MS,
   RETRY_AFTER_CAP_MS,
@@ -193,5 +194,51 @@ describe('fetchWithPolicy', () => {
     const out = await p;
     expect(out).toMatchObject({ ok: false, code: 'network' });
     expect(fetchFn).toHaveBeenCalledTimes(FETCH_MAX_RETRIES + 1);
+  });
+
+  it('rechaza por Content-Length que excede el cap sin leer el cuerpo', async () => {
+    const textSpy = vi.fn(() => Promise.resolve('body'));
+    const fetchFn = vi.fn(
+      () =>
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          url: 'https://example.test/final',
+          headers: {
+            get: (n: string) =>
+              n.toLowerCase() === 'content-length' ? String(FETCH_MAX_BODY_BYTES + 1) : null,
+          },
+          text: textSpy,
+        }) as unknown as Promise<Response>,
+    );
+    const p = fetchWithPolicy('https://example.test/', {
+      timeoutMs: 5_000,
+      fetchFn: asFetch(fetchFn),
+    });
+    await vi.runAllTimersAsync();
+    const out = await p;
+    expect(out).toMatchObject({ ok: false, code: 'too-large' });
+    expect(textSpy).not.toHaveBeenCalled(); // rejected before buffering
+    expect(fetchFn).toHaveBeenCalledTimes(1); // not retryable
+  });
+
+  it('corta un cuerpo enorme sin Content-Length (backstop chunked)', async () => {
+    const fetchFn = vi.fn(
+      () =>
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          url: 'https://example.test/final',
+          headers: { get: () => null },
+          text: () => Promise.resolve('x'.repeat(FETCH_MAX_BODY_BYTES + 1)),
+        }) as unknown as Promise<Response>,
+    );
+    const p = fetchWithPolicy('https://example.test/', {
+      timeoutMs: 5_000,
+      fetchFn: asFetch(fetchFn),
+    });
+    await vi.runAllTimersAsync();
+    const out = await p;
+    expect(out).toMatchObject({ ok: false, code: 'too-large' });
   });
 });

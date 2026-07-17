@@ -2,6 +2,12 @@
 
 All notable changes to CrosTem are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] — 2026-07-17
+
+### Fixed
+
+- Points Shop items (emoticons, backgrounds, animated stickers) no longer get a compatibility star overlay on app pages or in the Points Shop — they aren't games.
+
 ## [1.1.0] — 2026-07-17
 
 ### Added

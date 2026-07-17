@@ -142,3 +142,25 @@ describe('live-apply del widget de ficha', () => {
     });
   });
 });
+
+// Last on purpose: capsules.ts leaves a body-wide MutationObserver running
+// after import, and this file's tests share the document.
+describe('content/capsules.ts', () => {
+  it('superpone estrellas en capsules pero ignora los Points Shop Items', async () => {
+    document.body.innerHTML = `
+      <a href="https://store.steampowered.com/app/1245620/ELDEN_RING/"><img alt="ELDEN RING" /></a>
+      <a href="https://store.steampowered.com/points/shop/app/1324780/reward/150637/"><img alt="Reward" /></a>
+    `;
+    window.history.pushState({}, '', '/app/1324780/Easy_Red_2/');
+    await import('../src/content/capsules');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.crostem-overlay').length).toBe(1);
+    });
+    expect(document.querySelector('.crostem-overlay')?.closest('a')?.getAttribute('href')).toContain(
+      '/app/1245620/',
+    );
+    const pointsShop = document.querySelector<HTMLElement>('a[href*="/points/shop/"]');
+    expect(pointsShop?.querySelector('.crostem-overlay')).toBeNull();
+    expect(pointsShop?.dataset.crostemCapsule).toBeUndefined();
+  });
+});

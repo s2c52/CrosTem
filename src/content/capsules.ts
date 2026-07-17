@@ -13,6 +13,9 @@ import '../styles.css';
 
 const APP_LINK = /\/app\/(\d+)/;
 const ANCHOR_SEL = 'a[href*="/app/"]';
+// Points Shop items (emoticons, backgrounds…) link to
+// /points/shop/app/<id>/… — same /app/<id> segment, but they aren't games.
+const POINTS_SHOP = /\/points\/shop\//;
 
 // React store hover cards: hovering a capsule expands it into a card with
 // tags, reviews and price. Some variants have a semantic root class
@@ -100,6 +103,7 @@ function processAnchor(a: HTMLAnchorElement): void {
   if (a.dataset.crostemCapsule) return;
   if (a.classList.contains('search_result_row')) return; // already has an inline badge
   if (a.closest('.crostem-box, .crostem-badge, .crostem-overlay')) return;
+  if (POINTS_SHOP.test(a.getAttribute('href') ?? '')) return; // points shop items aren't games
 
   const appid = appidOf(a);
   if (!appid) return;

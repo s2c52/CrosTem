@@ -83,6 +83,22 @@ describe('background extFetch', () => {
     expect(await p).toMatchObject({ ok: true, body: 'page' });
   });
 
+  it('rechaza una redirección que termina fuera de la allowlist', async () => {
+    // Allowlisted request, but the final URL (after a 3xx) is off-allowlist.
+    const redirected = {
+      ok: true,
+      status: 200,
+      url: 'https://evil.example.test/x',
+      headers: { get: () => null },
+      text: () => Promise.resolve('page'),
+    } as unknown as Response;
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(redirected)));
+    const listener = await loadWorker();
+    const p = send(listener, { type: 'extFetch', url: CW_URL });
+    await vi.runAllTimersAsync();
+    expect(await p).toMatchObject({ ok: false, code: 'not-allowed' });
+  });
+
   it('dedupe: dos mensajes con la misma URL comparten un solo fetch', async () => {
     let release!: (r: Response) => void;
     const fetchMock = vi.fn(

@@ -10,7 +10,7 @@
 [![Version](https://img.shields.io/badge/version-1.1.0-blue)](CHANGELOG.md)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/manifest-v3-orange)](manifest.json)
-[![Tests](https://img.shields.io/badge/tests-234%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-241%20passing-brightgreen)](tests/)
 [![Languages](https://img.shields.io/badge/languages-30-purple)](public/_locales/)
 [![Runtime deps](https://img.shields.io/badge/runtime%20deps-0-lightgrey)](package.json)
 
@@ -18,7 +18,7 @@
 
 </div>
 
-![Elden Ring's Steam page with the CrosTem widget showing a green "Playable on Mac via CrossOver" verdict, a per-version CrossOver star breakdown, AppleGamingWiki status and anti-cheat info](store-assets/1-game-page-verdict.png)
+![Elden Ring's Steam page with the CrosTem widget showing a green "Playable on Mac via CrossOver" verdict banner and per-source rows: CrossOver "Runs Great" with five stars, AppleGamingWiki status and anti-cheat info](store-assets/1-game-page-verdict.png)
 
 ## What is CrosTem?
 
@@ -49,7 +49,7 @@ The verdict engine ([src/lib/verdict.ts](src/lib/verdict.ts)) is a pure, fully-t
 
 When the sources disagree, the widget says so explicitly ("Sources disagree — check both before buying") and shows each source's raw status so you can judge for yourself.
 
-![Destiny 2's Steam page with a red "Likely unplayable on Mac" verdict caused by BattlEye: Denied anti-cheat status](store-assets/2-anticheat-warning.png)
+![Destiny 2's Steam page with a red "Likely unplayable on Mac" verdict caused by a Denied anti-cheat status](store-assets/2-anticheat-warning.png)
 
 ## Features
 
@@ -78,7 +78,7 @@ Plus:
 - **Native macOS games** get a "Native on macOS" badge with 5 stars and an architecture tag — **M Series (Apple Silicon)** vs **Intel (Rosetta 2 on M)** — detected from AppleGamingWiki, Steam system requirements or release date ([src/lib/arch.ts](src/lib/arch.ts)), without querying CodeWeavers at all.
 - **Ambiguous-match resolution** — when a Steam name doesn't clearly map to a single CodeWeavers entry, the widget shows the candidates; pick once and CrosTem remembers it for that game everywhere ("Wrong match?" to change it). Corrections are kept per source and can be exported/imported.
 
-![CrosTem options page: surface toggles, data sources, CrossOver version, cache TTL and match corrections](store-assets/5-options.png)
+![CrosTem options page with card sections: surface toggles, UI language, data sources, CrossOver version and cache TTL](store-assets/5-options.png)
 
 ## Install
 
@@ -134,59 +134,13 @@ flowchart LR
 - Requests go exclusively to the four hosts above — Steam (the page you're already on), CodeWeavers, AppleGamingWiki and AreWeAntiCheatYet's public dataset.
 - No telemetry, no accounts, no servers of ours. Full policy: [docs/privacy-policy.md](docs/privacy-policy.md) ([español](docs/privacy-policy.es.md)).
 
-## Project structure
-
-```
-manifest.json             MV3: permissions and entry points (compiled by @crxjs/vite-plugin)
-vite.config.ts            Vite + crxjs
-src/types.ts              Domain and messaging types
-src/background.ts         Service worker: proxied fetches (queue + breaker + allowlist)
-src/content/app.ts        Game page → widget
-src/content/capsules.ts   Star overlays on capsules across the store
-src/content/search.ts     Search results (MutationObserver for AJAX)
-src/content/wishlist.ts   Wishlist (React SPA, generic /app/ link detection)
-src/lib/resolve.ts        Shared verdict pipeline (runs enabled sources in parallel)
-src/lib/verdict.ts        Traffic-light engine (pure function)
-src/lib/cw.ts             CodeWeavers resolution (saved choice → search + ranking)
-src/lib/parser.ts         CodeWeavers HTML scraping (all of it lives here)
-src/lib/matcher.ts        Name normalization and candidate scoring
-src/lib/agw.ts            AppleGamingWiki client (MediaWiki cargo API)
-src/lib/awacy.ts          AreWeAntiCheatYet client (games.json → appid index)
-src/lib/arch.ts           Native binary architecture detection (M Series vs Intel)
-src/lib/client.ts         search()/getApp()/steamDetails(): fetch + parse + cache
-src/lib/net.ts            Fetch policy: per-source timeouts, retries with backoff
-src/lib/breaker.ts        Per-origin circuit breaker (fail fast on downed sources)
-src/lib/cache.ts          TTL cache: in-memory L1, stale-while-revalidate, upkeep
-src/lib/queue.ts          Generic fetch queue (concurrency + dedupe)
-src/lib/allowlist.ts      Security boundary: URLs the service worker may fetch
-src/lib/settings.ts       User settings (storage.sync)
-src/lib/steam-lang.ts     Steam page-language detection (30 locales)
-src/lib/i18n.ts           Runtime i18n helper
-src/lib/widget.ts         Game-page widget construction
-src/lib/badge.ts          Single badge renderer (capsules, search, wishlist)
-src/lib/tooltip.ts        Hover card (singleton)
-src/lib/auto.ts           Lazy badge resolution (shared IntersectionObserver)
-src/lib/scan.ts           Incremental DOM scanning (added-subtree roots only)
-src/lib/surface.ts        Live mount/unmount of surfaces on settings changes
-src/lib/logo.ts           Programmatic SVG monogram
-src/popup/                Toolbar popup
-src/options/              Options page
-src/onboarding/           Post-install onboarding page
-src/styles.css            Styles injected into Steam
-src/theme.css             Design tokens (--ct-*), single source of the palette
-public/_locales/          30 locales for the manifest (name/description)
-public/locales/           30 runtime dictionaries (web-accessible)
-tests/                    Vitest + real CodeWeavers HTML fixtures
-scripts/                  verify.sh, e2e.mjs, package.mjs, icons.mjs, listing.mjs
-```
-
 ## Development
 
 ```bash
 npm install
 npm run dev            # vite in watch mode (reloads the extension on save)
 npm run build          # typecheck + vite build → dist/
-npm test               # 234 unit tests (vitest + happy-dom, real HTML fixtures)
+npm test               # 241 unit tests (vitest + happy-dom, real HTML fixtures)
 npm run lint           # eslint
 npm run e2e            # Playwright against the real Steam store (headed Brave; E2E_HEADLESS=1 for CI)
 npm run package        # minified release build + zip for the Chrome Web Store
