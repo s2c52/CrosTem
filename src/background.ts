@@ -31,7 +31,10 @@ function enqueueFetch(url: string): Promise<ExtFetchResponse> {
   return queue.run(url, () => doFetch(url));
 }
 
-chrome.runtime.onMessage.addListener((msg: unknown, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
+  // Defense in depth: only our own content scripts/pages may request
+  // fetches (the URL allowlist limits impact either way).
+  if (sender.id !== chrome.runtime.id) return false;
   if (!isExtFetchRequest(msg)) return false;
   void enqueueFetch(msg.url).then(sendResponse);
   return true; // asynchronous response

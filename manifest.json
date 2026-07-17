@@ -10,7 +10,7 @@
   "host_permissions": [
     "https://www.codeweavers.com/*",
     "https://www.applegamingwiki.com/*",
-    "https://raw.githubusercontent.com/*"
+    "https://raw.githubusercontent.com/AreWeAntiCheatYet/*"
   ],
   "background": {
     "service_worker": "src/background.ts",

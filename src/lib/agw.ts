@@ -77,6 +77,12 @@ function likePattern(name: string): string {
   return '%' + tokens.join('%') + '%';
 }
 
+/** Quotes a value as a Cargo (SQL) string literal. Backslashes are
+ * escaped too: doubling quotes alone leaves `\'` as an escape hatch. */
+function sqlQuote(value: string): string {
+  return "'" + value.replace(/\\/g, '\\\\').replace(/'/g, "''") + "'";
+}
+
 /**
  * Looks up a game's AGW compatibility by name. Returns null if no page
  * matches with confidence.
@@ -89,11 +95,7 @@ export async function agwLookup(name: string, appid?: string | null): Promise<Ag
   if (appid) {
     const chosen = await cache.getSourceChoice('agw', appid);
     if (chosen) {
-      const rows = await cachedQuery(
-        `_pageName='${chosen.replace(/'/g, "''")}'`,
-        1,
-        'agw:page:' + chosen,
-      );
+      const rows = await cachedQuery(`_pageName=${sqlQuote(chosen)}`, 1, 'agw:page:' + chosen);
       const row = rows[0];
       if (row) return row;
     }
@@ -105,7 +107,7 @@ export async function agwLookup(name: string, appid?: string | null): Promise<Ag
 
   let result: AgwCompat | null;
   try {
-    const rows = await cargoQuery(`_pageName LIKE '${likePattern(name).replace(/'/g, "''")}'`, 10);
+    const rows = await cargoQuery(`_pageName LIKE ${sqlQuote(likePattern(name))}`, 10);
     // Reuses the matcher ranking by treating pages as candidates.
     const asResults: CwSearchResult[] = rows.map((r) => ({
       name: r.page,
