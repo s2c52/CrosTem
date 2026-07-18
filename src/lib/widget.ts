@@ -361,10 +361,26 @@ export function renderAppWidget(data: FullCompat, opts: AppWidgetOpts): HTMLElem
     ];
     const line = el('div', blocked ? 'crostem-status-bad crostem-small' : 'crostem-small');
     line.textContent = `${data.ac.anticheats.join(', ') || t('sectionAc')}: ${data.ac.status}`;
+    // Per-game notes from AWACY (text is a source quote, kept as-is like statuses).
+    // The link label is the source domain — meaningful and translation-free.
+    const noteEls = (data.ac.notes ?? []).map((n) => {
+      const div = el('div', 'crostem-muted crostem-small', '• ' + n.text);
+      if (n.ref) {
+        let host = '↗';
+        try {
+          host = new URL(n.ref).hostname.replace(/^www\./, '') + ' ↗';
+        } catch {
+          // ref is validated as http(s) upstream; keep the bare arrow if it ever isn't.
+        }
+        div.appendChild(document.createTextNode(' '));
+        div.appendChild(linkEl(n.ref, host, 'crostem-link crostem-small'));
+      }
+      return div;
+    });
     const note = el('div', 'crostem-muted crostem-small');
     note.textContent = t('acLinuxNote');
     note.appendChild(linkEl(AWACY_SITE, 'AreWeAntiCheatYet ↗', 'crostem-link crostem-small'));
-    sourceRow(body, t('sectionAc'), summary, [line, note]);
+    sourceRow(body, t('sectionAc'), summary, [line, ...noteEls, note]);
   }
 
   // Footer: refresh + attribution
