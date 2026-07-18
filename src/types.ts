@@ -109,10 +109,18 @@ export interface AgwCompat {
 /** AreWeAntiCheatYet statuses (Linux/Proton data, indicative for CrossOver). */
 export type AnticheatStatus = 'Supported' | 'Running' | 'Planned' | 'Broken' | 'Denied';
 
+/** A per-game note from the AWACY dataset: free text with an optional source. */
+export interface AnticheatNote {
+  text: string;
+  ref: string | null;
+}
+
 export interface AnticheatInfo {
   name: string;
   status: AnticheatStatus;
   anticheats: string[];
+  // Optional: a pre-update cached index can lack it (no cache schema version).
+  notes?: AnticheatNote[];
 }
 
 export type VerdictLevel = 'green' | 'yellow' | 'red' | 'unknown';

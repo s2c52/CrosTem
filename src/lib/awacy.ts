@@ -11,7 +11,7 @@ import { fetchExt } from './client';
 import { isRecord } from './guards';
 import { logDebug } from './log';
 import { normalizeName } from './matcher';
-import type { AnticheatInfo, AnticheatStatus } from '../types';
+import type { AnticheatInfo, AnticheatNote, AnticheatStatus } from '../types';
 
 const AWACY_URL =
   'https://raw.githubusercontent.com/AreWeAntiCheatYet/AreWeAntiCheatYet/HEAD/games.json';
@@ -36,6 +36,22 @@ function toAnticheatStatus(v: unknown): AnticheatStatus | null {
     : null;
 }
 
+/** Parses the raw per-game notes: `[text, reference | null]` tuples. Untrusted
+ * input — entries without text are dropped, and the reference is kept only if
+ * it is an http(s) URL so a hostile `javascript:`/`data:` link can never become
+ * clickable. */
+function toNotes(v: unknown): AnticheatNote[] {
+  if (!Array.isArray(v)) return [];
+  const out: AnticheatNote[] = [];
+  for (const entry of v) {
+    if (!Array.isArray(entry) || typeof entry[0] !== 'string' || !entry[0]) continue;
+    const rawRef: unknown = entry[1];
+    const ref = typeof rawRef === 'string' && /^https?:\/\//i.test(rawRef) ? rawRef : null;
+    out.push({ text: entry[0], ref });
+  }
+  return out;
+}
+
 /** Builds the index from the raw games.json entries. The dataset is
  * untrusted input: entries are validated field by field and unknown
  * statuses are dropped rather than flowing into the verdict. */
@@ -52,6 +68,9 @@ export function buildIndex(games: unknown[]): AwacyIndex {
         ? g.anticheats.filter((a): a is string => typeof a === 'string')
         : [],
     };
+    // Attach notes only when present, so note-less games keep the compact shape.
+    const notes = toNotes(g.notes);
+    if (notes.length) info.notes = notes;
     const steamId = isRecord(g.storeIds) ? g.storeIds.steam : undefined;
     if (typeof steamId === 'string' && steamId) index.bySteamId[steamId] = info;
     index.byName[normalizeName(g.name)] = info;
