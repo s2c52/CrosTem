@@ -7,6 +7,7 @@ dist/
 e2e-results/
 store-assets/.profile/
 crostem-v*.zip
+CrosTem-web/
 
 # Internal development files (kept local, not published)
 .higinio/
