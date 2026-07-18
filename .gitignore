@@ -29,3 +29,4 @@ coverage/
 *.key
 *.p12
 .npmrc
+CrosTem-web/
