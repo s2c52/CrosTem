@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Tüm düzeltmeleri sil"
   },
+  "optAbout": {
+    "message": "Hakkında"
+  },
+  "optMadeBy": {
+    "message": "Geliştiren:"
+  },
   "optReloadNote": {
     "message": "Değişiklikler Steam sekmelerine yeniden yükleme sonrası uygulanır — aşağıdaki “Şimdi uygula”yı kullanın."
   },

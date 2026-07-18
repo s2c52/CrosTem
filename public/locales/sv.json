@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Ta bort alla korrigeringar"
   },
+  "optAbout": {
+    "message": "Om"
+  },
+  "optMadeBy": {
+    "message": "Skapad av"
+  },
   "optReloadNote": {
     "message": "Ändringar gäller för Steam-flikar efter omladdning — använd ”Tillämpa nu” nedan."
   },

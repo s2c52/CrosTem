@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Eliminar todas as correções"
   },
+  "optAbout": {
+    "message": "Sobre"
+  },
+  "optMadeBy": {
+    "message": "Feito por"
+  },
   "optReloadNote": {
     "message": "As alterações aplicam-se aos separadores do Steam depois de os recarregar — usa “Aplicar agora” abaixo."
   },

@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Usuń wszystkie poprawki"
   },
+  "optAbout": {
+    "message": "O rozszerzeniu"
+  },
+  "optMadeBy": {
+    "message": "Stworzone przez"
+  },
   "optReloadNote": {
     "message": "Zmiany działają na kartach Steam po ich przeładowaniu — użyj „Zastosuj teraz” poniżej."
   },

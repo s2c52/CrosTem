@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Șterge toate corecțiile"
   },
+  "optAbout": {
+    "message": "Despre"
+  },
+  "optMadeBy": {
+    "message": "Creat de"
+  },
   "optReloadNote": {
     "message": "Modificările se aplică filelor Steam după reîncărcare — folosește „Aplică acum” mai jos."
   },

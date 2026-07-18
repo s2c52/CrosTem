@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Delete all corrections"
   },
+  "optAbout": {
+    "message": "About"
+  },
+  "optMadeBy": {
+    "message": "Made by"
+  },
   "optReloadNote": {
     "message": "Changes apply to Steam tabs after a reload — use “Apply now” below."
   },

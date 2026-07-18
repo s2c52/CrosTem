@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "모든 수정 삭제"
   },
+  "optAbout": {
+    "message": "정보"
+  },
+  "optMadeBy": {
+    "message": "만든 사람:"
+  },
   "optReloadNote": {
     "message": "변경 사항은 Steam 탭을 새로고침한 뒤 적용됩니다 — 아래 “지금 적용”을 사용하세요."
   },

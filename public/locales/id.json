@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Hapus semua koreksi"
   },
+  "optAbout": {
+    "message": "Tentang"
+  },
+  "optMadeBy": {
+    "message": "Dibuat oleh"
+  },
   "optReloadNote": {
     "message": "Perubahan berlaku di tab Steam setelah dimuat ulang — gunakan “Terapkan sekarang” di bawah."
   },
