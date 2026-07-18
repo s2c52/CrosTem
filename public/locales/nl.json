@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Alle correcties verwijderen"
   },
+  "optAbout": {
+    "message": "Over"
+  },
+  "optMadeBy": {
+    "message": "Gemaakt door"
+  },
   "optReloadNote": {
     "message": "Wijzigingen gelden voor Steam-tabbladen na herladen — gebruik ‘Nu toepassen’ hieronder."
   },

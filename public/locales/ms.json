@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Padam semua pembetulan"
   },
+  "optAbout": {
+    "message": "Perihal"
+  },
+  "optMadeBy": {
+    "message": "Dibuat oleh"
+  },
   "optReloadNote": {
     "message": "Perubahan berkuat kuasa pada tab Steam selepas dimuat semula — gunakan “Guna sekarang” di bawah."
   },

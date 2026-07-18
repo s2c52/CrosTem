@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "删除所有更正"
   },
+  "optAbout": {
+    "message": "关于"
+  },
+  "optMadeBy": {
+    "message": "作者："
+  },
   "optReloadNote": {
     "message": "更改将在 Steam 标签页重新加载后生效，可使用下方的“立即应用”。"
   },

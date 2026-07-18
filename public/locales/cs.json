@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Smazat všechny opravy"
   },
+  "optAbout": {
+    "message": "O rozšíření"
+  },
+  "optMadeBy": {
+    "message": "Autor:"
+  },
   "optReloadNote": {
     "message": "Změny se na kartách Steamu projeví po jejich obnovení — použijte „Použít teď“ níže."
   },

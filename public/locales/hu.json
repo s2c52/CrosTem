@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Összes javítás törlése"
   },
+  "optAbout": {
+    "message": "Névjegy"
+  },
+  "optMadeBy": {
+    "message": "Készítette:"
+  },
   "optReloadNote": {
     "message": "A módosítások újratöltés után érvényesek a Steam-lapokon — használd lent az „Alkalmazás most” gombot."
   },

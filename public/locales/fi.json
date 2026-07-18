@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Poista kaikki korjaukset"
   },
+  "optAbout": {
+    "message": "Tietoja"
+  },
+  "optMadeBy": {
+    "message": "Luonut"
+  },
   "optReloadNote": {
     "message": "Muutokset tulevat voimaan Steam-välilehdissä uudelleenlatauksen jälkeen — käytä alla olevaa ”Ota käyttöön nyt” -painiketta."
   },

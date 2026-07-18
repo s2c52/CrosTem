@@ -122,6 +122,7 @@ async function main(): Promise<void> {
   document.documentElement.lang = currentLocale();
   applyI18n('optionsTitle');
   document.querySelector('.logo')?.replaceWith(ctLogo(22));
+  $('about-version').textContent = chrome.runtime.getManifest().version;
   populateLanguageSelect();
   fillForm(await getSettings());
   await refreshCounts();
