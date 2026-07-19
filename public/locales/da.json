@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Slet alle rettelser"
   },
+  "optAbout": {
+    "message": "Om"
+  },
+  "optMadeBy": {
+    "message": "Lavet af"
+  },
   "optReloadNote": {
     "message": "Ændringer gælder for Steam-faner efter genindlæsning — brug »Anvend nu« nedenfor."
   },

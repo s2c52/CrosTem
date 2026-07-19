@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "すべての修正を削除"
   },
+  "optAbout": {
+    "message": "この拡張機能について"
+  },
+  "optMadeBy": {
+    "message": "作成者："
+  },
   "optReloadNote": {
     "message": "変更はSteamタブの再読み込み後に反映されます — 下の「今すぐ適用」をご利用ください。"
   },

@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Изтрий всички корекции"
   },
+  "optAbout": {
+    "message": "Относно"
+  },
+  "optMadeBy": {
+    "message": "Създадено от"
+  },
   "optReloadNote": {
     "message": "Промените важат за разделите на Steam след презареждане — използвай „Приложи сега“ по-долу."
   },

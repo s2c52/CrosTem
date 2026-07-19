@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Alle Korrekturen löschen"
   },
+  "optAbout": {
+    "message": "Über"
+  },
+  "optMadeBy": {
+    "message": "Erstellt von"
+  },
   "optReloadNote": {
     "message": "Änderungen gelten für Steam-Tabs nach dem Neuladen — nutze unten „Jetzt anwenden“."
   },

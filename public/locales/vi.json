@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Xóa tất cả chỉnh sửa"
   },
+  "optAbout": {
+    "message": "Giới thiệu"
+  },
+  "optMadeBy": {
+    "message": "Được tạo bởi"
+  },
   "optReloadNote": {
     "message": "Thay đổi áp dụng cho các thẻ Steam sau khi tải lại — dùng “Áp dụng ngay” bên dưới."
   },

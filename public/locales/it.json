@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Elimina tutte le correzioni"
   },
+  "optAbout": {
+    "message": "Informazioni"
+  },
+  "optMadeBy": {
+    "message": "Creato da"
+  },
   "optReloadNote": {
     "message": "Le modifiche si applicano alle schede di Steam dopo un ricaricamento — usa “Applica ora” qui sotto."
   },

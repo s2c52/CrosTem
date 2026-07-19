@@ -39,4 +39,47 @@ describe('buildIndex (AWACY)', () => {
     expect(Object.keys(idx.byName)).toHaveLength(0);
     expect(Object.keys(idx.bySteamId)).toHaveLength(0);
   });
+
+  it('extrae la nota sin referencia (ref null)', () => {
+    const elden = must(index.bySteamId['1245620'], 'Elden Ring entry');
+    expect(elden.notes).toEqual([
+      {
+        text: 'Game may not work out of the box unless you have purchased the DLC, Shadow of the Erdtree.',
+        ref: null,
+      },
+    ]);
+  });
+
+  it('extrae varias notas con su referencia', () => {
+    const halo = must(index.bySteamId['976730'], 'Halo MCC entry');
+    const notes = must(halo.notes, 'Halo notes');
+    expect(notes).toHaveLength(2);
+    expect(must(notes[0]).ref).toBe(
+      'https://www.gamingonlinux.com/2023/04/halo-the-master-chief-collection-gets-steam-deck-support/',
+    );
+    expect(must(notes[1]).ref).toBe('https://www.protondb.com/app/976730#s1M6yjsTt');
+  });
+
+  it('normaliza una referencia vacía a null', () => {
+    const paladins = must(index.bySteamId['444090'], 'Paladins entry');
+    expect(must(must(paladins.notes, 'Paladins notes')[0]).ref).toBeNull();
+  });
+
+  it('omite el campo notes cuando el juego no tiene ninguna', () => {
+    const bf = must(index.bySteamId['1517290'], 'Battlefield entry');
+    expect(bf.notes).toBeUndefined();
+  });
+
+  it('descarta una referencia no http(s) (evita javascript:/data:)', () => {
+    const idx = buildIndex([
+      {
+        name: 'Evil',
+        status: 'Denied',
+        storeIds: { steam: '999' },
+        notes: [['click me', 'javascript:alert(1)']],
+      },
+    ]);
+    const evil = must(idx.bySteamId['999'], 'Evil entry');
+    expect(evil.notes).toEqual([{ text: 'click me', ref: null }]);
+  });
 });

@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Borrar todas las correcciones"
   },
+  "optAbout": {
+    "message": "Acerca de"
+  },
+  "optMadeBy": {
+    "message": "Hecho por"
+  },
   "optReloadNote": {
     "message": "Los cambios se aplican a las pestañas de Steam al recargarlas — usa «Aplicar ahora» abajo."
   },

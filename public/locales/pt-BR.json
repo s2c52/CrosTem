@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Excluir todas as correções"
   },
+  "optAbout": {
+    "message": "Sobre"
+  },
+  "optMadeBy": {
+    "message": "Feito por"
+  },
   "optReloadNote": {
     "message": "As mudanças valem para as abas da Steam após recarregá-las — use “Aplicar agora” abaixo."
   },

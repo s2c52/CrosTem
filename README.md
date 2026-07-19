@@ -7,7 +7,7 @@
 **"Does it run on my Mac?" — answered right on the Steam store.**
 
 [![CI](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml/badge.svg)](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue)](CHANGELOG.md)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/manifest-v3-orange)](manifest.json)
 [![Tests](https://img.shields.io/badge/tests-241%20passing-brightgreen)](tests/)
@@ -18,6 +18,8 @@
 
 </div>
 
+> 🔒 **Your data never leaves your device.** CrosTem has no servers, no accounts and no tracking — everything it stores lives in your browser, owned by you. Free & open source (GPL-3.0). [Details ↓](#your-data-is-yours)
+
 ![Elden Ring's Steam page with the CrosTem widget showing a green "Playable on Mac via CrossOver" verdict banner and per-source rows: CrossOver "Runs Great" with five stars, AppleGamingWiki status and anti-cheat info](store-assets/1-game-page-verdict.png)
 
 ## What is CrosTem?
@@ -25,6 +27,16 @@
 Steam says "Windows only" for most of its catalog — but a huge share of those games run beautifully on a Mac through [CrossOver](https://www.codeweavers.com/crossover), Parallels or Rosetta 2. The catch: finding out *which ones* means juggling three different community databases in separate tabs, every time you browse the store.
 
 CrosTem folds all of that into Steam itself. Every game page gets a **"Runs on Mac?" verdict** — a conservative traffic light (🟢🟡🔴) computed from three community sources — plus star overlays on capsules across the whole store, and badges in search results and your wishlist. No accounts, no servers, no telemetry: the extension only fetches public compatibility pages and caches them in your browser.
+
+## Your data is yours
+
+CrosTem has no backend. There is no server of ours that receives, stores or even sees anything about you — no account to create, no sign-in, nothing to opt out of. Everything the extension knows (your settings, its cache of compatibility results, your match corrections) lives in your browser's storage, on your device, and belongs to you: inspect it, export it or wipe it from the options page whenever you like. And because CrosTem is free and open source, you don't have to take our word for any of this — anyone can read the code and verify every claim below.
+
+- **One single permission: `storage`.** No `tabs`, no browsing history, no cookies ([manifest.json](manifest.json)).
+- **Everything stays on your device** — the cache in `chrome.storage.local`, your settings in `chrome.storage.sync` (which syncs through *your* browser profile, never through us).
+- **Network requests go to exactly four public hosts** — Steam (the page you're already on), CodeWeavers, AppleGamingWiki and AreWeAntiCheatYet's public dataset — enforced by a strict, unit-tested URL allowlist ([src/lib/allowlist.ts](src/lib/allowlist.ts)), with external requests sent without credentials (`credentials: 'omit'`). They only *fetch* public compatibility pages; nothing about you is ever sent anywhere.
+- **No telemetry, no analytics, no error reporting, no tracking of any kind.** Zero runtime dependencies, so no third-party library phones home either.
+- Full policy: [docs/privacy-policy.md](docs/privacy-policy.md) ([español](docs/privacy-policy.es.md)).
 
 ## The three sources
 
@@ -127,12 +139,6 @@ flowchart LR
 - **Everything is cached** in `chrome.storage.local`: results for 7 days (configurable 1–30), "no data" answers for 24 h, Steam details for 30 days, the anti-cheat dataset for 7 days — and your match choices permanently. Reads go **stale-while-revalidate**: a recently expired entry paints instantly while a background pass refreshes it and silently corrects the badge if anything changed. The cache maintains itself (in-memory L1, daily sweep, quota-safe writes, size-capped eviction). Settings live in `chrome.storage.sync` and apply **live**: toggling a surface mounts or unmounts it immediately on open Steam tabs, no reload.
 - **Badges resolve ahead of time**: a shared `IntersectionObserver` ([src/lib/auto.ts](src/lib/auto.ts)) triggers resolution about a viewport before a capsule scrolls into view, paints on the first source signal and refines when the rest arrive — while content scripts rescan only newly added page content ([src/lib/scan.ts](src/lib/scan.ts)), so browsing the front page stays cheap.
 - **No `innerHTML` anywhere** — all UI is built with `createElement`/`createElementNS`, safe under strict CSP and Trusted Types. Accessible by design: star ratings carry `role="img"` labels, verdicts are never conveyed by color alone, and `prefers-reduced-motion` is honored.
-
-## Privacy
-
-- The only Chrome permission is **`storage`**. No `tabs`, no history, no cookies.
-- Requests go exclusively to the four hosts above — Steam (the page you're already on), CodeWeavers, AppleGamingWiki and AreWeAntiCheatYet's public dataset.
-- No telemetry, no accounts, no servers of ours. Full policy: [docs/privacy-policy.md](docs/privacy-policy.md) ([español](docs/privacy-policy.es.md)).
 
 ## Development
 

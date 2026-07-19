@@ -93,15 +93,21 @@ describe('content/wishlist.ts', () => {
     expect(document.querySelectorAll('.crostem-badge').length).toBe(0);
   });
 
-  it('inserta un badge tras el enlace de título e ignora el de imagen', async () => {
+  it('inserta un badge tras cada enlace de título e ignora los de imagen', async () => {
     document.body.innerHTML = WISHLIST_HTML;
     window.history.pushState({}, '', '/wishlist/profiles/123/');
     await import('../src/content/wishlist');
     await vi.waitFor(() => {
-      expect(document.querySelectorAll('.crostem-badge').length).toBe(1);
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
     });
     const badge = document.querySelector('.crostem-badge');
-    expect(badge?.previousElementSibling?.textContent).toBe('Stardew Valley');
+    expect(badge?.previousElementSibling?.textContent).toBe('Papers, Please');
+    // Only the title anchors get stamped; capsule-image anchors are skipped.
+    const stamped = document.querySelectorAll<HTMLAnchorElement>('a[data-crostem]');
+    expect(stamped.length).toBe(2);
+    stamped.forEach((a) => {
+      expect(a.textContent?.trim()).toBeTruthy();
+    });
   });
 
   it('aplica en vivo el toggle de la superficie (off → limpia, on → remonta)', async () => {
@@ -109,7 +115,7 @@ describe('content/wishlist.ts', () => {
     window.history.pushState({}, '', '/wishlist/profiles/123/');
     await import('../src/content/wishlist');
     await vi.waitFor(() => {
-      expect(document.querySelectorAll('.crostem-badge').length).toBe(1);
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
     });
 
     mock.emitStorageChange({ settings: { newValue: { surfaces: { wishlist: false } } } }, 'sync');
@@ -118,7 +124,7 @@ describe('content/wishlist.ts', () => {
 
     mock.emitStorageChange({ settings: { newValue: { surfaces: { wishlist: true } } } }, 'sync');
     await vi.waitFor(() => {
-      expect(document.querySelectorAll('.crostem-badge').length).toBe(1);
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
     });
   });
 });

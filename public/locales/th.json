@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "ลบการแก้ไขทั้งหมด"
   },
+  "optAbout": {
+    "message": "เกี่ยวกับ"
+  },
+  "optMadeBy": {
+    "message": "สร้างโดย"
+  },
   "optReloadNote": {
     "message": "การเปลี่ยนแปลงจะมีผลกับแท็บ Steam หลังจากโหลดใหม่ — ใช้ “นำไปใช้ตอนนี้” ด้านล่าง"
   },

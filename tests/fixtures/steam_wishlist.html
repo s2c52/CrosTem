@@ -1,8 +1,78 @@
-<!-- Minimal hand-reduced subset of the Steam wishlist SPA. The wishlist
-     uses obfuscated React classes, so wishlist.ts keys off /app/<id>
-     links carrying the title as text; the image-only link must be
-     ignored. Recapture: copy a row's outerHTML from a real wishlist. -->
-<div id="wishlist_ctn">
-  <a href="https://store.steampowered.com/app/413150/Stardew_Valley/">Stardew Valley</a>
-  <a href="https://store.steampowered.com/app/1245620/ELDEN_RING/"><img src="capsule.jpg" alt="" /></a>
+<!-- Hand-reduced from a real logged-in wishlist capture (2026-07-17).
+     The wishlist SPA renders ~15 virtualized rows; each row is a
+     div.Panel holding TWO /app/<id> anchors: a capsule-image anchor
+     with no text (must be ignored) and a title anchor whose text is
+     the game name (the badge goes right after it). Class names are
+     obfuscated per-build hashes — kept verbatim to prove the code
+     never relies on them. Recapture: log into Steam, open /wishlist/,
+     copy a row's outerHTML from devtools, strip srcset/styles/noise. -->
+<div>
+  <div class="Panel">
+    <div class="yhLprNB93bY-">
+      <div class="c-Pw-ER6JnA- Panel" role="button">
+        <div class="MAMcEvZCSmY- VVLR9TqzBlQ-">
+          <div class="xgHCDhZc--A-" role="button"><img alt="" /></div>
+          <div class="oSpPXI7jWxI-"><input type="checkbox" /></div>
+        </div>
+        <a class="J-rmzQeQW-A-" href="https://store.steampowered.com/app/239030/Papers_Please?snr=1_25_4__318">
+          <div class="YP7EaAGJ5w8-"><img class="TqDNCK5Qf7I-" alt="" role="presentation" /></div>
+        </a>
+        <div class="-irQN7ogs-M-">
+          <a class="pOyXxbQoV38-" href="https://store.steampowered.com/app/239030/Papers_Please?snr=1_25_4__318">Papers, Please</a>
+        </div>
+        <div class="aS8xP-RU7Gs- LOCwWJY7AM4-">
+          <div class="Wv0tBZBa-2I-">English Reviews:</div>
+          <div class="EksC22ZNgAk-"><span class="cWLPuFe-zxc- MbdBgOhlg7c-">Overwhelmingly Positive</span></div>
+          <div class="Wv0tBZBa-2I-">Release Date:</div>
+          <div class="EksC22ZNgAk-">8/8/2013</div>
+        </div>
+        <div class="n0Vm-k0i9p8-">
+          <div class="DOnsaVcV0Is-">CLP$5.750</div>
+          <button class="_5b8C30zCFXs- Focusable" role="button"><span>Add to Cart</span></button>
+        </div>
+        <div class="Mc4Y3FzWMl0-">
+          <button class="c6zN5GAO4n0-">Indie</button>
+          <button class="c6zN5GAO4n0-">Simulation</button>
+        </div>
+        <div class="TBvO5y7RnvM-">
+          <div class="_2p2AmOs-7Ek-">Added on 6/24/2017</div>
+          <button class="Yg0IhgBRaUA- Focusable" role="button">remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="Panel">
+    <div class="yhLprNB93bY-">
+      <div class="c-Pw-ER6JnA- Panel" role="button">
+        <div class="MAMcEvZCSmY- VVLR9TqzBlQ-">
+          <div class="xgHCDhZc--A-" role="button"><img alt="" /></div>
+          <div class="oSpPXI7jWxI-"><input type="checkbox" /></div>
+        </div>
+        <a class="J-rmzQeQW-A-" href="https://store.steampowered.com/app/250760/Shovel_Knight_Treasure_Trove?snr=1_25_4__318">
+          <div class="YP7EaAGJ5w8-"><img class="TqDNCK5Qf7I-" alt="" role="presentation" /></div>
+        </a>
+        <div class="-irQN7ogs-M-">
+          <a class="pOyXxbQoV38-" href="https://store.steampowered.com/app/250760/Shovel_Knight_Treasure_Trove?snr=1_25_4__318">Shovel Knight: Treasure Trove</a>
+        </div>
+        <div class="aS8xP-RU7Gs- LOCwWJY7AM4-">
+          <div class="Wv0tBZBa-2I-">English Reviews:</div>
+          <div class="EksC22ZNgAk-"><span class="cWLPuFe-zxc- MbdBgOhlg7c-">Overwhelmingly Positive</span></div>
+          <div class="Wv0tBZBa-2I-">Release Date:</div>
+          <div class="EksC22ZNgAk-">6/26/2014</div>
+        </div>
+        <div class="n0Vm-k0i9p8-">
+          <div class="DOnsaVcV0Is-">CLP$14.900</div>
+          <button class="_5b8C30zCFXs- Focusable" role="button"><span>Add to Cart</span></button>
+        </div>
+        <div class="Mc4Y3FzWMl0-">
+          <button class="c6zN5GAO4n0-">Platformer</button>
+          <button class="c6zN5GAO4n0-">Retro</button>
+        </div>
+        <div class="TBvO5y7RnvM-">
+          <div class="_2p2AmOs-7Ek-">Added on 3/5/2015</div>
+          <button class="Yg0IhgBRaUA- Focusable" role="button">remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

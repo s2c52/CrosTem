@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "Supprimer toutes les corrections"
   },
+  "optAbout": {
+    "message": "À propos"
+  },
+  "optMadeBy": {
+    "message": "Créé par"
+  },
   "optReloadNote": {
     "message": "Les changements s’appliquent aux onglets Steam après rechargement — utilisez « Appliquer maintenant » ci-dessous."
   },

@@ -263,6 +263,12 @@
   "optClearChoices": {
     "message": "刪除所有修正"
   },
+  "optAbout": {
+    "message": "關於"
+  },
+  "optMadeBy": {
+    "message": "作者："
+  },
   "optReloadNote": {
     "message": "變更會在 Steam 分頁重新載入後生效，可使用下方的「立即套用」。"
   },
