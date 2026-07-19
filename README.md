@@ -7,7 +7,7 @@
 **"Does it run on my Mac?" — answered right on the Steam store.**
 
 [![CI](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml/badge.svg)](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.1-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue)](CHANGELOG.md)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/manifest-v3-orange)](manifest.json)
 [![Tests](https://img.shields.io/badge/tests-241%20passing-brightgreen)](tests/)

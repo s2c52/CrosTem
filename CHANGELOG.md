@@ -2,6 +2,14 @@
 
 All notable changes to CrosTem are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] — 2026-07-18
+
+### Added
+
+- AreWeAntiCheatYet per-game notes surfaced on the game-page widget.
+- About card with author credit on the options page.
+- Wishlist stars validated against Steam's live React wishlist.
+
 ## [1.1.1] — 2026-07-17
 
 ### Fixed
