@@ -82,4 +82,24 @@ describe('buildIndex (AWACY)', () => {
     const evil = must(idx.bySteamId['999'], 'Evil entry');
     expect(evil.notes).toEqual([{ text: 'click me', ref: null }]);
   });
+
+  it('indexa por nombre base para variantes de edición de la tienda', () => {
+    const idx = buildIndex([
+      { name: 'Grand Theft Auto V', status: 'Denied', anticheats: ['BattlEye'], storeIds: { steam: '271590' } },
+    ]);
+    // "Grand Theft Auto V Enhanced" has no appid entry and misses byName;
+    // the edition-stripped base key must still reach the warning.
+    expect(idx.byName['grand theft auto v enhanced']).toBeUndefined();
+    expect(must(idx.byBaseName['grand theft auto v']).status).toBe('Denied');
+  });
+
+  it('con base compartida gana la entrada sin sufijo, en cualquier orden', () => {
+    for (const games of [
+      [{ name: 'X Enhanced', status: 'Denied' }, { name: 'X', status: 'Supported' }],
+      [{ name: 'X', status: 'Supported' }, { name: 'X Enhanced', status: 'Denied' }],
+    ]) {
+      const idx = buildIndex(games);
+      expect(must(idx.byBaseName['x']).status).toBe('Supported');
+    }
+  });
 });
