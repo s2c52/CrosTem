@@ -81,6 +81,24 @@ function likePattern(name: string): string {
   return '%' + tokens.join('%') + '%';
 }
 
+/**
+ * Where clause for the page search. Wiki page names often omit the
+ * subtitle after ':' or ' - ' ("The Witcher 3: Wild Hunt" → page
+ * "The Witcher 3"), and a pattern built from the full title can never
+ * match those; a second pattern from the pre-subtitle prefix rescues
+ * them. rank() still arbitrates every row, so the extra matches cannot
+ * cause a wrong auto-pick. Exported for tests.
+ */
+export function likeWhere(name: string): string {
+  const patterns = [likePattern(name)];
+  const prefix = name.split(/:|\s+[-–—]\s+/)[0] ?? '';
+  const prefixPattern = likePattern(prefix);
+  if (prefixPattern !== '%%' && !patterns.includes(prefixPattern)) {
+    patterns.push(prefixPattern);
+  }
+  return patterns.map((p) => `_pageName LIKE ${sqlQuote(p)}`).join(' OR ');
+}
+
 /** Quotes a value as a Cargo (SQL) string literal. Backslashes are
  * escaped too: doubling quotes alone leaves `\'` as an escape hatch. */
 function sqlQuote(value: string): string {
@@ -129,7 +147,10 @@ export async function agwLookupDetailed(
 
   let lookup: AgwLookup;
   try {
-    const rows = await cargoQuery(`_pageName LIKE ${sqlQuote(likePattern(name))}`, 10);
+    const fetched = await cargoQuery(likeWhere(name), 20);
+    // The wiki can hold duplicate table rows for one page; deduplicate or
+    // two identical top scores would void the lone-confident-match rule.
+    const rows = [...new Map(fetched.map((r) => [r.page, r])).values()];
     // Reuses the matcher ranking by treating pages as candidates.
     const asResults: CwSearchResult[] = rows.map((r) => ({
       name: r.page,
@@ -139,7 +160,13 @@ export async function agwLookupDetailed(
       stars: null,
     }));
     const ranked = rank(name, asResults);
-    const pick = ranked.confident ?? (ranked.candidates.length === 1 ? ranked.candidates[0] : null);
+    // A lone below-confident candidate auto-picks only when the page name
+    // extends the query (edition/DLC pages). A *shorter* page is how a
+    // prequel surfaces for a sequel query ("Kingdom Come: Deliverance"
+    // for "… II" via the prefix pattern), so those stay in the picker.
+    const lone = ranked.candidates.length === 1 ? ranked.candidates[0] : null;
+    const loneSafe = lone && baseName(lone.name).startsWith(baseName(name)) ? lone : null;
+    const pick = ranked.confident ?? loneSafe;
     const result = pick ? (rows.find((r) => r.page === pick.slug) ?? null) : null;
     lookup = { result, candidates: ranked.candidates };
   } catch (e) {

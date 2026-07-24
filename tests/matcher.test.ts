@@ -18,6 +18,10 @@ describe('normalizeName', () => {
     expect(normalizeName("Baldur's Gate 3")).toBe('baldur s gate 3');
     expect(normalizeName('Ori & the Blind Forest')).toBe('ori and the blind forest');
   });
+
+  it('no pliega números romanos: alimenta claves de caché y búsquedas', () => {
+    expect(normalizeName('DARK SOULS™ III')).toBe('dark souls iii');
+  });
 });
 
 describe('baseName', () => {
@@ -42,6 +46,17 @@ describe('score', () => {
 
   it('0.8 cuando uno es prefijo del otro', () => {
     expect(score('ELDEN RING', 'ELDEN RING NIGHTREIGN')).toBe(0.8);
+  });
+
+  it('romano y arábigo puntúan como el mismo nombre', () => {
+    expect(
+      score('Divinity: Original Sin 2 - Definitive Edition', 'Divinity: Original Sin II - Definitive Edition'),
+    ).toBe(1);
+    expect(score('DARK SOULS III', 'Dark Souls 3')).toBe(1);
+  });
+
+  it('numerales de una letra no se pliegan al puntuar', () => {
+    expect(score('Mega Man X', 'Mega Man 10')).toBeLessThan(0.95);
   });
 });
 

@@ -10,7 +10,7 @@ import * as cache from './cache';
 import { fetchExt } from './client';
 import { isRecord } from './guards';
 import { logDebug } from './log';
-import { normalizeName } from './matcher';
+import { baseName, normalizeName } from './matcher';
 import type { AnticheatInfo, AnticheatNote, AnticheatStatus } from '../types';
 
 const AWACY_URL =
@@ -20,6 +20,9 @@ export const AWACY_SITE = 'https://areweanticheatyet.com/';
 interface AwacyIndex {
   bySteamId: Record<string, AnticheatInfo>;
   byName: Record<string, AnticheatInfo>;
+  /** Same entries keyed by edition-stripped name ("grand theft auto v"),
+   * so store variants ("… Enhanced") inherit the dataset's entry. */
+  byBaseName: Record<string, AnticheatInfo>;
 }
 
 const STATUSES: readonly AnticheatStatus[] = [
@@ -56,7 +59,7 @@ function toNotes(v: unknown): AnticheatNote[] {
  * untrusted input: entries are validated field by field and unknown
  * statuses are dropped rather than flowing into the verdict. */
 export function buildIndex(games: unknown[]): AwacyIndex {
-  const index: AwacyIndex = { bySteamId: {}, byName: {} };
+  const index: AwacyIndex = { bySteamId: {}, byName: {}, byBaseName: {} };
   for (const g of games) {
     if (!isRecord(g) || typeof g.name !== 'string' || !g.name) continue;
     const status = toAnticheatStatus(g.status);
@@ -74,13 +77,23 @@ export function buildIndex(games: unknown[]): AwacyIndex {
     const steamId = isRecord(g.storeIds) ? g.storeIds.steam : undefined;
     if (typeof steamId === 'string' && steamId) index.bySteamId[steamId] = info;
     index.byName[normalizeName(g.name)] = info;
+    // When several names share a base ("X" and "X Enhanced"), the
+    // suffix-less entry claims the slot regardless of dataset order.
+    const base = baseName(g.name);
+    if (!(base in index.byBaseName) || base === normalizeName(g.name)) {
+      index.byBaseName[base] = info;
+    }
   }
   return index;
 }
 
 async function getIndex(swr?: cache.SwrPass): Promise<AwacyIndex | null> {
   const cached = await cache.getSwr<AwacyIndex>('awacy:index', swr);
-  if (cached !== undefined) return cached;
+  if (cached !== undefined) {
+    if (!cached) return cached;
+    // Indexes cached by older builds predate byBaseName; patch the shape.
+    return { ...cached, byBaseName: (cached as Partial<AwacyIndex>).byBaseName ?? {} };
+  }
   try {
     const body = await fetchExt(AWACY_URL);
     const parsed: unknown = JSON.parse(body);
@@ -108,6 +121,9 @@ export async function anticheatLookup(
   const index = await getIndex(swr);
   if (!index) return null;
   if (appid && index.bySteamId[appid]) return index.bySteamId[appid];
-  if (name) return index.byName[normalizeName(name)] ?? null;
-  return null;
+  if (!name) return null;
+  // Exact normalized name first; then the edition-stripped base, so a
+  // store variant missing its own appid entry ("Grand Theft Auto V
+  // Enhanced") still surfaces the warning filed under the plain name.
+  return index.byName[normalizeName(name)] ?? index.byBaseName[baseName(name)] ?? null;
 }
