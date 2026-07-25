@@ -2,6 +2,16 @@
 
 All notable changes to CrosTem are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] — 2026-07-25
+
+### Fixed
+
+- AppleGamingWiki pages that omit the game's subtitle (e.g. "The Witcher 3" for "The Witcher 3: Wild Hunt") are now reachable: the lookup also searches by the pre-subtitle prefix and offers the pages in the candidate picker.
+- Duplicate AppleGamingWiki table rows no longer cancel a confident match (NieR: Automata showed "No data" despite its perfect rating).
+- Roman and arabic numerals are treated as the same name when scoring matches ("Original Sin II" ≡ "Original Sin 2"); this also fixes the native-badge architecture for Divinity: Original Sin 2 — Definitive Edition, which fell back to a release-date guess instead of AppleGamingWiki's Apple Silicon data.
+- Anticheat warnings now reach store edition variants that lack their own AreWeAntiCheatYet entry: Grand Theft Auto V Enhanced shows the Denied (BattlEye) status filed under "Grand Theft Auto V", and its verdict drops to red accordingly.
+- A lone below-confident AppleGamingWiki candidate no longer auto-matches when its page name is shorter than the game's, so a sequel can never inherit its prequel's page (Kingdom Come: Deliverance II vs "Kingdom Come: Deliverance"); those cases go to the candidate picker instead.
+
 ## [1.2.0] — 2026-07-18
 
 ### Added

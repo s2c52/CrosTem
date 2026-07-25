@@ -46,6 +46,33 @@ export function normalizeName(name: string): string {
   return s;
 }
 
+// Multi-character roman numerals folded to digits so "Original Sin II"
+// scores as "Original Sin 2". Only score() folds: normalized names feed
+// cache keys and outgoing search/LIKE queries, where folding would stop
+// literal-roman titles ("Dark Souls III") from being found. Single
+// letters (I, V, X) never fold: "Mega Man X" is not "Mega Man 10".
+const ROMAN_NUMERALS: Readonly<Record<string, string>> = {
+  ii: '2',
+  iii: '3',
+  iv: '4',
+  vi: '6',
+  vii: '7',
+  viii: '8',
+  ix: '9',
+  xi: '11',
+  xii: '12',
+  xiii: '13',
+  xiv: '14',
+  xv: '15',
+};
+
+function foldNumerals(s: string): string {
+  return s
+    .split(' ')
+    .map((t) => ROMAN_NUMERALS[t] ?? t)
+    .join(' ');
+}
+
 // Normalized name without trailing edition qualifiers
 // ("elden ring deluxe edition" -> "elden ring").
 export function baseName(name: string): string {
@@ -78,12 +105,12 @@ function diceCoefficient(a: string, b: string): number {
 }
 
 export function score(steamName: string, cwName: string): number {
-  const a = normalizeName(steamName);
-  const b = normalizeName(cwName);
+  const a = foldNumerals(normalizeName(steamName));
+  const b = foldNumerals(normalizeName(cwName));
   if (!a || !b) return 0;
   if (a === b) return 1;
-  const ba = baseName(steamName);
-  const bb = baseName(cwName);
+  const ba = foldNumerals(baseName(steamName));
+  const bb = foldNumerals(baseName(cwName));
   if (ba === bb) return SCORE_BASE_MATCH;
   if (ba.startsWith(bb) || bb.startsWith(ba)) return SCORE_PREFIX_MATCH;
   return diceCoefficient(ba, bb) * SCORE_DICE_WEIGHT;
