@@ -1,64 +1,88 @@
 <!--
-  Steam Community games list row (steamcommunity.com/id/<user>/games?tab=all).
+  Hand-reduced from a real logged-in capture of the Steam Community games
+  list (steamcommunity.com/id/<user>/games?tab=all, 2026-07-26). SVG icon
+  paths, srcset noise and the stats dropdowns are stripped; everything the
+  surface reads is verbatim.
 
-  PROVISIONAL: that page is login-gated (an anonymous GET returns the Sign In
-  page), so this is a hand-built approximation of the structure visible in the
-  live UI, not a verbatim dump. Recapture and replace this file wholesale:
-  log into Steam, open /id/<you>/games?tab=all, copy a row's outerHTML from
-  devtools and strip srcset/styles/noise.
+  Each row links the SAME app three times, in this document order:
+    1. the capsule anchor  — wraps <picture>, carries no text  -> ignored
+    2. the title anchor    — the game name                     -> gets the badge
+    3. "Store Page" inside the row's overflow popover          -> deduped away
+  The popover is `popover="manual"`, so it is in the DOM from the start:
+  without the per-appid dedupe every row would earn two badges.
+  Sibling links (/forum/<id>, /appofficialsite/<id>, /news/?appids=<id>)
+  deliberately do NOT contain "/app/" and must stay unmatched.
 
-  Every node here encodes something the surface must handle:
-    - the capsule anchor has an <img> and no text  -> must be ignored
-    - the title anchor carries the game name       -> gets the badge
-    - a row exposes the same appid more than once  -> only one badge per game
   Class names are per-build hashes, kept verbatim to prove the code never
-  relies on them.
+  relies on them. Recapture: log into Steam (the page 200s to a Sign In
+  page when anonymous), open /my/games?tab=all, copy a row's outerHTML
+  from devtools and strip the noise.
 -->
-<div class="Panel Focusable">
-  <div class="_1jw4uKPUAd0Iy1kMzGQOFB Focusable">
-    <a class="_2C5PJvTZDvEsCEBrIYVJ7O" href="https://steamcommunity.com/app/1599340">
-      <img
-        class="_2eQ7ARSFmZbMcCjrPjyEbP"
-        src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1599340/capsule_231x87.jpg"
-      />
-    </a>
-    <div class="_3Yg8gEBqUqJVh0LiFLzGvM">
-      <a class="_2ZUWtC1YGqvVKzr2wKJmZ2" href="https://steamcommunity.com/app/1599340">Lost Ark</a>
-      <div class="_1QQjPHXqZLDDnKcVJ0LnQb">
-        <div class="_2ZKvHqRVJGYFqQfMBcqCJH">
-          <div class="_1WEsHrFFWZbJhZoJgYbcRz">TOTAL PLAYED</div>
-          <div class="_3wJPKQqqSSsVDBnEDXgKPz">511.3 hours</div>
-        </div>
-        <div class="_2ZKvHqRVJGYFqQfMBcqCJH">
-          <div class="_1WEsHrFFWZbJhZoJgYbcRz">ACHIEVEMENTS</div>
-          <div class="_3wJPKQqqSSsVDBnEDXgKPz">89/156</div>
-        </div>
+<div class="qaT2YvwApZE- Panel" tabindex="0" role="button">
+  <a href="https://store.steampowered.com/app/1599340" class="SneKFkp55Bg- Focusable" tabindex="0">
+    <div class="_9KdVfQnfVHQ-">
+      <picture>
+        <img
+          src="https://shared.fastly.steamstatic.com/store_item_assets//steam/apps/1599340/header.jpg"
+          alt="Lost Ark"
+          loading="lazy"
+        />
+      </picture>
+    </div>
+  </a>
+  <span class="jZNS61Z2Jx4-">
+    <a href="https://store.steampowered.com/app/1599340" class="wfG8VGEsVTw-">Lost Ark</a>
+  </span>
+  <div class="xMHnQPzVAX0-">
+    <span class="_5r4voF1GRxA-"><span class="bJu5kygBbe4-">TOTAL PLAYED</span>511.3 hours</span
+    ><span class="SBr0k5kcPck-"><span class="bJu5kygBbe4-">LAST PLAYED</span>Jan 5, 2023</span>
+    <div class="_6JCZzdWjmVI-">
+      <div class="_84blVQ488Xk-">
+        <a
+          class="AXAEoGZEJj0-"
+          href="https://steamcommunity.com/id/s2c52/stats/1599340/?tab=achievements"
+          >ACHIEVEMENTS</a
+        ><span class="tDUpY1ZtY60-">89/156</span>
       </div>
-      <div class="_1kFXbwvUhOSJTPHXhLDQzC">
-        <a class="_3jMBQZmVJHrPXBhJNCKLcz" href="https://store.steampowered.com/app/1599340"
-          >Store Page</a
-        >
+    </div>
+  </div>
+  <div class="uW-NDBOMCI0-">
+    <button class="WnfjYSyvqNI- pd4jG0hXPJk- Focusable" aria-expanded="false" role="button"></button>
+    <div popover="manual" class="h2hJmhz41JY- Panel">
+      <div class="bWJ-A1tETJQ-">
+        <a href="https://store.steampowered.com/app/1599340">Store Page</a
+        ><a href="https://store.steampowered.com/forum/1599340">Forums</a
+        ><a href="https://store.steampowered.com/appofficialsite/1599340">Official Website</a
+        ><a href="https://store.steampowered.com/news/?appids=1599340">News</a>
       </div>
     </div>
   </div>
 </div>
-<div class="Panel Focusable">
-  <div class="_1jw4uKPUAd0Iy1kMzGQOFB Focusable">
-    <a class="_2C5PJvTZDvEsCEBrIYVJ7O" href="https://steamcommunity.com/app/730">
-      <img
-        class="_2eQ7ARSFmZbMcCjrPjyEbP"
-        src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/730/capsule_231x87.jpg"
-      />
-    </a>
-    <div class="_3Yg8gEBqUqJVh0LiFLzGvM">
-      <a class="_2ZUWtC1YGqvVKzr2wKJmZ2" href="https://steamcommunity.com/app/730"
-        >Counter-Strike 2</a
-      >
-      <div class="_1QQjPHXqZLDDnKcVJ0LnQb">
-        <div class="_2ZKvHqRVJGYFqQfMBcqCJH">
-          <div class="_1WEsHrFFWZbJhZoJgYbcRz">TOTAL PLAYED</div>
-          <div class="_3wJPKQqqSSsVDBnEDXgKPz">398.4 hours</div>
-        </div>
+<div class="qaT2YvwApZE- Panel" tabindex="0" role="button">
+  <a href="https://store.steampowered.com/app/730" class="SneKFkp55Bg- Focusable" tabindex="0">
+    <div class="_9KdVfQnfVHQ-">
+      <picture>
+        <img
+          src="https://shared.fastly.steamstatic.com/store_item_assets//steam/apps/730/header.jpg"
+          alt="Counter-Strike 2"
+          loading="lazy"
+        />
+      </picture>
+    </div>
+  </a>
+  <span class="jZNS61Z2Jx4-">
+    <a href="https://store.steampowered.com/app/730" class="wfG8VGEsVTw-">Counter-Strike 2</a>
+  </span>
+  <div class="xMHnQPzVAX0-">
+    <span class="_5r4voF1GRxA-"><span class="bJu5kygBbe4-">TOTAL PLAYED</span>398.4 hours</span
+    ><span class="SBr0k5kcPck-"><span class="bJu5kygBbe4-">LAST PLAYED</span>Jun 20, 2022</span>
+  </div>
+  <div class="uW-NDBOMCI0-">
+    <button class="WnfjYSyvqNI- pd4jG0hXPJk- Focusable" aria-expanded="false" role="button"></button>
+    <div popover="manual" class="h2hJmhz41JY- Panel">
+      <div class="bWJ-A1tETJQ-">
+        <a href="https://store.steampowered.com/app/730">Store Page</a
+        ><a href="https://store.steampowered.com/forum/730">Forums</a>
       </div>
     </div>
   </div>

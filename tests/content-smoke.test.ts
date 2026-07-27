@@ -159,15 +159,21 @@ describe('content/library.ts', () => {
     expect([...badges].map((b) => b.dataset.crostemAppid)).toEqual(['1599340', '730']);
     // The capsule anchor wraps an image and carries no title: never stamped.
     expect(document.querySelector('a[data-crostem] img')).toBeNull();
-    // The row also links the same app from its "Store Page" entry, which
-    // must not earn a second badge.
+    // The row links the same app three times (capsule, title, "Store Page"
+    // in the always-present popover); only one badge may come out of that.
     expect(document.querySelectorAll('a[href*="/app/1599340"]').length).toBe(3);
     expect(document.querySelectorAll('.crostem-badge[data-crostem-appid="1599340"]').length).toBe(
       1,
     );
+    // The overflow menu is never a candidate: its label is not a game name.
+    expect(document.querySelector('[popover] a[data-crostem]')).toBeNull();
+    expect(document.querySelector('[popover] .crostem-badge')).toBeNull();
+    // Sibling row links must not be mistaken for app links.
+    expect(document.querySelector('a[href*="/forum/1599340"][data-crostem]')).toBeNull();
+    expect(document.querySelector('a[href*="/appofficialsite/"][data-crostem]')).toBeNull();
   });
 
-  it('si el virtualizador recicla un nodo, el badge se rehace para el juego nuevo', async () => {
+  it('si un nodo se reutiliza para otro juego, el badge se rehace', async () => {
     document.body.innerHTML = LIBRARY_HTML;
     window.history.pushState({}, '', LIBRARY_URL);
     await import('../src/content/library');

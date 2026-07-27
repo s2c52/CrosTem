@@ -18,19 +18,19 @@ CrosTem collects **no personal data whatsoever**. There is no telemetry, no anal
 
 To look up a game's compatibility, the extension requests public pages/APIs of these services, sending only the game's name or public Steam app id:
 
-| Service                                         | Purpose                                                    |
-| ----------------------------------------------- | ---------------------------------------------------------- |
-| `www.codeweavers.com`                           | CrossOver compatibility ratings                            |
-| `www.applegamingwiki.com`                       | CrossOver/Parallels/Rosetta 2 status                       |
-| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Anticheat support status                                   |
-| `store.steampowered.com`                        | Game name and native-Mac flag (same site you are browsing) |
+| Service                                         | Purpose                                                   |
+| ----------------------------------------------- | --------------------------------------------------------- |
+| `www.codeweavers.com`                           | CrossOver compatibility ratings                           |
+| `www.applegamingwiki.com`                       | CrossOver/Parallels/Rosetta 2 status                      |
+| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Anticheat support status                                  |
+| `store.steampowered.com`                        | Game name and native-Mac flag (Steam's public appdetails) |
 
 These requests carry no identifiers from the extension beyond what any browser request includes. Each service's own privacy policy applies to what they log server-side. Results are cached (default 7 days) to keep requests to a minimum.
 
 ## Permissions
 
 - **`storage`** — to cache results and save your preferences locally.
-- **Host access to the services listed above** — solely to fetch compatibility data. The extension runs on `store.steampowered.com` pages to display the information in place.
+- **Host access to the services listed above** — solely to fetch compatibility data. The extension runs on `store.steampowered.com` pages, and on your Steam Community games list (`steamcommunity.com/<profile>/games`), to display the information in place. It reads only the game titles and app ids already visible on the page; nothing about your profile, playtime or account is read or sent anywhere.
 
 ## Affiliation
 

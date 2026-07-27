@@ -2,6 +2,12 @@
 
 All notable changes to CrosTem are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Compatibility badges on your Steam Community games list (`steamcommunity.com/id/<user>/games`), so an owned library shows the CrossOver verdict next to each title — including the "Native on macOS" badge with its Apple Silicon / Intel tag. Works on any profile's list and on every tab (All Games, Recently Played, Perfect Games…), and can be turned off with the new "Library badges" switch in the popup and options.
+
 ## [1.2.1] — 2026-07-25
 
 ### Fixed

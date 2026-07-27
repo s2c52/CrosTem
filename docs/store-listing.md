@@ -20,7 +20,7 @@ Wondering "will this run on my Mac?" every time you browse Steam? CrosTem answer
 • AreWeAntiCheatYet: anticheat support (the #1 blocker for multiplayer under CrossOver — Linux/Proton data, indicative)
 
 ★ Star overlays on game capsules across the whole store (front page, sales, categories), loaded lazily as you scroll.
-★ Badges in search results and your wishlist.
+★ Badges in search results, your wishlist and your Steam Community games list — see at a glance what your whole owned library does on a Mac.
 ★ Native Mac games get a "Native on macOS" badge — no lookups needed.
 ★ Wrong match? Pick the right game once; CrosTem remembers it (export/import included).
 ★ Toolbar popup to look up any game manually.
@@ -41,7 +41,7 @@ CrosTem is not affiliated with CodeWeavers, AppleGamingWiki, AreWeAntiCheatYet, 
 • AreWeAntiCheatYet: soporte del anticheat (el bloqueador nº1 del multijugador bajo CrossOver — datos de Linux/Proton, orientativos)
 
 ★ Estrellas sobre las cápsulas de toda la tienda (portada, ofertas, categorías), cargadas al hacer scroll.
-★ Badges en la búsqueda y en tu wishlist.
+★ Badges en la búsqueda, en tu wishlist y en tu lista de juegos de Steam Community — mira de un vistazo qué hace en Mac toda tu biblioteca.
 ★ Los juegos nativos de Mac muestran "Nativo en macOS" — sin consultas.
 ★ ¿Coincidencia errónea? Elige el juego correcto una vez; CrosTem lo recuerda (con export/import).
 ★ Popup en la barra para consultar cualquier juego a mano.
@@ -58,12 +58,13 @@ Productivity → Tools (o "Fun" → Entertainment; Tools recomendado)
 
 ## Single purpose (formulario de revisión)
 
-**EN:** Display Mac gaming compatibility information (CrossOver ratings, AppleGamingWiki status, anticheat support) on Steam store pages.
+**EN:** Display Mac gaming compatibility information (CrossOver ratings, AppleGamingWiki status, anticheat support) on Steam store pages and on the user's Steam Community games list.
 
 ## Justificación de permisos (formulario de revisión)
 
 - `storage`: cache compatibility results locally and store user preferences.
 - Host `store.steampowered.com` (content scripts): display compatibility info on the Steam store the user is browsing; read the game name/appid from the page; query Steam's public appdetails endpoint for the native-Mac flag.
+- Host `steamcommunity.com` (content script, `/<profile>/games` only): display the same compatibility info next to each title in the user's Steam Community games list. Only the game titles and app ids already rendered on the page are read; no profile, playtime or account data is accessed.
 - Host `www.codeweavers.com`: fetch public CrossOver compatibility pages.
 - Host `www.applegamingwiki.com`: query the public MediaWiki cargo API for compatibility status.
 - Host `raw.githubusercontent.com`: download AreWeAntiCheatYet's public games.json dataset.

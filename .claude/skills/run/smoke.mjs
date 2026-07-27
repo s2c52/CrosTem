@@ -138,7 +138,32 @@ if (!libraryUrl) {
         timeout: 30000,
       });
       const n = await page.evaluate(() => document.querySelectorAll('.crostem-badge').length);
-      console.log('library badges:', n, 'on', libraryRows, 'app links');
+      // Inserting the host span is not the interesting part: wait for badges
+      // that actually RESOLVED. Counting empty spans would pass even with
+      // the whole appdetails/CodeWeavers path broken (which off the store
+      // origin is exactly what CORS would do).
+      await page.waitForFunction(
+        () =>
+          [...document.querySelectorAll('.crostem-badge')].filter(
+            (b) => (b.textContent || '').trim().length > 0,
+          ).length >= 3,
+        { timeout: 60000 },
+      );
+      const resolved = await page.evaluate(
+        () =>
+          [...document.querySelectorAll('.crostem-badge')].filter(
+            (b) => (b.textContent || '').trim().length > 0,
+          ).length,
+      );
+      console.log(
+        'library badges:',
+        n,
+        'inserted /',
+        resolved,
+        'resolved, on',
+        libraryRows,
+        'app links',
+      );
       // One badge per game: the capsule link and the row menu point at the
       // same app and must not each earn one.
       const dupes = await page.evaluate(() => {
@@ -167,7 +192,12 @@ if (!libraryUrl) {
         fails.push('library: untranslated i18n key in a badge (locales not web-accessible here?)');
       }
     } catch {
-      fails.push(`library rows present (${libraryRows} app links) but no badges appeared`);
+      const inserted = await page.evaluate(
+        () => document.querySelectorAll('.crostem-badge').length,
+      );
+      fails.push(
+        `library: ${libraryRows} app links, ${inserted} badges inserted, but fewer than 3 resolved`,
+      );
     }
     await page.screenshot({ path: join(OUT, 'library.png') });
   }
