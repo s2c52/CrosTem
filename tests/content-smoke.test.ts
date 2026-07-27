@@ -5,8 +5,9 @@
 // so each test stubs chrome + fetch, seeds the fixture DOM and imports
 // the module fresh. Covers the happy mount and the degraded path (all
 // sources failing must yield a friendly state, never an exception).
-// Note: the wishlist surface-off test runs before the surface-on one so
-// no MutationObserver from a previous import can touch its DOM.
+// Note: for the scanner-based surfaces (wishlist, library) the
+// surface-off test runs before the surface-on ones so no MutationObserver
+// from a previous import can touch its DOM.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +17,7 @@ import { stubChrome, type ChromeMock } from './chrome-mock';
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 const APP_HTML = readFileSync(join(FIXTURES, 'steam_app.html'), 'utf8');
 const WISHLIST_HTML = readFileSync(join(FIXTURES, 'steam_wishlist.html'), 'utf8');
+const LIBRARY_HTML = readFileSync(join(FIXTURES, 'steam_community_games.html'), 'utf8');
 
 const BREAKER_OPEN = { ok: false, error: 'circuit open for test', code: 'breaker-open' };
 
@@ -123,6 +125,90 @@ describe('content/wishlist.ts', () => {
     expect(document.querySelector('a[data-crostem]')).toBeNull();
 
     mock.emitStorageChange({ settings: { newValue: { surfaces: { wishlist: true } } } }, 'sync');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
+    });
+  });
+});
+
+describe('content/library.ts', () => {
+  const LIBRARY_URL = '/id/s2c52/games?tab=all';
+
+  it('respeta la superficie desactivada sin tocar el DOM', async () => {
+    mock.sync['settings'] = { surfaces: { library: false } };
+    document.body.innerHTML = LIBRARY_HTML;
+    window.history.pushState({}, '', LIBRARY_URL);
+    await import('../src/content/library');
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.querySelectorAll('.crostem-badge').length).toBe(0);
+  });
+
+  it('un solo badge por juego, tras el título y no en la carátula', async () => {
+    document.body.innerHTML = LIBRARY_HTML;
+    window.history.pushState({}, '', LIBRARY_URL);
+    await import('../src/content/library');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
+    });
+
+    const badges = document.querySelectorAll<HTMLElement>('.crostem-badge');
+    expect([...badges].map((b) => b.previousElementSibling?.textContent?.trim())).toEqual([
+      'Lost Ark',
+      'Counter-Strike 2',
+    ]);
+    expect([...badges].map((b) => b.dataset.crostemAppid)).toEqual(['1599340', '730']);
+    // The capsule anchor wraps an image and carries no title: never stamped.
+    expect(document.querySelector('a[data-crostem] img')).toBeNull();
+    // The row also links the same app from its "Store Page" entry, which
+    // must not earn a second badge.
+    expect(document.querySelectorAll('a[href*="/app/1599340"]').length).toBe(3);
+    expect(document.querySelectorAll('.crostem-badge[data-crostem-appid="1599340"]').length).toBe(
+      1,
+    );
+  });
+
+  it('si el virtualizador recicla un nodo, el badge se rehace para el juego nuevo', async () => {
+    document.body.innerHTML = LIBRARY_HTML;
+    window.history.pushState({}, '', LIBRARY_URL);
+    await import('../src/content/library');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
+    });
+
+    // Recycling = the same anchor node re-pointed at another game, rather
+    // than the row being unmounted and a fresh one mounted.
+    const title = document.querySelector<HTMLAnchorElement>('a[data-crostem="730"]');
+    const row = title?.closest('.Panel');
+    if (!title || !row) throw new Error('fixture row not found');
+    title.setAttribute('href', 'https://steamcommunity.com/app/570');
+    title.textContent = 'Dota 2';
+    // Re-attach the row so the scanner revisits it (a bare attribute edit
+    // is invisible to a childList observer).
+    const parent = row.parentNode;
+    row.remove();
+    parent?.appendChild(row);
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.crostem-badge[data-crostem-appid="570"]')).not.toBeNull();
+    });
+    expect(document.querySelector('.crostem-badge[data-crostem-appid="730"]')).toBeNull();
+    expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
+    expect(title.dataset.crostem).toBe('570');
+  });
+
+  it('aplica en vivo el toggle de la superficie (off → limpia, on → remonta)', async () => {
+    document.body.innerHTML = LIBRARY_HTML;
+    window.history.pushState({}, '', LIBRARY_URL);
+    await import('../src/content/library');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
+    });
+
+    mock.emitStorageChange({ settings: { newValue: { surfaces: { library: false } } } }, 'sync');
+    expect(document.querySelectorAll('.crostem-badge').length).toBe(0);
+    expect(document.querySelector('a[data-crostem]')).toBeNull();
+
+    mock.emitStorageChange({ settings: { newValue: { surfaces: { library: true } } } }, 'sync');
     await vi.waitFor(() => {
       expect(document.querySelectorAll('.crostem-badge').length).toBe(2);
     });

@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Значки в списъка с желания"
   },
+  "optSurfaceLibrary": {
+    "message": "Значки в библиотеката"
+  },
   "optLanguage": {
     "message": "Език"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Списък с желания"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Библиотека"
   },
   "popupStatusSources": {
     "message": "$N$ от 3 активни източника",

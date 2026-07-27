@@ -1,0 +1,65 @@
+<!--
+  Steam Community games list row (steamcommunity.com/id/<user>/games?tab=all).
+
+  PROVISIONAL: that page is login-gated (an anonymous GET returns the Sign In
+  page), so this is a hand-built approximation of the structure visible in the
+  live UI, not a verbatim dump. Recapture and replace this file wholesale:
+  log into Steam, open /id/<you>/games?tab=all, copy a row's outerHTML from
+  devtools and strip srcset/styles/noise.
+
+  Every node here encodes something the surface must handle:
+    - the capsule anchor has an <img> and no text  -> must be ignored
+    - the title anchor carries the game name       -> gets the badge
+    - a row exposes the same appid more than once  -> only one badge per game
+  Class names are per-build hashes, kept verbatim to prove the code never
+  relies on them.
+-->
+<div class="Panel Focusable">
+  <div class="_1jw4uKPUAd0Iy1kMzGQOFB Focusable">
+    <a class="_2C5PJvTZDvEsCEBrIYVJ7O" href="https://steamcommunity.com/app/1599340">
+      <img
+        class="_2eQ7ARSFmZbMcCjrPjyEbP"
+        src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1599340/capsule_231x87.jpg"
+      />
+    </a>
+    <div class="_3Yg8gEBqUqJVh0LiFLzGvM">
+      <a class="_2ZUWtC1YGqvVKzr2wKJmZ2" href="https://steamcommunity.com/app/1599340">Lost Ark</a>
+      <div class="_1QQjPHXqZLDDnKcVJ0LnQb">
+        <div class="_2ZKvHqRVJGYFqQfMBcqCJH">
+          <div class="_1WEsHrFFWZbJhZoJgYbcRz">TOTAL PLAYED</div>
+          <div class="_3wJPKQqqSSsVDBnEDXgKPz">511.3 hours</div>
+        </div>
+        <div class="_2ZKvHqRVJGYFqQfMBcqCJH">
+          <div class="_1WEsHrFFWZbJhZoJgYbcRz">ACHIEVEMENTS</div>
+          <div class="_3wJPKQqqSSsVDBnEDXgKPz">89/156</div>
+        </div>
+      </div>
+      <div class="_1kFXbwvUhOSJTPHXhLDQzC">
+        <a class="_3jMBQZmVJHrPXBhJNCKLcz" href="https://store.steampowered.com/app/1599340"
+          >Store Page</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+<div class="Panel Focusable">
+  <div class="_1jw4uKPUAd0Iy1kMzGQOFB Focusable">
+    <a class="_2C5PJvTZDvEsCEBrIYVJ7O" href="https://steamcommunity.com/app/730">
+      <img
+        class="_2eQ7ARSFmZbMcCjrPjyEbP"
+        src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/730/capsule_231x87.jpg"
+      />
+    </a>
+    <div class="_3Yg8gEBqUqJVh0LiFLzGvM">
+      <a class="_2ZUWtC1YGqvVKzr2wKJmZ2" href="https://steamcommunity.com/app/730"
+        >Counter-Strike 2</a
+      >
+      <div class="_1QQjPHXqZLDDnKcVJ0LnQb">
+        <div class="_2ZKvHqRVJGYFqQfMBcqCJH">
+          <div class="_1WEsHrFFWZbJhZoJgYbcRz">TOTAL PLAYED</div>
+          <div class="_3wJPKQqqSSsVDBnEDXgKPz">398.4 hours</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

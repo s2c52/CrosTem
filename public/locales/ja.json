@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "ウィッシュリストのバッジ"
   },
+  "optSurfaceLibrary": {
+    "message": "ライブラリのバッジ"
+  },
   "optLanguage": {
     "message": "言語"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "ウィッシュリスト"
+  },
+  "popupSurfaceLibrary": {
+    "message": "ライブラリ"
   },
   "popupStatusSources": {
     "message": "3ソース中$N$件が有効",

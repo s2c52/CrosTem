@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Insigne în lista de dorințe"
   },
+  "optSurfaceLibrary": {
+    "message": "Insigne în bibliotecă"
+  },
   "optLanguage": {
     "message": "Limbă"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Lista de dorințe"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Bibliotecă"
   },
   "popupStatusSources": {
     "message": "$N$ din 3 surse active",

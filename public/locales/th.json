@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "ป้ายในสิ่งที่อยากได้"
   },
+  "optSurfaceLibrary": {
+    "message": "ป้ายในคลังเกม"
+  },
   "optLanguage": {
     "message": "ภาษา"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "สิ่งที่อยากได้"
+  },
+  "popupSurfaceLibrary": {
+    "message": "คลังเกม"
   },
   "popupStatusSources": {
     "message": "ใช้งานอยู่ $N$ จาก 3 แหล่งข้อมูล",

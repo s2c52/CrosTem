@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "願望清單徽章"
   },
+  "optSurfaceLibrary": {
+    "message": "遊戲庫徽章"
+  },
   "optLanguage": {
     "message": "語言"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "願望清單"
+  },
+  "popupSurfaceLibrary": {
+    "message": "遊戲庫"
   },
   "popupStatusSources": {
     "message": "3 個資料來源中已啟用 $N$ 個",
