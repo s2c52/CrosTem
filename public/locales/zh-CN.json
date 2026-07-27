@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "愿望单徽章"
   },
+  "optSurfaceLibrary": {
+    "message": "游戏库徽章"
+  },
   "optLanguage": {
     "message": "语言"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "愿望单"
+  },
+  "popupSurfaceLibrary": {
+    "message": "游戏库"
   },
   "popupStatusSources": {
     "message": "3 个数据源中已启用 $N$ 个",

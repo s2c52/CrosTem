@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Badges op de verlanglijst"
   },
+  "optSurfaceLibrary": {
+    "message": "Badges in de bibliotheek"
+  },
   "optLanguage": {
     "message": "Taal"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Verlanglijst"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Bibliotheek"
   },
   "popupStatusSources": {
     "message": "$N$ van 3 bronnen actief",

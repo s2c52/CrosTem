@@ -9,6 +9,11 @@ const ALLOWED: Array<{ host: string; pathPrefix: string }> = [
   { host: 'www.codeweavers.com', pathPrefix: '/compatibility' },
   { host: 'www.applegamingwiki.com', pathPrefix: '/w/api.php' },
   { host: 'raw.githubusercontent.com', pathPrefix: '/AreWeAntiCheatYet/' },
+  // Steam appdetails is same-origin (and never proxied) from the store
+  // surfaces; the library surface runs on steamcommunity.com, where it
+  // is cross-origin and must go through the worker. The path prefix keeps
+  // the rest of the store out of reach.
+  { host: 'store.steampowered.com', pathPrefix: '/api/appdetails' },
 ];
 
 /** True if the URL is https and points inside the allowlist. */

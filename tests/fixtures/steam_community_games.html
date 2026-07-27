@@ -1,0 +1,89 @@
+<!--
+  Hand-reduced from a real logged-in capture of the Steam Community games
+  list (steamcommunity.com/id/<user>/games?tab=all, 2026-07-26). SVG icon
+  paths, srcset noise and the stats dropdowns are stripped; everything the
+  surface reads is verbatim.
+
+  Each row links the SAME app three times, in this document order:
+    1. the capsule anchor  — wraps <picture>, carries no text  -> ignored
+    2. the title anchor    — the game name                     -> gets the badge
+    3. "Store Page" inside the row's overflow popover          -> deduped away
+  The popover is `popover="manual"`, so it is in the DOM from the start:
+  without the per-appid dedupe every row would earn two badges.
+  Sibling links (/forum/<id>, /appofficialsite/<id>, /news/?appids=<id>)
+  deliberately do NOT contain "/app/" and must stay unmatched.
+
+  Class names are per-build hashes, kept verbatim to prove the code never
+  relies on them. Recapture: log into Steam (the page 200s to a Sign In
+  page when anonymous), open /my/games?tab=all, copy a row's outerHTML
+  from devtools and strip the noise.
+-->
+<div class="qaT2YvwApZE- Panel" tabindex="0" role="button">
+  <a href="https://store.steampowered.com/app/1599340" class="SneKFkp55Bg- Focusable" tabindex="0">
+    <div class="_9KdVfQnfVHQ-">
+      <picture>
+        <img
+          src="https://shared.fastly.steamstatic.com/store_item_assets//steam/apps/1599340/header.jpg"
+          alt="Lost Ark"
+          loading="lazy"
+        />
+      </picture>
+    </div>
+  </a>
+  <span class="jZNS61Z2Jx4-">
+    <a href="https://store.steampowered.com/app/1599340" class="wfG8VGEsVTw-">Lost Ark</a>
+  </span>
+  <div class="xMHnQPzVAX0-">
+    <span class="_5r4voF1GRxA-"><span class="bJu5kygBbe4-">TOTAL PLAYED</span>511.3 hours</span
+    ><span class="SBr0k5kcPck-"><span class="bJu5kygBbe4-">LAST PLAYED</span>Jan 5, 2023</span>
+    <div class="_6JCZzdWjmVI-">
+      <div class="_84blVQ488Xk-">
+        <a
+          class="AXAEoGZEJj0-"
+          href="https://steamcommunity.com/id/s2c52/stats/1599340/?tab=achievements"
+          >ACHIEVEMENTS</a
+        ><span class="tDUpY1ZtY60-">89/156</span>
+      </div>
+    </div>
+  </div>
+  <div class="uW-NDBOMCI0-">
+    <button class="WnfjYSyvqNI- pd4jG0hXPJk- Focusable" aria-expanded="false" role="button"></button>
+    <div popover="manual" class="h2hJmhz41JY- Panel">
+      <div class="bWJ-A1tETJQ-">
+        <a href="https://store.steampowered.com/app/1599340">Store Page</a
+        ><a href="https://store.steampowered.com/forum/1599340">Forums</a
+        ><a href="https://store.steampowered.com/appofficialsite/1599340">Official Website</a
+        ><a href="https://store.steampowered.com/news/?appids=1599340">News</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="qaT2YvwApZE- Panel" tabindex="0" role="button">
+  <a href="https://store.steampowered.com/app/730" class="SneKFkp55Bg- Focusable" tabindex="0">
+    <div class="_9KdVfQnfVHQ-">
+      <picture>
+        <img
+          src="https://shared.fastly.steamstatic.com/store_item_assets//steam/apps/730/header.jpg"
+          alt="Counter-Strike 2"
+          loading="lazy"
+        />
+      </picture>
+    </div>
+  </a>
+  <span class="jZNS61Z2Jx4-">
+    <a href="https://store.steampowered.com/app/730" class="wfG8VGEsVTw-">Counter-Strike 2</a>
+  </span>
+  <div class="xMHnQPzVAX0-">
+    <span class="_5r4voF1GRxA-"><span class="bJu5kygBbe4-">TOTAL PLAYED</span>398.4 hours</span
+    ><span class="SBr0k5kcPck-"><span class="bJu5kygBbe4-">LAST PLAYED</span>Jun 20, 2022</span>
+  </div>
+  <div class="uW-NDBOMCI0-">
+    <button class="WnfjYSyvqNI- pd4jG0hXPJk- Focusable" aria-expanded="false" role="button"></button>
+    <div popover="manual" class="h2hJmhz41JY- Panel">
+      <div class="bWJ-A1tETJQ-">
+        <a href="https://store.steampowered.com/app/730">Store Page</a
+        ><a href="https://store.steampowered.com/forum/730">Forums</a>
+      </div>
+    </div>
+  </div>
+</div>

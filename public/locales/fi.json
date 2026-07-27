@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Merkit toivelistalla"
   },
+  "optSurfaceLibrary": {
+    "message": "Merkit kirjastossa"
+  },
   "optLanguage": {
     "message": "Kieli"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Toivelista"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Kirjasto"
   },
   "popupStatusSources": {
     "message": "$N$/3 lähdettä käytössä",

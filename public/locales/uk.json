@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Значки у списку бажаного"
   },
+  "optSurfaceLibrary": {
+    "message": "Значки в бібліотеці"
+  },
   "optLanguage": {
     "message": "Мова"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Бажане"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Бібліотека"
   },
   "popupStatusSources": {
     "message": "Активні джерела: $N$ із 3",

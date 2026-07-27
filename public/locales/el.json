@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Σήματα στη λίστα επιθυμιών"
   },
+  "optSurfaceLibrary": {
+    "message": "Σήματα στη συλλογή"
+  },
   "optLanguage": {
     "message": "Γλώσσα"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Λίστα επιθυμιών"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Συλλογή"
   },
   "popupStatusSources": {
     "message": "$N$ από 3 πηγές ενεργές",

@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Badges en la lista de deseados"
   },
+  "optSurfaceLibrary": {
+    "message": "Badges en la biblioteca"
+  },
   "optLanguage": {
     "message": "Idioma"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Lista de deseados"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Biblioteca"
   },
   "popupStatusSources": {
     "message": "$N$ de 3 fuentes activas",

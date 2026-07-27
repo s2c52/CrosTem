@@ -43,6 +43,7 @@ function readForm(): Settings {
       capsules: input('surface-capsules').checked,
       search: input('surface-search').checked,
       wishlist: input('surface-wishlist').checked,
+      library: input('surface-library').checked,
     },
     sources: {
       cw: input('source-cw').checked,
@@ -60,6 +61,7 @@ function fillForm(s: Settings): void {
   input('surface-capsules').checked = s.surfaces.capsules;
   input('surface-search').checked = s.surfaces.search;
   input('surface-wishlist').checked = s.surfaces.wishlist;
+  input('surface-library').checked = s.surfaces.library;
   input('source-cw').checked = s.sources.cw;
   input('source-agw').checked = s.sources.agw;
   input('source-anticheat').checked = s.sources.anticheat;
@@ -105,7 +107,10 @@ function showApplyBar(): void {
 }
 
 async function applyToSteamTabs(): Promise<void> {
-  const tabs = await chrome.tabs.query({ url: 'https://store.steampowered.com/*' });
+  // Both injected origins: the store surfaces and the community library.
+  const tabs = await chrome.tabs.query({
+    url: ['https://store.steampowered.com/*', 'https://steamcommunity.com/*'],
+  });
   await Promise.all(
     tabs.flatMap((tab) => (tab.id != null ? [chrome.tabs.reload(tab.id)] : [])),
   );

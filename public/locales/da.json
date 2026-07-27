@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Badges på ønskelisten"
   },
+  "optSurfaceLibrary": {
+    "message": "Badges i biblioteket"
+  },
   "optLanguage": {
     "message": "Sprog"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Ønskeliste"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Bibliotek"
   },
   "popupStatusSources": {
     "message": "$N$ af 3 kilder aktive",

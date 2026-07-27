@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { isAllowedUrl } from '../src/lib/allowlist';
 
 describe('isAllowedUrl', () => {
-  it('acepta los tres endpoints reales', () => {
+  it('acepta los cuatro endpoints reales', () => {
     expect(isAllowedUrl('https://www.codeweavers.com/compatibility?name=elden')).toBe(true);
     expect(isAllowedUrl('https://www.codeweavers.com/compatibility/crossover/elden-ring')).toBe(
       true,
@@ -18,6 +18,21 @@ describe('isAllowedUrl', () => {
         'https://raw.githubusercontent.com/AreWeAntiCheatYet/AreWeAntiCheatYet/HEAD/games.json',
       ),
     ).toBe(true);
+    expect(
+      isAllowedUrl(
+        'https://store.steampowered.com/api/appdetails?appids=620&filters=platforms&l=english',
+      ),
+    ).toBe(true);
+  });
+
+  it('de Steam sólo abre appdetails, no el resto de la tienda', () => {
+    expect(isAllowedUrl('https://store.steampowered.com/app/440')).toBe(false);
+    expect(isAllowedUrl('https://store.steampowered.com/api/appuserdetails?appids=440')).toBe(
+      false,
+    );
+    expect(isAllowedUrl('https://store.steampowered.com/wishlist/')).toBe(false);
+    // The community origin is injected into, never fetched through the worker.
+    expect(isAllowedUrl('https://steamcommunity.com/id/x/games')).toBe(false);
   });
 
   it('rechaza otros hosts, paths y esquemas', () => {
