@@ -54,8 +54,55 @@ function tooltipFor(result: ResolveResult): TooltipData | null {
   }
 }
 
+/** Dot-only rendering for rows too dense for the inline badge (a ~24px
+ * list row has no room for stars); the tooltip still carries the detail
+ * a full badge would show. Click-through to CodeWeavers is preserved by
+ * wrapping the dot in the same link the inline badge uses. */
+function renderCompact(el: HTMLElement, result: ResolveResult): void {
+  switch (result.kind) {
+    case 'native': {
+      const dot = dotEl('green');
+      dot.setAttribute('aria-label', t('nativeBadge'));
+      el.appendChild(dot);
+      break;
+    }
+    case 'stars': {
+      const a = cwLink(
+        appUrl(result.slug),
+        t('badgeCwRating', result.cwName) + (result.approximate ? ' ' + t('badgeApprox') : ''),
+      );
+      a.appendChild(dotEl(result.level));
+      el.appendChild(a);
+      break;
+    }
+    case 'ambiguous': {
+      const a = cwLink(searchUrl(result.query), t('badgeMatches', String(result.count)));
+      a.appendChild(dotEl(result.level));
+      el.appendChild(a);
+      break;
+    }
+    case 'dot': {
+      const dot = dotEl(result.level);
+      dot.setAttribute('aria-label', t('verdict_' + result.level));
+      el.appendChild(dot);
+      break;
+    }
+    default:
+      el.remove();
+  }
+}
+
 export function renderBadge(el: HTMLElement, result: ResolveResult, opts: AutoAttachOpts): void {
   el.textContent = '';
+
+  if (opts.mode === 'compact') {
+    renderCompact(el, result);
+    // tooltipFor is null for 'none', the only kind that removed the element.
+    const compactTip = tooltipFor(result);
+    if (compactTip) attachTooltip(el, compactTip);
+    return;
+  }
+
   const overlay = opts.mode === 'overlay';
 
   switch (result.kind) {
