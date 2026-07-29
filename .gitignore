@@ -9,6 +9,9 @@ store-assets/.profile/
 crostem-v*.zip
 CrosTem-web/
 
+# Editor workspace config: local to whoever opened the project
+*.code-workspace
+
 # Internal development files (kept local, not published)
 .higinio/
 HANDOFF.md
