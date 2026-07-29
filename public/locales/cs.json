@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Odznaky na seznamu přání"
   },
+  "optSurfaceLibrary": {
+    "message": "Odznaky v knihovně"
+  },
   "optLanguage": {
     "message": "Jazyk"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Seznam přání"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Knihovna"
   },
   "popupStatusSources": {
     "message": "Aktivní zdroje: $N$ ze 3",

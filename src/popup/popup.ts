@@ -176,7 +176,7 @@ async function initCurrentTab(): Promise<void> {
 
 // --- Surface toggles ---------------------------------------------------
 
-const SURFACE_IDS = ['app', 'capsules', 'search', 'wishlist'] as const;
+const SURFACE_IDS = ['app', 'capsules', 'search', 'wishlist', 'library'] as const;
 
 function surfaceInput(key: (typeof SURFACE_IDS)[number]): HTMLInputElement {
   return mustGet('surface-' + key) as HTMLInputElement;
@@ -194,6 +194,7 @@ async function initToggles(): Promise<void> {
           capsules: surfaceInput('capsules').checked,
           search: surfaceInput('search').checked,
           wishlist: surfaceInput('wishlist').checked,
+          library: surfaceInput('library').checked,
         },
       }),
     ).then(() => flashStatus(t('optSaved')));

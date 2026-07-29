@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Lencana wishlist"
   },
+  "optSurfaceLibrary": {
+    "message": "Lencana perpustakaan"
+  },
   "optLanguage": {
     "message": "Bahasa"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Wishlist"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Perpustakaan"
   },
   "popupStatusSources": {
     "message": "$N$ dari 3 sumber aktif",

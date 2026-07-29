@@ -7,7 +7,7 @@
 **"Does it run on my Mac?" — answered right on the Steam store.**
 
 [![CI](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml/badge.svg)](https://github.com/s2c52/CrosTem/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.2.1-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue)](CHANGELOG.md)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/manifest-v3-orange)](manifest.json)
 [![Tests](https://img.shields.io/badge/tests-241%20passing-brightgreen)](tests/)
@@ -26,7 +26,7 @@
 
 Steam says "Windows only" for most of its catalog — but a huge share of those games run beautifully on a Mac through [CrossOver](https://www.codeweavers.com/crossover), Parallels or Rosetta 2. The catch: finding out *which ones* means juggling three different community databases in separate tabs, every time you browse the store.
 
-CrosTem folds all of that into Steam itself. Every game page gets a **"Runs on Mac?" verdict** — a conservative traffic light (🟢🟡🔴) computed from three community sources — plus star overlays on capsules across the whole store, and badges in search results and your wishlist. No accounts, no servers, no telemetry: the extension only fetches public compatibility pages and caches them in your browser.
+CrosTem folds all of that into Steam itself. Every game page gets a **"Runs on Mac?" verdict** — a conservative traffic light (🟢🟡🔴) computed from three community sources — plus star overlays on capsules across the whole store, and badges in search results, your wishlist and your Steam Community games list. No accounts, no servers, no telemetry: the extension only fetches public compatibility pages and caches them in your browser.
 
 ## Your data is yours
 
@@ -65,11 +65,12 @@ When the sources disagree, the widget says so explicitly ("Sources disagree — 
 
 ## Features
 
-CrosTem renders on six surfaces, all individually toggleable:
+CrosTem renders on seven surfaces, all individually toggleable:
 
 - **Game-page widget** — a "Runs on Mac?" panel in the right column: verdict banner, collapsible per-source rows, the 3 latest CrossOver versions with stars (your branch highlighted), last-tested version, and direct links to each source. Skeleton shimmer while loading, retry on error.
 - **Store-wide capsule overlays** — star ratings in the corner of game capsules everywhere (front page, sales, categories, "more like this"…), resolved lazily as each capsule scrolls into view. `?` marks games with several possible matches; `~` marks approximate matches.
 - **Search results & wishlist badges** — compact rating badges next to each row's title, injected as rows appear (MutationObserver for Steam's AJAX search, generic `/app/` link detection for the React wishlist SPA).
+- **Library badges** — the same badges on your Steam Community games list (`steamcommunity.com/<profile>/games`, every tab), so an entire owned library shows its Mac verdict as you scroll. The only surface that runs off `store.steampowered.com`, which is why Steam's appdetails is proxied through the service worker there.
 - **Toolbar popup** — the active tab's verdict at a glance, manual game lookup, quick surface toggles and cache stats.
 - **Options page** — toggle each surface and data source (changes apply live to open Steam tabs), set your CrossOver version, tune the cache TTL (1–30 days), and export/import your match corrections.
 - **Hover tooltip & onboarding** — a mini-card with the verdict and per-source lines on badge hover, and a one-time onboarding page after install.
@@ -115,8 +116,8 @@ The injected UI follows the **language of the Steam page you're viewing** — no
 
 ```mermaid
 flowchart LR
-    subgraph tab["Steam store tab (content scripts)"]
-        CS["app.ts · capsules.ts<br>search.ts · wishlist.ts"]
+    subgraph tab["Steam tab (content scripts)"]
+        CS["app.ts · capsules.ts · search.ts<br>wishlist.ts · library.ts"]
         R["resolve.ts<br>verdict pipeline"]
         C[("chrome.storage.local<br>TTL cache")]
         CS --> R

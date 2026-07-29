@@ -12,6 +12,7 @@ export interface Settings {
     capsules: boolean; // overlays on capsules
     search: boolean; // badges in search results
     wishlist: boolean; // badges on the wishlist
+    library: boolean; // badges on the community games list
   };
   sources: {
     cw: boolean; // CodeWeavers
@@ -27,7 +28,7 @@ export interface Settings {
 }
 
 export const DEFAULTS: Settings = {
-  surfaces: { app: true, capsules: true, search: true, wishlist: true },
+  surfaces: { app: true, capsules: true, search: true, wishlist: true, library: true },
   sources: { cw: true, agw: true, anticheat: true },
   crossoverVersion: '26',
   cacheTtlDays: 7,

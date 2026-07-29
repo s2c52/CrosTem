@@ -18,19 +18,19 @@ CrosTem **no recopila ningún dato personal**. No hay telemetría, ni analítica
 
 Para consultar la compatibilidad de un juego, la extensión pide páginas/APIs públicas de estos servicios, enviando solo el nombre del juego o su appid público de Steam:
 
-| Servicio                                        | Propósito                                                                  |
-| ----------------------------------------------- | -------------------------------------------------------------------------- |
-| `www.codeweavers.com`                           | Ratings de compatibilidad de CrossOver                                     |
-| `www.applegamingwiki.com`                       | Estado de CrossOver/Parallels/Rosetta 2                                    |
-| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Estado del soporte de anticheat                                            |
-| `store.steampowered.com`                        | Nombre del juego y flag de Mac nativo (el mismo sitio que estás navegando) |
+| Servicio                                        | Propósito                                                           |
+| ----------------------------------------------- | ------------------------------------------------------------------- |
+| `www.codeweavers.com`                           | Ratings de compatibilidad de CrossOver                              |
+| `www.applegamingwiki.com`                       | Estado de CrossOver/Parallels/Rosetta 2                             |
+| `raw.githubusercontent.com` (AreWeAntiCheatYet) | Estado del soporte de anticheat                                     |
+| `store.steampowered.com`                        | Nombre del juego y flag de Mac nativo (appdetails público de Steam) |
 
 Estas peticiones no llevan identificadores de la extensión más allá de lo que incluye cualquier petición del navegador. A lo que cada servicio registre en su servidor se le aplica su propia política de privacidad. Los resultados se cachean (7 días por defecto) para minimizar las peticiones.
 
 ## Permisos
 
 - **`storage`** — para cachear resultados y guardar tus preferencias localmente.
-- **Acceso a los servicios listados arriba** — únicamente para obtener datos de compatibilidad. La extensión se ejecuta en páginas de `store.steampowered.com` para mostrar la información en su sitio.
+- **Acceso a los servicios listados arriba** — únicamente para obtener datos de compatibilidad. La extensión se ejecuta en páginas de `store.steampowered.com` y en tu lista de juegos de Steam Community (`steamcommunity.com/<perfil>/games`) para mostrar la información en su sitio. Solo lee los títulos y app ids ya visibles en la página; nada sobre tu perfil, tus horas jugadas o tu cuenta se lee ni se envía a ninguna parte.
 
 ## Afiliación
 

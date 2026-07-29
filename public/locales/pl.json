@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Plakietki na liście życzeń"
   },
+  "optSurfaceLibrary": {
+    "message": "Plakietki w bibliotece"
+  },
   "optLanguage": {
     "message": "Język"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Lista życzeń"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Biblioteka"
   },
   "popupStatusSources": {
     "message": "Aktywne źródła: $N$ z 3",

@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Huy hiệu trong danh sách ước"
   },
+  "optSurfaceLibrary": {
+    "message": "Huy hiệu trong thư viện"
+  },
   "optLanguage": {
     "message": "Ngôn ngữ"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Danh sách ước"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Thư viện"
   },
   "popupStatusSources": {
     "message": "$N$/3 nguồn đang bật",

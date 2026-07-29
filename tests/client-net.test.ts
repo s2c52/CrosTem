@@ -80,6 +80,9 @@ describe('SWR en client.search', () => {
 
 describe('steam appdetails breaker', () => {
   it('abre tras fallos consecutivos y corta sin tocar la red', async () => {
+    // The dedicated breaker guards the direct same-origin fetch, which
+    // only happens on the store surfaces.
+    vi.stubGlobal('location', { origin: 'https://store.steampowered.com' });
     const fetchMock = vi.fn(() =>
       Promise.resolve({
         ok: false,
@@ -104,5 +107,59 @@ describe('steam appdetails breaker', () => {
     await vi.runAllTimersAsync();
     await expectation;
     expect(fetchMock.mock.calls.length).toBe(callsBefore);
+  });
+});
+
+// The library surface runs on steamcommunity.com, where appdetails is
+// cross-origin: a direct fetch would be blocked by CORS, so it has to be
+// proxied by the service worker (which holds the host permission).
+describe('steam appdetails fuera del origen de la tienda', () => {
+  const body = JSON.stringify({
+    '620': { success: true, data: { name: 'Portal 2', platforms: { mac: true } } },
+  });
+
+  /** Records the URLs the worker is asked to fetch. */
+  function recordingHandler(): { urls: string[]; handler: (msg: unknown) => unknown } {
+    const urls: string[] = [];
+    return {
+      urls,
+      handler: (msg: unknown) => {
+        urls.push((msg as { url: string }).url);
+        return { ok: true, body, finalUrl: 'https://store.steampowered.com/' };
+      },
+    };
+  }
+
+  it('sale por el service worker y no toca fetch directo', async () => {
+    vi.stubGlobal('location', { origin: 'https://steamcommunity.com' });
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const { urls, handler } = recordingHandler();
+    mock.onSendMessage(handler);
+    const { steamDetails } = await import('../src/lib/client');
+
+    const details = steamDetails('620');
+    await vi.runAllTimersAsync();
+    await expect(details).resolves.toMatchObject({ name: 'Portal 2', mac: true });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(urls[0]).toContain('store.steampowered.com/api/appdetails');
+    expect(urls[0]).toContain('appids=620');
+    expect(urls[0]).toContain('l=english');
+  });
+
+  it('la URL que pide es una que el allowlist acepta', async () => {
+    vi.stubGlobal('location', { origin: 'https://steamcommunity.com' });
+    vi.stubGlobal('fetch', vi.fn());
+    const { urls, handler } = recordingHandler();
+    mock.onSendMessage(handler);
+    const { steamDetails } = await import('../src/lib/client');
+    const { isAllowedUrl } = await import('../src/lib/allowlist');
+
+    const details = steamDetails('620');
+    await vi.runAllTimersAsync();
+    await details;
+
+    expect(isAllowedUrl(urls[0] ?? '')).toBe(true);
   });
 });

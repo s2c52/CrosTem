@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Jelvények a kívánságlistán"
   },
+  "optSurfaceLibrary": {
+    "message": "Jelvények a könyvtárban"
+  },
   "optLanguage": {
     "message": "Nyelv"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Kívánságlista"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Könyvtár"
   },
   "popupStatusSources": {
     "message": "$N$/3 forrás aktív",

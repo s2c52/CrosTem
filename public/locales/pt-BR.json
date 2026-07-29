@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "Selos na lista de desejos"
   },
+  "optSurfaceLibrary": {
+    "message": "Selos na biblioteca"
+  },
   "optLanguage": {
     "message": "Idioma"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "Lista de desejos"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Biblioteca"
   },
   "popupStatusSources": {
     "message": "$N$ de 3 fontes ativas",

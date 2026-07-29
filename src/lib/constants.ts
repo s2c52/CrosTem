@@ -36,7 +36,9 @@ export const APPLE_SILICON_YEAR = 2021;
  * the failure memo bounding misbehavior, 4 lanes halve cold latency. */
 export const MAX_CONCURRENT_FETCHES = 4;
 /** Per-attempt fetch timeout by host. AWACY gets longer because its
- * games.json is a single ~460 KB blob; Steam is same-origin and fast. */
+ * games.json is a single ~460 KB blob; Steam's appdetails is a small
+ * filtered payload, fast whether fetched same-origin from the store or
+ * proxied through the worker from steamcommunity. */
 export const SOURCE_TIMEOUTS_MS: Readonly<Record<string, number>> = {
   'store.steampowered.com': 5_000,
   'www.codeweavers.com': 8_000,

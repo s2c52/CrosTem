@@ -140,16 +140,24 @@ export async function getApp(slug: string, swr?: cache.SwrPass): Promise<CwAppPa
   return data;
 }
 
-// --- Steam appdetails (same origin from store.steampowered.com) ---
-// Provides the name and native Mac flag for capsules that only carry an image.
+// --- Steam appdetails ---
+// Provides the name and native Mac flag for rows that only carry an image.
 // Throttled and cached long-term because of Steam's rate limit.
 
 const STEAM_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
 const steamQueue = createFetchQueue<SteamDetails | null>(MAX_CONCURRENT_FETCHES);
-// Steam is fetched directly (same origin), so the worker's breaker never
-// sees it: it gets its own, keyed by a constant.
+// On the store surfaces Steam is fetched directly (same origin), so the
+// worker's breaker never sees it: it gets its own, keyed by a constant.
 const steamBreaker = createBreaker();
 const STEAM_ORIGIN = 'https://store.steampowered.com';
+
+/** True when this context can fetch appdetails without hitting CORS, i.e.
+ * a content script running on the store itself. The library surface
+ * (steamcommunity.com) and the extension pages (chrome-extension://) are
+ * cross-origin and must go through the service worker instead. */
+function canFetchSteamDirectly(): boolean {
+  return typeof location !== 'undefined' && location.origin === STEAM_ORIGIN;
+}
 
 function stripHtml(s: string): string {
   return s
@@ -183,14 +191,17 @@ export function parseSteamDetails(json: unknown, appid: string): SteamDetails | 
   };
 }
 
-async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
-  // l=english pins the response language regardless of the user's Steam
-  // session: the English name matches the (English) compatibility sources
-  // and mac_requirements stays parseable by the arch regexes.
-  const url =
-    'https://store.steampowered.com/api/appdetails?appids=' +
-    encodeURIComponent(appid) +
-    '&filters=platforms,basic,release_date&l=english';
+/** Raw appdetails body, from wherever this context is allowed to get it.
+ * Throws on failure so nothing is cached: only a parsed success:false
+ * response is a cacheable negative. */
+async function fetchSteamBody(url: string): Promise<string> {
+  // Off the store origin the worker does the fetch: it holds the host
+  // permission, so CORS does not apply, and it brings its own queue and
+  // breaker. It fetches with credentials omitted, so age-gated or
+  // region-locked apps answer success:false — those rows lose only the
+  // native flag and still resolve by name through CodeWeavers/AGW.
+  if (!canFetchSteamDirectly()) return fetchExt(url);
+
   if (!steamBreaker.allow(STEAM_ORIGIN)) {
     throw new Error('steam appdetails circuit open');
   }
@@ -200,10 +211,20 @@ async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
   });
   if (out.ok) steamBreaker.onSuccess(STEAM_ORIGIN);
   else steamBreaker.onFailure(STEAM_ORIGIN);
-  // Errors keep throwing (nothing cached): only a parsed success:false
-  // response is a cacheable negative.
   if (!out.ok) throw new Error(out.error);
-  const value = parseSteamDetails(JSON.parse(out.body) as unknown, appid);
+  return out.body;
+}
+
+async function fetchSteamDetails(appid: string): Promise<SteamDetails | null> {
+  // l=english pins the response language regardless of the user's Steam
+  // session: the English name matches the (English) compatibility sources
+  // and mac_requirements stays parseable by the arch regexes.
+  const url =
+    'https://store.steampowered.com/api/appdetails?appids=' +
+    encodeURIComponent(appid) +
+    '&filters=platforms,basic,release_date&l=english';
+  const body = await fetchSteamBody(url);
+  const value = parseSteamDetails(JSON.parse(body) as unknown, appid);
   await cache.set(steamCacheKey(appid), value, value ? STEAM_TTL : cache.TTL_NEGATIVE);
   return value;
 }

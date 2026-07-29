@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "İstek listesinde rozetler"
   },
+  "optSurfaceLibrary": {
+    "message": "Kütüphanede rozetler"
+  },
   "optLanguage": {
     "message": "Dil"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "İstek listesi"
+  },
+  "popupSurfaceLibrary": {
+    "message": "Kütüphane"
   },
   "popupStatusSources": {
     "message": "3 kaynaktan $N$ tanesi etkin",

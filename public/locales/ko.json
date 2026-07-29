@@ -193,6 +193,9 @@
   "optSurfaceWishlist": {
     "message": "찜 목록 배지"
   },
+  "optSurfaceLibrary": {
+    "message": "라이브러리 배지"
+  },
   "optLanguage": {
     "message": "언어"
   },
@@ -326,6 +329,9 @@
   },
   "popupSurfaceWishlist": {
     "message": "찜 목록"
+  },
+  "popupSurfaceLibrary": {
+    "message": "라이브러리"
   },
   "popupStatusSources": {
     "message": "소스 3개 중 $N$개 활성",

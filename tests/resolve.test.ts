@@ -16,7 +16,7 @@ vi.mock('../src/lib/awacy', () => ({ anticheatLookup: vi.fn() }));
 vi.mock('../src/lib/settings', () => ({ getSettings: vi.fn() }));
 
 const settings = (sources: Settings['sources']): Settings => ({
-  surfaces: { app: true, capsules: true, search: true, wishlist: true },
+  surfaces: { app: true, capsules: true, search: true, wishlist: true, library: true },
   sources,
   crossoverVersion: '',
   cacheTtlDays: 7,

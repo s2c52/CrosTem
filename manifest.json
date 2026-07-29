@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_appName__",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "__MSG_appDesc__",
   "author": {
     "email": "s2c52@users.noreply.github.com"
@@ -9,6 +9,7 @@
   "permissions": ["storage"],
   "host_permissions": [
     "https://store.steampowered.com/*",
+    "https://steamcommunity.com/*",
     "https://www.codeweavers.com/*",
     "https://www.applegamingwiki.com/*",
     "https://raw.githubusercontent.com/AreWeAntiCheatYet/*"
@@ -37,6 +38,15 @@
       "run_at": "document_idle"
     },
     {
+      "matches": [
+        "https://steamcommunity.com/id/*/games*",
+        "https://steamcommunity.com/profiles/*/games*",
+        "https://steamcommunity.com/my/games*"
+      ],
+      "js": ["src/content/library.ts"],
+      "run_at": "document_idle"
+    },
+    {
       "matches": ["https://store.steampowered.com/*"],
       "js": ["src/content/capsules.ts"],
       "run_at": "document_idle"
@@ -46,7 +56,7 @@
   "web_accessible_resources": [
     {
       "resources": ["locales/*.json"],
-      "matches": ["https://store.steampowered.com/*"]
+      "matches": ["https://store.steampowered.com/*", "https://steamcommunity.com/*"]
     }
   ],
   "options_ui": {
