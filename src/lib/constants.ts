@@ -91,6 +91,28 @@ export const MAX_IMPORT_ENTRIES = 5_000;
  * AGW page name); longer values are dropped as malformed. */
 export const MAX_IMPORT_VALUE_LEN = 200;
 
+// --- Library scan (bulk.ts) ---
+/** Games resolved concurrently by a bulk scan. Each game fans out up to
+ * three source fetches, so two games keep the 4-lane fetch queue busy
+ * while leaving room for interactive badges resolving alongside. */
+export const SCAN_GAME_CONCURRENCY = 2;
+/** Floor between starts of two games that touch the network. Sized to
+ * keep Steam appdetails near 40 req/min and the CodeWeavers HTML
+ * scraping well under 1 req/s across a ~1000-game scan. */
+export const SCAN_MIN_GAME_SPACING_MS = 1_500;
+/** A game resolved faster than this never left the local cache — no
+ * network round-trip completes that fast — so it consumes no spacing;
+ * warm rescans take seconds instead of half an hour. */
+export const SCAN_CACHE_FAST_MS = 250;
+/** Scan-wide pause after a BreakerOpenError before retrying that game.
+ * Must exceed BREAKER_COOLDOWN_MS or the retry meets the same open
+ * breaker it is waiting out. */
+export const SCAN_BREAKER_WAIT_MS = BREAKER_COOLDOWN_MS + 30_000;
+/** Breaker pauses tolerated per scan. When an origin stays down, its
+ * breaker keeps reopening; after this many pauses the scan stops
+ * waiting and lets the affected games land in the error tally. */
+export const SCAN_MAX_BREAKER_PAUSES = 3;
+
 // --- UI / DOM scanning ---
 /** Coalescing window for MutationObserver-triggered rescans. */
 export const SCAN_DEBOUNCE_MS = 300;

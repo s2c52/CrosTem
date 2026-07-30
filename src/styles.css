@@ -205,6 +205,15 @@
   font-size: 12px;
 }
 
+/* Compact badge: dot-only, for rows too dense for the inline badge. */
+.crostem-badge-compact {
+  line-height: 1;
+}
+
+.crostem-badge-compact .crostem-dot {
+  margin-right: 0;
+}
+
 /* Inline badge inside the store's expanded hover card, below the price */
 .crostem-hovercard-badge {
   align-items: center;
