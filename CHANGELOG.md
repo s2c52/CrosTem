@@ -2,6 +2,12 @@
 
 All notable changes to CrosTem are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- The AreWeAntiCheatYet index is cached in a compact form: 315 KB down to 165 KB for the current dataset. It is keyed by appid, by name and by edition-stripped name, and JSON has no shared references — so an entry reachable all three ways was written to storage three times. The maps now hold positions into a single list. Every page that consults anticheat data reads that index, so this is a saving on each of them, not just on disk. Indexes cached by earlier versions are refetched once.
+
 ## [1.3.0] — 2026-07-28
 
 ### Added
