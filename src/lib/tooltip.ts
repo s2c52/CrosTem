@@ -77,13 +77,35 @@ function hide(): void {
   tip.setAttribute('aria-hidden', 'true');
 }
 
-/** Wire the tooltip to an anchor element (mouse + keyboard focus). */
+/** The data each wired anchor currently shows. Re-attaching updates the
+ * entry instead of stacking another listener set: a badge renders up to
+ * three times per resolution (partial, final, SWR) plus once per
+ * correction repaint, and each attach used to add four more closures — a
+ * hover then rebuilt the tip once per accumulated set, forced layout
+ * included, and the orphaned closures held their TooltipData alive for
+ * the element's lifetime. */
+const tipData = new WeakMap<HTMLElement, TooltipData>();
+
+/** Wire the tooltip to an anchor element (mouse + keyboard focus).
+ * Idempotent: the first call installs the listeners, later calls only
+ * swap the data they read. */
 export function attachTooltip(anchor: HTMLElement, data: TooltipData): void {
-  anchor.addEventListener('mouseenter', () => show(anchor, data));
+  const wired = tipData.has(anchor);
+  tipData.set(anchor, data);
+  if (wired) {
+    // A re-render while the user hovers this badge: refresh in place.
+    if (currentAnchor === anchor) show(anchor, data);
+    return;
+  }
+  const showCurrent = (): void => {
+    const current = tipData.get(anchor);
+    if (current) show(anchor, current);
+  };
+  anchor.addEventListener('mouseenter', showCurrent);
   anchor.addEventListener('mouseleave', () => {
     if (currentAnchor === anchor) hide();
   });
-  anchor.addEventListener('focusin', () => show(anchor, data));
+  anchor.addEventListener('focusin', showCurrent);
   anchor.addEventListener('focusout', () => {
     if (currentAnchor === anchor) hide();
   });
