@@ -73,6 +73,12 @@ function foldNumerals(s: string): string {
     .join(' ');
 }
 
+// The qualifiers are constant: normalize them once at module scope.
+// baseName runs per badge (cache keys, AGW LIKE patterns, scoring) and
+// twice per game when the AWACY index is built — re-normalizing all 16
+// words on every call was ~35 regex/NFKD passes per invocation.
+const EDITION_SUFFIXES = EDITION_WORDS.map((w) => normalizeName(w));
+
 // Normalized name without trailing edition qualifiers
 // ("elden ring deluxe edition" -> "elden ring").
 export function baseName(name: string): string {
@@ -80,8 +86,7 @@ export function baseName(name: string): string {
   let changed = true;
   while (changed) {
     changed = false;
-    for (const w of EDITION_WORDS) {
-      const nw = normalizeName(w);
+    for (const nw of EDITION_SUFFIXES) {
       if (s.endsWith(' ' + nw)) {
         s = s.slice(0, -nw.length - 1).trim();
         changed = true;

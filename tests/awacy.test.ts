@@ -5,8 +5,9 @@
 // (fixture with Elden Ring + one entry per status in the dataset).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildIndex, infoAt } from '../src/lib/awacy';
+import { stubChrome } from './chrome-mock';
 import { must } from './helpers';
 
 const games: unknown = JSON.parse(
@@ -148,5 +149,55 @@ describe('buildIndex (AWACY)', () => {
       const idx = buildIndex(games);
       expect(must(infoAt(idx, idx.byBaseName['x'])).status).toBe('Supported');
     }
+  });
+});
+
+describe('getIndex single-flight', () => {
+  beforeEach(() => {
+    vi.resetModules(); // fresh module: indexFetch/cache L1 are module state
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('lookups concurrentes en frío comparten una descarga y un parse', async () => {
+    const mock = stubChrome();
+    let fetches = 0;
+    mock.onSendMessage(() => {
+      fetches++;
+      return { ok: true, body: JSON.stringify(games), finalUrl: '' };
+    });
+    const awacy = await import('../src/lib/awacy');
+    const [a, b] = await Promise.all([
+      awacy.anticheatLookup('1245620', 'Elden Ring'),
+      awacy.anticheatLookup('976730', 'Halo: The Master Chief Collection'),
+    ]);
+    expect(must(a).name).toBe('Elden Ring');
+    expect(must(b).status).toBeDefined();
+    expect(fetches).toBe(1);
+    // A later caller reads the cached index without a new download.
+    expect(await awacy.anticheatLookup('1245620', 'Elden Ring')).not.toBeNull();
+    expect(fetches).toBe(1);
+  });
+
+  it('el fallo compartido resuelve null para todos sin dejar el vuelo colgado', async () => {
+    const mock = stubChrome();
+    let fetches = 0;
+    mock.onSendMessage(() => {
+      fetches++;
+      return { ok: false, error: 'down', code: 'network' };
+    });
+    const awacy = await import('../src/lib/awacy');
+    const [a, b] = await Promise.all([
+      awacy.anticheatLookup('1', 'X'),
+      awacy.anticheatLookup('2', 'Y'),
+    ]);
+    expect(a).toBeNull();
+    expect(b).toBeNull();
+    expect(fetches).toBe(1);
+    // The shared failure left a cached negative, not a stuck promise.
+    expect(await awacy.anticheatLookup('3', 'Z')).toBeNull();
+    expect(fetches).toBe(1);
   });
 });
