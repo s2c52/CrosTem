@@ -118,6 +118,13 @@ export function buildIndex(games: unknown[]): AwacyIndex {
   return index;
 }
 
+// One in-flight download+parse+build serves every concurrent cold
+// caller. A cold page fires dozens of badge resolutions at once, and
+// each miss used to fetch the ~460KB dataset, parse it, build the index
+// and write it to storage for itself. The cache probe stays per caller
+// so each resolution's SwrPass is marked correctly.
+let indexFetch: Promise<AwacyIndex | null> | null = null;
+
 async function getIndex(swr?: cache.SwrPass): Promise<AwacyIndex | null> {
   const cached = await cache.getSwr<AwacyIndex>('awacy:index', swr);
   if (cached !== undefined) {
@@ -128,18 +135,23 @@ async function getIndex(swr?: cache.SwrPass): Promise<AwacyIndex | null> {
     // reshaping an old index is code that would exist only to be wrong once.
     if (cached.v === INDEX_VERSION) return cached;
   }
-  try {
-    const body = await fetchExt(AWACY_URL);
-    const parsed: unknown = JSON.parse(body);
-    const index = buildIndex(Array.isArray(parsed) ? parsed : []);
-    await cache.set('awacy:index', index, await cache.ttlResult());
-    return index;
-  } catch (e) {
-    // AWACY down: no anticheat data, the verdict keeps working.
-    logDebug('AWACY index unavailable', e);
-    await cache.set('awacy:index', null, cache.TTL_NEGATIVE);
-    return null;
-  }
+  indexFetch ??= (async () => {
+    try {
+      const body = await fetchExt(AWACY_URL);
+      const parsed: unknown = JSON.parse(body);
+      const index = buildIndex(Array.isArray(parsed) ? parsed : []);
+      await cache.set('awacy:index', index, await cache.ttlResult());
+      return index;
+    } catch (e) {
+      // AWACY down: no anticheat data, the verdict keeps working.
+      logDebug('AWACY index unavailable', e);
+      await cache.set('awacy:index', null, cache.TTL_NEGATIVE);
+      return null;
+    } finally {
+      indexFetch = null;
+    }
+  })();
+  return indexFetch;
 }
 
 /**

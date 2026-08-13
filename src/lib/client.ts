@@ -110,6 +110,14 @@ export function steamCacheKey(appid: string): string {
   return 'steam:en:' + appid;
 }
 
+// One in-flight fetch+parse per cache key: on a cold page several
+// surfaces can miss on the same lookup at once, and each used to
+// download and parse the same HTML for itself. (The worker queue only
+// dedupes the HTTP request — every caller still received and parsed the
+// full body.) steamDetails already dedupes through its queue.
+const inflightSearches = new Map<string, Promise<CwSearchResult[]>>();
+const inflightApps = new Map<string, Promise<CwAppPage | null>>();
+
 /** Searches CodeWeavers by (simplified) game name. */
 export async function search(name: string, swr?: cache.SwrPass): Promise<CwSearchResult[]> {
   const query = baseName(name);
@@ -118,14 +126,21 @@ export async function search(name: string, swr?: cache.SwrPass): Promise<CwSearc
   const cached = await cache.getSwr<CwSearchResult[]>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
-  const html = await fetchExt(searchUrl(query));
-  const results = parseSearchResults(html);
-  await cache.set(
-    cacheKey,
-    results,
-    results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult(),
-  );
-  return results;
+  let flight = inflightSearches.get(cacheKey);
+  if (!flight) {
+    flight = (async () => {
+      const html = await fetchExt(searchUrl(query));
+      const results = parseSearchResults(html);
+      await cache.set(
+        cacheKey,
+        results,
+        results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult(),
+      );
+      return results;
+    })().finally(() => inflightSearches.delete(cacheKey));
+    inflightSearches.set(cacheKey, flight);
+  }
+  return flight;
 }
 
 /** Downloads and parses a CodeWeavers app page by slug. */
@@ -134,10 +149,17 @@ export async function getApp(slug: string, swr?: cache.SwrPass): Promise<CwAppPa
   const cached = await cache.getSwr<CwAppPage | null>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
-  const html = await fetchExt(appUrl(slug));
-  const data = parseAppPage(html);
-  await cache.set(cacheKey, data, data ? await cache.ttlResult() : cache.TTL_NEGATIVE);
-  return data;
+  let flight = inflightApps.get(cacheKey);
+  if (!flight) {
+    flight = (async () => {
+      const html = await fetchExt(appUrl(slug));
+      const data = parseAppPage(html);
+      await cache.set(cacheKey, data, data ? await cache.ttlResult() : cache.TTL_NEGATIVE);
+      return data;
+    })().finally(() => inflightApps.delete(cacheKey));
+    inflightApps.set(cacheKey, flight);
+  }
+  return flight;
 }
 
 // --- Steam appdetails ---

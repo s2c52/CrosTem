@@ -196,7 +196,10 @@ async function cachedQuery(
   const cached = await cache.getSwr<AgwCompat[]>(key, swr);
   if (cached !== undefined) return cached;
   const rows = await cargoQuery(where, limit);
-  await cache.set(key, rows);
+  // Same TTL policy as the lookup path above: the user's cacheTtlDays for
+  // data, the short negative TTL for misses (this call site used to pin
+  // the 7-day fallback regardless of settings).
+  await cache.set(key, rows, rows.length ? await cache.ttlResult() : cache.TTL_NEGATIVE);
   return rows;
 }
 
