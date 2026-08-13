@@ -79,11 +79,25 @@ if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
   });
 }
 
+let inflight: Promise<Settings> | null = null;
+
 export async function getSettings(): Promise<Settings> {
   if (cached) return cached;
-  const obj = await chrome.storage.sync.get(KEY);
-  cached = mergeSettings(obj[KEY]);
-  return cached;
+  // Single-flight: a cold page resolves many badges at once and every
+  // resolution asks for settings; all concurrent callers share one
+  // storage.sync.get instead of issuing one each.
+  inflight ??= chrome.storage.sync.get(KEY).then(
+    (obj) => {
+      cached = mergeSettings(obj[KEY]);
+      inflight = null;
+      return cached;
+    },
+    (e: unknown) => {
+      inflight = null;
+      throw e;
+    },
+  );
+  return inflight;
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {

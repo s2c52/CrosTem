@@ -81,6 +81,14 @@ export const CACHE_QUOTA_SOFT_BYTES = 4 * 1024 * 1024;
 export const CACHE_EVICT_TARGET_BYTES = 3 * 1024 * 1024;
 /** Minimum interval between maintenance runs (sweep + eviction). */
 export const CACHE_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+/** Write-coalescing window: cache.set entries scheduled within it land in
+ * ONE storage.local.set (one quota check, one change event) instead of
+ * 30-90 individual writes on a cold store page. Short enough that a
+ * cross-context reader lags well inside the SWR staleness contract. */
+export const CACHE_WRITE_COALESCE_MS = 150;
+/** Pending entries that force an early flush before the window closes,
+ * bounding both batch size and worst-case loss if the context dies. */
+export const CACHE_WRITE_FLUSH_MAX = 24;
 
 // --- Options import (options.ts) ---
 /** Max matching-correction entries accepted from an imported JSON file.
