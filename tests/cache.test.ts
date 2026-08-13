@@ -223,6 +223,43 @@ describe('maybeDailyMaintenance', () => {
     mock.failLocalSets(5); // stamp write will fail
     await expect(cache.maybeDailyMaintenance()).resolves.toBeUndefined();
   });
+
+  it('una sola pasada barre y evicta con un único snapshot', async () => {
+    const big = 'x'.repeat(600_000);
+    mock.local['cache:dead'] = entry('gone', BEYOND_WINDOW);
+    mock.local['cache:oldest'] = entry(big, 1_500_000);
+    mock.local['cache:middle'] = entry(big, 1_600_000);
+    mock.local['cache:newest'] = entry(big, 1_700_000);
+    mock.setBytesInUse(4_200_000);
+    const before = mock.localGets();
+    await cache.maybeDailyMaintenance();
+    // Stamp read (one batched keyed get) + ONE area snapshot — the old
+    // path read the full area twice (sweep, then eviction).
+    expect(mock.localGets()).toBe(before + 2);
+    expect(mock.local['cache:dead']).toBeUndefined(); // swept
+    expect(mock.local['cache:oldest']).toBeUndefined(); // evicted
+    expect(mock.local['cache:middle']).toBeUndefined(); // evicted
+    expect(mock.local['cache:newest']).toBeDefined(); // survives
+  });
+});
+
+describe('storageKeys', () => {
+  it('usa getKeys cuando existe y no materializa valores', async () => {
+    mock.local['cache:a'] = entry('x', 2_000_000);
+    mock.local['choice:cw:1'] = 'slug';
+    const before = mock.localGets();
+    expect(await cache.storageKeys('cache:')).toEqual(['cache:a']);
+    expect(mock.localGets()).toBe(before); // no get(null)
+  });
+
+  it('sin getKeys cae al get(null) con el mismo resultado', async () => {
+    delete (chrome.storage.local as { getKeys?: unknown }).getKeys;
+    mock.local['cache:a'] = entry('x', 2_000_000);
+    mock.local['choice:cw:1'] = 'slug';
+    const before = mock.localGets();
+    expect(await cache.storageKeys('cache:')).toEqual(['cache:a']);
+    expect(mock.localGets()).toBe(before + 1);
+  });
 });
 
 describe('quota en set', () => {

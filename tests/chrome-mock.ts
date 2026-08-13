@@ -107,6 +107,8 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
         return Promise.resolve();
       },
       getBytesInUse: () => Promise.resolve(bytesInUse),
+      // Chrome 130+ API; tests can `delete` it to exercise fallbacks.
+      getKeys: () => Promise.resolve(Object.keys(store)),
     };
   }
 
