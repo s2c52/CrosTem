@@ -67,4 +67,30 @@ describe('watchSurface', () => {
     expect(c.start).toHaveBeenCalledTimes(1);
     expect(c.stop).not.toHaveBeenCalled();
   });
+
+  it('el disposer desmonta y desuscribe del onChanged', async () => {
+    const c = makeController();
+    const { watchSurface } = await import('../src/lib/surface');
+    const dispose = await watchSurface('search', c);
+    expect(c.start).toHaveBeenCalledTimes(1);
+
+    dispose();
+    expect(c.stop).toHaveBeenCalledTimes(1);
+
+    // The listener is gone: settings changes no longer reach the surface.
+    emitSettings({ search: true });
+    emitSettings({ search: false });
+    expect(c.start).toHaveBeenCalledTimes(1);
+    expect(c.stop).toHaveBeenCalledTimes(1);
+  });
+
+  it('el disposer sobre una superficie no montada es un no-op', async () => {
+    mock.sync['settings'] = { surfaces: { search: false } };
+    const c = makeController();
+    const { watchSurface } = await import('../src/lib/surface');
+    const dispose = await watchSurface('search', c);
+    dispose();
+    expect(c.start).not.toHaveBeenCalled();
+    expect(c.stop).not.toHaveBeenCalled();
+  });
 });

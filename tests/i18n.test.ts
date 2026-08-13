@@ -115,6 +115,30 @@ describe('initI18n + t', () => {
     expect(currentLocale()).toBe('en');
   });
 
+  it('llamadas concurrentes del mismo idioma comparten un fetch+compile', async () => {
+    stubExtension();
+    let fetches = 0;
+    const plainFetch = globalThis.fetch;
+    vi.stubGlobal('fetch', (url: string) => {
+      fetches++;
+      return plainFetch(url);
+    });
+    await Promise.all([initI18n('es'), initI18n('es')]);
+    expect(currentLocale()).toBe('es');
+    expect(t('widgetTitle')).toBe('¿Corre en Mac?');
+    expect(fetches).toBe(1);
+    // Settled calls are NOT memoized: a new request loads again.
+    await initI18n('es');
+    expect(fetches).toBe(2);
+  });
+
+  it('llamadas concurrentes de idiomas distintos no se mezclan', async () => {
+    stubExtension();
+    await Promise.all([initI18n('es'), initI18n('en')]);
+    // Last writer wins on the module dict; both requests completed.
+    expect(['en', 'es']).toContain(currentLocale());
+  });
+
   it('normaliza el idioma pedido (zh-cn de community)', async () => {
     stubExtension();
     await initI18n('zh-cn');

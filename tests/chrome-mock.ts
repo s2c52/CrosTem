@@ -124,7 +124,13 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
     storage: {
       local: makeArea(local, 'local'),
       sync: makeArea(sync, 'sync'),
-      onChanged: { addListener: (l: StorageListener) => void storageListeners.push(l) },
+      onChanged: {
+        addListener: (l: StorageListener) => void storageListeners.push(l),
+        removeListener: (l: StorageListener) => {
+          const at = storageListeners.indexOf(l);
+          if (at >= 0) storageListeners.splice(at, 1);
+        },
+      },
     },
   });
 

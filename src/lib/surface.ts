@@ -13,10 +13,15 @@ export interface SurfaceController {
   stop(): void;
 }
 
+/** Resolves to a disposer: unsubscribes from settings changes and
+ * unmounts the surface. Extension content scripts live as long as their
+ * page and may ignore it; embedders that tear surfaces down (the desktop
+ * shim declares onChanged.removeListener too) use it to avoid leaking
+ * one listener per mount. */
 export async function watchSurface(
   key: keyof Settings['surfaces'],
   surface: SurfaceController,
-): Promise<void> {
+): Promise<() => void> {
   let mounted = false;
   const apply = (enabled: boolean): void => {
     if (enabled === mounted) return;
@@ -24,12 +29,22 @@ export async function watchSurface(
     if (enabled) surface.start();
     else surface.stop();
   };
+  const onChange = (
+    changes: Record<string, { oldValue?: unknown; newValue?: unknown }>,
+    area: string,
+  ): void => {
+    if (area !== 'sync' || !(SETTINGS_KEY in changes)) return;
+    apply(mergeSettings(changes[SETTINGS_KEY]?.newValue).surfaces[key]);
+  };
   // Listener first so a change arriving during the initial read wins.
   if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
-    chrome.storage.onChanged.addListener((changes, area) => {
-      if (area !== 'sync' || !(SETTINGS_KEY in changes)) return;
-      apply(mergeSettings(changes[SETTINGS_KEY]?.newValue).surfaces[key]);
-    });
+    chrome.storage.onChanged.addListener(onChange);
   }
   apply((await getSettings()).surfaces[key]);
+  return () => {
+    if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
+      chrome.storage.onChanged.removeListener(onChange);
+    }
+    apply(false);
+  };
 }
