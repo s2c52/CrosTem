@@ -12,6 +12,8 @@ import {
   CACHE_QUOTA_SOFT_BYTES,
   CACHE_STALE_WINDOW_MS,
   CACHE_SWEEP_INTERVAL_MS,
+  CACHE_WRITE_COALESCE_MS,
+  CACHE_WRITE_FLUSH_MAX,
 } from './constants';
 import { logDebug } from './log';
 import { getSettings } from './settings';
@@ -39,19 +41,104 @@ interface CacheEntry<T> {
 // chrome.storage.local.remove that never goes through this module.
 const l1 = new Map<string, CacheEntry<unknown>>();
 
+// Own-write ledger: with writes coalesced (below), one storage.set fires a
+// single onChanged carrying every key of the batch — in this context too.
+// Evicting on our own echo would guarantee an L1 miss right after every
+// write, so the flush records `expires` per key and the listener keeps the
+// entry when the incoming value matches. `expires` is minted here at set()
+// time; a foreign write echoing the identical millisecond would carry data
+// exactly as fresh, so keeping ours is safe. Capped because the desktop
+// shim never echoes cache writes back (consume-on-event never runs there).
+const OWN_WRITE_LEDGER_MAX = 512;
+const ownWrites = new Map<string, number>();
+
+function recordOwnWrite(storageKey: string, expires: number): void {
+  ownWrites.delete(storageKey);
+  ownWrites.set(storageKey, expires);
+  if (ownWrites.size > OWN_WRITE_LEDGER_MAX) {
+    const oldest = ownWrites.keys().next().value;
+    if (oldest !== undefined) ownWrites.delete(oldest);
+  }
+}
+
 if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
-    // Drop on every change (own writes included): the next get simply
-    // repopulates. Cheaper to reason about than diffing newValue.
     for (const k of Object.keys(changes)) {
-      if (k.startsWith('cache:')) l1.delete(k);
+      if (!k.startsWith('cache:')) continue;
+      const own = ownWrites.get(k);
+      const incoming = changes[k]?.newValue as Partial<CacheEntry<unknown>> | undefined;
+      if (own !== undefined && incoming?.expires === own) {
+        // Our own flushed write echoing back: L1 already holds exactly
+        // this entry; evicting would send the next read to storage.
+        ownWrites.delete(k);
+        continue;
+      }
+      // Foreign write or removal (no newValue): drop the L1 copy AND any
+      // pending write of ours, so a late flush cannot overwrite fresher
+      // foreign data or resurrect an entry the user just cleared.
+      l1.delete(k);
+      pendingWrites?.items.delete(k);
     }
   });
 }
 
+interface GetWaiter {
+  keys: string[];
+  resolve: (value: Record<string, unknown>) => void;
+  reject: (error: unknown) => void;
+}
+
+interface GetBatch {
+  keys: Set<string>;
+  waiters: GetWaiter[];
+}
+
+let pendingGet: GetBatch | null = null;
+
+// Coalesce keyed gets landing in the same microtask window into ONE
+// storage.local.get. A screenful of badges released by the observer fires
+// dozens of near-simultaneous reads (cache probes, correction lookups);
+// the burst is synchronous, so a microtask flush catches all of it with no
+// added latency. Whole-area gets (null) stay unbatched: merging them would
+// answer keyed callers with the entire area.
+function batchedLocalGet(keys: string[]): Promise<Record<string, unknown>> {
+  return new Promise((resolve, reject) => {
+    let batch = pendingGet;
+    if (!batch) {
+      const opened: GetBatch = { keys: new Set(), waiters: [] };
+      batch = opened;
+      pendingGet = opened;
+      // Pinned like WriteBatch.area: the flush must hit the storage the
+      // callers saw, even if the global changes underneath (tests).
+      const area = chrome.storage.local;
+      queueMicrotask(() => {
+        pendingGet = null;
+        area.get([...opened.keys]).then(
+          (all) => {
+            for (const waiter of opened.waiters) {
+              // Slice per caller, present keys only — chrome.storage.get
+              // omits keys that do not exist.
+              const out: Record<string, unknown> = {};
+              for (const key of waiter.keys) {
+                if (key in all) out[key] = all[key];
+              }
+              waiter.resolve(out);
+            }
+          },
+          (error: unknown) => {
+            for (const waiter of opened.waiters) waiter.reject(error);
+          },
+        );
+      });
+    }
+    for (const key of keys) batch.keys.add(key);
+    batch.waiters.push({ keys, resolve, reject });
+  });
+}
+
 async function storageGet<T>(key: string): Promise<T | undefined> {
-  const obj = await chrome.storage.local.get(key);
+  const obj = await batchedLocalGet([key]);
   return obj[key] as T | undefined;
 }
 
@@ -101,29 +188,88 @@ export async function getSwr<T>(key: string, swr?: SwrPass): Promise<T | undefin
   return undefined;
 }
 
-export async function set<T>(key: string, value: T, ttlMs: number = TTL_RESULT): Promise<void> {
-  const storageKey = 'cache:' + key;
-  const entry: CacheEntry<T> = { value, expires: Date.now() + ttlMs };
-  // The value is valid for this context even if persisting fails below.
-  l1.set(storageKey, entry);
+interface WriteBatch {
+  items: Map<string, CacheEntry<unknown>>;
+  // Pinned at scheduling time so the flush always lands on the storage
+  // the writer saw, even if the global changes underneath (tests).
+  area: typeof chrome.storage.local;
+}
+
+let pendingWrites: WriteBatch | null = null;
+let writeTimer: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleWrite(storageKey: string, entry: CacheEntry<unknown>): void {
+  let batch = pendingWrites;
+  if (!batch) {
+    batch = { items: new Map(), area: chrome.storage.local };
+    pendingWrites = batch;
+  }
+  batch.items.set(storageKey, entry);
+  if (batch.items.size >= CACHE_WRITE_FLUSH_MAX) {
+    void flushWrites();
+  } else if (writeTimer === null) {
+    writeTimer = setTimeout(() => {
+      writeTimer = null;
+      void flushWrites();
+    }, CACHE_WRITE_COALESCE_MS);
+  }
+}
+
+async function flushWrites(): Promise<void> {
+  if (writeTimer !== null) {
+    clearTimeout(writeTimer);
+    writeTimer = null;
+  }
+  const batch = pendingWrites;
+  pendingWrites = null;
+  if (!batch || batch.items.size === 0) return;
+  const items: Record<string, CacheEntry<unknown>> = {};
+  for (const [k, v] of batch.items) {
+    items[k] = v;
+    recordOwnWrite(k, v.expires);
+  }
   try {
-    await chrome.storage.local.set({ [storageKey]: entry });
+    await batch.area.set(items);
   } catch (e) {
-    // Quota exceeded: make room once and retry; if it still fails the
-    // extension just runs uncached (every caller tolerates misses).
-    await sweepExpired();
+    // Quota exceeded: make room once and retry the whole batch; if it
+    // still fails the extension just runs uncached for these entries
+    // (they survive in L1 and every caller tolerates misses).
     try {
-      await chrome.storage.local.set({ [storageKey]: entry });
+      await sweepExpired();
+      await batch.area.set(items);
     } catch {
-      logDebug('cache.set skipped (quota)', e);
+      logDebug('cache flush skipped (quota)', e);
+      for (const [k, v] of batch.items) {
+        if (ownWrites.get(k) === v.expires) ownWrites.delete(k);
+      }
     }
   }
 }
 
+export async function set<T>(key: string, value: T, ttlMs: number = TTL_RESULT): Promise<void> {
+  const storageKey = 'cache:' + key;
+  const entry: CacheEntry<T> = { value, expires: Date.now() + ttlMs };
+  // The value is valid for this context even if persisting fails later.
+  l1.set(storageKey, entry);
+  // Persistence is coalesced (see WriteBatch). Resolving at schedule time
+  // keeps resolution paths — which await set() — off the flush window;
+  // cross-context readers lag by at most that window, well inside the SWR
+  // staleness contract.
+  scheduleWrite(storageKey, entry);
+}
+
 /** Invalidates specific entries (widget refresh button). */
 export async function remove(...keys: string[]): Promise<void> {
-  for (const k of keys) l1.delete('cache:' + k);
-  await chrome.storage.local.remove(keys.map((k) => 'cache:' + k));
+  const storageKeys = keys.map((k) => 'cache:' + k);
+  for (const k of storageKeys) {
+    l1.delete(k);
+    // A pending write must not outlive the removal: a late flush would
+    // resurrect the entry this caller just invalidated (widget refresh
+    // is remove -> re-resolve).
+    pendingWrites?.items.delete(k);
+    ownWrites.delete(k);
+  }
+  await chrome.storage.local.remove(storageKeys);
 }
 
 /** Removes every cache entry past its stale window (or malformed).

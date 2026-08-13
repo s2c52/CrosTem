@@ -30,6 +30,10 @@ export interface ChromeMock {
   messageListener(): MessageListener;
   /** Calls made to storage.local.get so far (cache-hit assertions). */
   localGets(): number;
+  /** Calls made to storage.local.set so far (write-coalescing assertions). */
+  localSets(): number;
+  /** Calls made to storage.sync.get so far (single-flight assertions). */
+  syncGets(): number;
   /** Value returned by storage.local.getBytesInUse. */
   setBytesInUse(bytes: number): void;
   /** Makes the next `count` storage.local.set calls reject (quota tests). */
@@ -43,6 +47,8 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
   const sync = init.sync ?? {};
   let bytesInUse = 0;
   let localGetCalls = 0;
+  let localSetCalls = 0;
+  let syncGetCalls = 0;
   let failingSets = 0;
   let sendMessageHandler: (msg: unknown) => unknown = () => ({
     ok: false,
@@ -61,22 +67,43 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
     return out;
   }
 
-  function makeArea(store: Store, countGets: boolean) {
+  function makeArea(store: Store, area: 'local' | 'sync') {
+    const emit = (changes: StorageChanges) => {
+      if (Object.keys(changes).length > 0) storageListeners.forEach((l) => l(changes, area));
+    };
     return {
       get: (keys?: string | string[] | null) => {
-        if (countGets) localGetCalls++;
+        if (area === 'local') localGetCalls++;
+        else syncGetCalls++;
         return Promise.resolve(read(store, keys));
       },
+      // Like real Chrome, set/remove fire onChanged in every context —
+      // including the writer's own (own-write handling gets exercised).
       set: (items: Store) => {
-        if (countGets && failingSets > 0) {
-          failingSets--;
-          return Promise.reject(new Error('QUOTA_BYTES quota exceeded'));
+        if (area === 'local') {
+          localSetCalls++;
+          if (failingSets > 0) {
+            failingSets--;
+            return Promise.reject(new Error('QUOTA_BYTES quota exceeded'));
+          }
+        }
+        const changes: StorageChanges = {};
+        for (const [k, v] of Object.entries(items)) {
+          changes[k] = k in store ? { oldValue: store[k], newValue: v } : { newValue: v };
         }
         Object.assign(store, items);
+        emit(changes);
         return Promise.resolve();
       },
       remove: (keys: string | string[]) => {
-        for (const k of typeof keys === 'string' ? [keys] : keys) delete store[k];
+        const changes: StorageChanges = {};
+        for (const k of typeof keys === 'string' ? [keys] : keys) {
+          if (k in store) {
+            changes[k] = { oldValue: store[k] };
+            delete store[k];
+          }
+        }
+        emit(changes);
         return Promise.resolve();
       },
       getBytesInUse: () => Promise.resolve(bytesInUse),
@@ -93,8 +120,8 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
     },
     tabs: { create: () => Promise.resolve() },
     storage: {
-      local: makeArea(local, true),
-      sync: makeArea(sync, false),
+      local: makeArea(local, 'local'),
+      sync: makeArea(sync, 'sync'),
       onChanged: { addListener: (l: StorageListener) => void storageListeners.push(l) },
     },
   });
@@ -109,6 +136,8 @@ export function stubChrome(init: { local?: Store; sync?: Store } = {}): ChromeMo
       return listener;
     },
     localGets: () => localGetCalls,
+    localSets: () => localSetCalls,
+    syncGets: () => syncGetCalls,
     setBytesInUse: (bytes) => {
       bytesInUse = bytes;
     },

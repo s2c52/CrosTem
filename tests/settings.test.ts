@@ -1,8 +1,9 @@
 // Copyright (C) 2026 Sacha Gennari
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULTS, mergeSettings } from '../src/lib/settings';
+import { stubChrome, type ChromeMock } from './chrome-mock';
 
 describe('mergeSettings', () => {
   it('sin nada guardado devuelve los defaults', () => {
@@ -43,5 +44,36 @@ describe('mergeSettings', () => {
     expect(mergeSettings({ cacheTtlDays: 0 }).cacheTtlDays).toBe(DEFAULTS.cacheTtlDays);
     expect(mergeSettings({ cacheTtlDays: 99 }).cacheTtlDays).toBe(30);
     expect(mergeSettings({ cacheTtlDays: '7' }).cacheTtlDays).toBe(DEFAULTS.cacheTtlDays);
+  });
+});
+
+describe('getSettings', () => {
+  let mock: ChromeMock;
+
+  beforeEach(() => {
+    vi.resetModules(); // fresh module: the settings memo is module state
+    mock = stubChrome({ sync: { settings: { cacheTtlDays: 3 } } });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('single-flight: llamadas concurrentes en frío comparten un sync.get', async () => {
+    const settings = await import('../src/lib/settings');
+    const [a, b] = await Promise.all([settings.getSettings(), settings.getSettings()]);
+    expect(a.cacheTtlDays).toBe(3);
+    expect(b).toBe(a); // both callers got the same memoized object
+    expect(mock.syncGets()).toBe(1);
+  });
+
+  it('un fallo del get limpia el vuelo y la siguiente llamada reintenta', async () => {
+    const settings = await import('../src/lib/settings');
+    const failing = vi
+      .spyOn(chrome.storage.sync, 'get')
+      .mockRejectedValueOnce(new Error('storage down'));
+    await expect(settings.getSettings()).rejects.toThrow('storage down');
+    failing.mockRestore();
+    expect((await settings.getSettings()).cacheTtlDays).toBe(3);
   });
 });
