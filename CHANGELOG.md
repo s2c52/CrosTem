@@ -4,9 +4,23 @@ All notable changes to CrosTem are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Added
+
+- Badges paint instantly on pages you have visited before: resolutions feed a compact per-game verdict index (`verdict:index`, a few bytes per game), and list surfaces paint the remembered color the moment a tile appears, refining it in place when the live resolution lands. Unknown or failed outcomes are never primed — an appearing dot reads as an answer arriving, a gray dot flipping color would read as a wrong answer corrected — and a resolution that comes back empty un-primes the game. "Clear cached results" in the options resets the index too.
+
 ### Changed
 
 - The AreWeAntiCheatYet index is cached in a compact form: 315 KB down to 165 KB for the current dataset. It is keyed by appid, by name and by edition-stripped name, and JSON has no shared references — so an entry reachable all three ways was written to storage three times. The maps now hold positions into a single list. Every page that consults anticheat data reads that index, so this is a saving on each of them, not just on disk. Indexes cached by earlier versions are refetched once.
+- Cache writes coalesce: entries produced within a 150 ms window land in ONE `storage.local.set` (one quota check, one change event) instead of the 30–90 individual writes a cold store page used to fire, and same-tick cache reads share one `storage.local.get`. The in-memory L1 no longer evicts itself on its own writes (every write used to guarantee a miss on the next read of that key), and a removal or a foreign write drops any still-pending write so nothing cleared can be resurrected by a late flush.
+- The cache counters in the popup and options list key names via `getKeys` (Chrome 130+, with the old full-read fallback) instead of materializing the whole multi-megabyte store to count entries, and the daily maintenance sweeps and evicts from one storage snapshot instead of two consecutive full reads.
+- The AreWeAntiCheatYet download is single-flight: concurrent cold badges share one ~460 KB fetch, one parse and one index write instead of one each. CodeWeavers search and app-page lookups dedupe the same way, settings reads share one `storage.sync` round-trip, and the locale dictionary is fetched and compiled once when several surfaces initialize together on the same page.
+- Name matching hoists its constant edition-suffix table: `baseName` no longer re-normalizes all 16 qualifiers on every call (it runs per badge and twice per game while indexing the anticheat dataset).
+- Capsule overlays: the hover-card migration pass now runs only when a mutation actually touches hover-card markup, and the covered-overlay suppression reads all geometry before toggling any class and skips repeated passes over an unmoved card — pointer movement near a 100-capsule page stops forcing layout per overlay.
+- Search results reuse the shared incremental scanner: only newly added rows are scanned (the old observer re-queried every row of the growing container and woke itself on our own badge insertions).
+- Turning a surface off mid-resolution now cancels the in-flight work: the game-page widget no longer keeps resolving into its detached container after the toggle.
+- Library scans decide their politeness spacing by whether a resolution actually dispatched a fetch, not by how fast it finished — a fast CDN answer no longer skips the spacing, and warm cached rescans no longer pay it.
+- AppleGamingWiki page lookups now honor the "Cache results" days setting (they were pinned to the 7-day default).
+- The release zip no longer ships source maps (they were ~40% of the package and every `.js.map` was listed as a web-accessible resource — stable fingerprinting URLs). Development builds keep maps, and any tagged release can be rebuilt locally with them to diagnose a report.
 
 ## [1.3.0] — 2026-07-28
 
