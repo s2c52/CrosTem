@@ -10,6 +10,7 @@ import { type SwrPass } from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
 import { logDebug, logWarn } from '../lib/log';
 import { initContentI18n, t } from '../lib/i18n';
+import { codeForLevel, notePrimed } from '../lib/primed';
 import { resolveGame } from '../lib/resolve';
 import { getSettings } from '../lib/settings';
 import { watchSurface } from '../lib/surface';
@@ -151,11 +152,14 @@ if (appidFromPath && nameFromDom) {
       const swr: SwrPass = { staleServed: false };
       const first = await resolveGame(gameName, appid, { forcePicker, swr });
       await renderResolution(first, resolveAll);
+      // Feed the primed index so list surfaces paint this game instantly.
+      notePrimed(appid, codeForLevel(first.verdict));
       if (swr.staleServed && first.cw.kind !== 'ambiguous') {
         const fresh = await resolveGame(gameName, appid, { forcePicker });
         if (fresh.cw.kind !== 'ambiguous' && JSON.stringify(fresh) !== JSON.stringify(first)) {
           await renderResolution(fresh, resolveAll);
         }
+        notePrimed(appid, codeForLevel(fresh.verdict));
       }
     } catch (e) {
       // Friendly, localized message; the technical detail goes to the console.
@@ -169,6 +173,7 @@ if (appidFromPath && nameFromDom) {
       if (!mount()) return;
       if (isNativeMac()) {
         // Immediate badge; the architecture (M Series / Intel) arrives async.
+        notePrimed(appid, 'n');
         show(renderNativeBadge());
         void resolveNativeArch(gameName, appid)
           .then((arch) => {
