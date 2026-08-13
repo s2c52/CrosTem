@@ -272,35 +272,28 @@ export async function remove(...keys: string[]): Promise<void> {
   await chrome.storage.local.remove(storageKeys);
 }
 
-/** Removes every cache entry past its stale window (or malformed).
- * Entries merely past their TTL stay: they are SWR fodder. Returns the
- * count of removed entries. */
-export async function sweepExpired(): Promise<number> {
-  const all = await chrome.storage.local.get(null);
-  const now = Date.now();
-  const stale = Object.entries(all)
+/** Cache keys past their stale window (or malformed) in a snapshot. */
+function staleKeysIn(all: Record<string, unknown>, now: number): string[] {
+  return Object.entries(all)
     .filter(([k, v]) => {
       if (!k.startsWith('cache:')) return false;
       const expires = (v as Partial<CacheEntry<unknown>> | null)?.expires;
       return typeof expires !== 'number' || now > expires + CACHE_STALE_WINDOW_MS;
     })
     .map(([k]) => k);
-  if (stale.length > 0) {
-    for (const k of stale) l1.delete(k);
-    await chrome.storage.local.remove(stale);
-  }
-  return stale.length;
 }
 
-/** When usage exceeds the soft limit, evicts cache entries until the
- * estimated usage drops to the target. Soonest-to-expire go first:
- * `expires` doubles as an age proxy (short-TTL negatives fall before
- * month-long Steam entries), avoiding a schema change to track creation
- * time. Returns the number of evicted entries. */
-export async function enforceQuotaSoftLimit(): Promise<number> {
-  const used = await chrome.storage.local.getBytesInUse(null);
-  if (used <= CACHE_QUOTA_SOFT_BYTES) return 0;
-  const all = await chrome.storage.local.get(null);
+/** Estimate of what an entry costs in the quota (chrome counts key +
+ * JSON of the value); avoids calling getBytesInUse in a loop. */
+function entryBytes(key: string, value: unknown): number {
+  return key.length + JSON.stringify(value).length;
+}
+
+/** Cache keys to evict from a snapshot so `used` drops to the target.
+ * Soonest-to-expire go first: `expires` doubles as an age proxy
+ * (short-TTL negatives fall before month-long Steam entries), avoiding
+ * a schema change to track creation time. */
+function evictionKeysIn(all: Record<string, unknown>, used: number): string[] {
   const entries = Object.entries(all)
     .filter(([k]) => k.startsWith('cache:'))
     .map(([k, v]) => {
@@ -308,9 +301,7 @@ export async function enforceQuotaSoftLimit(): Promise<number> {
       return {
         key: k,
         expires: typeof expires === 'number' ? expires : 0,
-        // Estimate (chrome counts key + JSON of the value) so we do not
-        // call getBytesInUse in a loop.
-        bytes: k.length + JSON.stringify(v).length,
+        bytes: entryBytes(k, v),
       };
     })
     .sort((a, b) => a.expires - b.expires);
@@ -321,6 +312,30 @@ export async function enforceQuotaSoftLimit(): Promise<number> {
     doomed.push(e.key);
     freed += e.bytes;
   }
+  return doomed;
+}
+
+/** Removes every cache entry past its stale window (or malformed).
+ * Entries merely past their TTL stay: they are SWR fodder. Returns the
+ * count of removed entries. */
+export async function sweepExpired(): Promise<number> {
+  const all = await chrome.storage.local.get(null);
+  const stale = staleKeysIn(all, Date.now());
+  if (stale.length > 0) {
+    for (const k of stale) l1.delete(k);
+    await chrome.storage.local.remove(stale);
+  }
+  return stale.length;
+}
+
+/** When usage exceeds the soft limit, evicts cache entries until the
+ * estimated usage drops to the target. Returns the number of evicted
+ * entries. */
+export async function enforceQuotaSoftLimit(): Promise<number> {
+  const used = await chrome.storage.local.getBytesInUse(null);
+  if (used <= CACHE_QUOTA_SOFT_BYTES) return 0;
+  const all = await chrome.storage.local.get(null);
+  const doomed = evictionKeysIn(all, used);
   if (doomed.length > 0) {
     for (const k of doomed) l1.delete(k);
     await chrome.storage.local.remove(doomed);
@@ -343,9 +358,30 @@ export async function maybeDailyMaintenance(): Promise<void> {
     // Stamp before working: a second near-simultaneous worker start
     // should skip (the work itself is idempotent either way).
     await chrome.storage.local.set({ [SWEEP_STAMP_KEY]: now });
-    const swept = await sweepExpired();
-    const evicted = await enforceQuotaSoftLimit();
-    if (swept > 0 || evicted > 0) logDebug('cache maintenance', { swept, evicted });
+    // One area snapshot serves sweep AND eviction. The standalone
+    // helpers each read the whole area; running them back to back paid
+    // that twice on a multi-MB store.
+    const used = await chrome.storage.local.getBytesInUse(null);
+    const all = await chrome.storage.local.get(null);
+    const stale = staleKeysIn(all, now);
+    let doomed = stale;
+    if (used > CACHE_QUOTA_SOFT_BYTES) {
+      // The sweep already frees bytes; evict only what is still needed
+      // to reach the target, judged over the surviving entries.
+      const staleSet = new Set(stale);
+      let usedAfterSweep = used;
+      const surviving: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(all)) {
+        if (staleSet.has(k)) usedAfterSweep -= entryBytes(k, v);
+        else surviving[k] = v;
+      }
+      doomed = stale.concat(evictionKeysIn(surviving, usedAfterSweep));
+    }
+    if (doomed.length > 0) {
+      for (const k of doomed) l1.delete(k);
+      await chrome.storage.local.remove(doomed);
+      logDebug('cache maintenance', { swept: stale.length, evicted: doomed.length - stale.length });
+    }
   } catch (e) {
     logDebug('cache maintenance failed', e);
   }
@@ -353,6 +389,15 @@ export async function maybeDailyMaintenance(): Promise<void> {
 
 /** Keys in chrome.storage.local starting with the given prefix. */
 export async function storageKeys(prefix: string): Promise<string[]> {
+  // getKeys (Chrome 130+) lists names without materializing values; the
+  // popup/options counters otherwise deserialize a multi-MB warm cache
+  // to produce an integer. Feature-detected at runtime: older Chrome and
+  // the desktop shim take the get(null) fallback.
+  const area: { getKeys?: () => Promise<string[]> } = chrome.storage.local;
+  if (typeof area.getKeys === 'function') {
+    const keys = await area.getKeys();
+    return keys.filter((k) => k.startsWith(prefix));
+  }
   const all = await chrome.storage.local.get(null);
   return Object.keys(all).filter((k) => k.startsWith(prefix));
 }
