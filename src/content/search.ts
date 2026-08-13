@@ -5,10 +5,12 @@
 // (loads when the row becomes visible, via the lib/auto observer).
 import { attach, detach } from '../lib/auto';
 import { SCAN_DEBOUNCE_MS } from '../lib/constants';
-import { coalesce } from '../lib/debounce';
 import { initContentI18n } from '../lib/i18n';
+import { createIncrementalScanner } from '../lib/scan';
 import { watchSurface } from '../lib/surface';
 import '../styles.css';
+
+const ROW_SEL = 'a.search_result_row';
 
 function processRow(row: HTMLElement): void {
   if (row.dataset.crostem) return;
@@ -32,32 +34,47 @@ function processRow(row: HTMLElement): void {
   });
 }
 
-function scan(root: ParentNode = document): void {
-  root.querySelectorAll<HTMLElement>('a.search_result_row').forEach(processRow);
+/** AJAX pagination appends row batches inside this container. */
+function resultsRoot(): HTMLElement {
+  return (
+    document.getElementById('search_resultsRows') ??
+    document.getElementById('search_results') ??
+    document.body
+  );
 }
 
-let observer: MutationObserver | null = null;
+/** roots = null means a full pass (initial scan / batch overflow). */
+function scan(roots: readonly Element[] | null): void {
+  if (roots === null) {
+    resultsRoot().querySelectorAll<HTMLElement>(ROW_SEL).forEach(processRow);
+    return;
+  }
+  // Incremental: only the added subtrees are queried, instead of the old
+  // re-querySelectorAll over the ever-growing results container. The
+  // shared scanner also filters our own badge churn (renderBadge appends
+  // children inside .crostem-badge), which used to re-arm the observer on
+  // every paint.
+  for (const root of roots) {
+    if (root instanceof HTMLElement && root.matches(ROW_SEL)) processRow(root);
+    root.querySelectorAll<HTMLElement>(ROW_SEL).forEach(processRow);
+  }
+}
+
+const scanner = createIncrementalScanner(scan, SCAN_DEBOUNCE_MS);
 
 const surface = {
   start(): void {
-    scan();
-    // Steam loads more rows via AJAX (infinite scroll / pagination);
-    // rescans are coalesced — the row dataset guard keeps them idempotent.
-    const resultsContainer =
-      document.getElementById('search_resultsRows') ??
-      document.getElementById('search_results') ??
-      document.body;
-    observer = new MutationObserver(coalesce(() => scan(resultsContainer), SCAN_DEBOUNCE_MS));
-    observer.observe(resultsContainer, { childList: true, subtree: true });
+    // Observing the results container (not body) keeps unrelated page
+    // churn away from the scanner; start() runs the initial full pass.
+    scanner.start(resultsRoot());
   },
   stop(): void {
-    observer?.disconnect();
-    observer = null;
+    scanner.stop();
     document.querySelectorAll<HTMLElement>('.crostem-badge').forEach((badge) => {
       detach(badge);
       badge.remove();
     });
-    document.querySelectorAll<HTMLElement>('a.search_result_row[data-crostem]').forEach((row) => {
+    document.querySelectorAll<HTMLElement>(`${ROW_SEL}[data-crostem]`).forEach((row) => {
       delete row.dataset.crostem;
     });
   },
