@@ -62,6 +62,20 @@ function sendFetchMessage(url: string): Promise<string> {
 // reset the worker-side breaker.
 const failMemo = new Map<string, number>();
 
+// Context-wide count of fetches actually dispatched. bulk.ts snapshots
+// it around a resolution to learn whether the game touched the network —
+// replacing a wall-clock proxy that inverted under real conditions (a
+// fast CDN answer skipped the politeness spacing; warm cache reads on a
+// loaded machine paid it). Cooldown-memo early-throws and a locally-open
+// breaker do not count: nothing was dispatched. Attribution under
+// concurrency errs conservative — a neighbour's fetch keeps my spacing,
+// never skips it.
+let netFetches = 0;
+
+export function fetchCount(): number {
+  return netFetches;
+}
+
 /** Fetch of an external resource through the service worker (avoids CORS).
  * Retries once on transport failures: the worker may have just been
  * restarted by MV3 (its queue state is ephemeral by design). */
@@ -70,6 +84,7 @@ export async function fetchExt(url: string): Promise<string> {
   if (cooldownUntil !== undefined && Date.now() < cooldownUntil) {
     throw new Error('recently failed, cooling down: ' + url);
   }
+  netFetches++;
   try {
     let body: string;
     try {
@@ -227,6 +242,7 @@ async function fetchSteamBody(url: string): Promise<string> {
   if (!steamBreaker.allow(STEAM_ORIGIN)) {
     throw new Error('steam appdetails circuit open');
   }
+  netFetches++;
   const out = await fetchWithPolicy(url, {
     timeoutMs: sourceTimeoutMs(url),
     credentials: 'same-origin',

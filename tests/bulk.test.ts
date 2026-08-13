@@ -15,9 +15,13 @@ import { getSettings } from '../src/lib/settings';
 import type { Settings } from '../src/lib/settings';
 import type { AgwCompat, SteamDetails } from '../src/types';
 
+// Stands in for client.ts's dispatched-fetch counter: source mocks that
+// simulate a network hit bump it; cache-served mocks leave it alone.
+const net = vi.hoisted(() => ({ fetches: 0 }));
+
 vi.mock('../src/lib/client', () => {
   class BreakerOpenError extends Error {}
-  return { BreakerOpenError, steamDetails: vi.fn() };
+  return { BreakerOpenError, steamDetails: vi.fn(), fetchCount: () => net.fetches };
 });
 vi.mock('../src/lib/cw', () => ({ resolveCw: vi.fn() }));
 vi.mock('../src/lib/agw', () => ({ agwLookup: vi.fn() }));
@@ -54,6 +58,7 @@ const agwBroken: AgwCompat = {
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
+  net.fetches = 0;
   settingsMock.mockResolvedValue(ALL_ON);
   steam.mockResolvedValue(null);
   cw.mockResolvedValue({ kind: 'none' });
@@ -146,6 +151,7 @@ describe('resolveMany', () => {
     const starts: number[] = [];
     steam.mockImplementation(() => {
       starts.push(Date.now() - t0);
+      net.fetches++; // this lookup dispatched a real fetch
       return new Promise((resolve) => setTimeout(() => resolve(null), 300));
     });
     const promise = resolveMany(['1', '2', '3'].map((id) => game(id)), {
@@ -157,12 +163,12 @@ describe('resolveMany', () => {
     expect(starts).toEqual([0, 1_500, 3_000]);
   });
 
-  it('skips the spacing for games served from cache', async () => {
+  it('skips the spacing for games served from cache (no fetch dispatched)', async () => {
     const t0 = Date.now();
     const starts: number[] = [];
     steam.mockImplementation((appid) => {
       starts.push(Date.now() - t0);
-      return Promise.resolve({ name: `N${appid}`, mac: true });
+      return Promise.resolve({ name: `N${appid}`, mac: true }); // fetch counter untouched
     });
     const promise = resolveMany(['1', '2', '3'].map((id) => game(id)), {
       concurrency: 1,
@@ -172,6 +178,27 @@ describe('resolveMany', () => {
     const out = await promise;
     expect(out.items).toHaveLength(3);
     expect(starts).toEqual([0, 0, 0]);
+  });
+
+  it('keeps the spacing when a concurrent fetch lands mid-resolution', async () => {
+    // Conservative attribution: the counter cannot tell whose fetch it
+    // was, so a resolution that overlaps any dispatched fetch pays its
+    // spacing even if it was itself cache-served.
+    const t0 = Date.now();
+    const starts: number[] = [];
+    steam.mockImplementation((appid) => {
+      starts.push(Date.now() - t0);
+      net.fetches++; // a neighbour's fetch lands while this game resolves
+      return Promise.resolve({ name: `N${appid}`, mac: true });
+    });
+    const promise = resolveMany(['1', '2'].map((id) => game(id)), {
+      concurrency: 1,
+      minSpacingMs: 1_500,
+    });
+    await vi.runAllTimersAsync();
+    const out = await promise;
+    expect(out.items).toHaveLength(2);
+    expect(starts).toEqual([0, 1_500]);
   });
 
   it('stops at an abort and reports the partial outcome honestly', async () => {
