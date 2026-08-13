@@ -10,10 +10,9 @@
 // with the games not yet done.
 import { agwLookup } from './agw';
 import { anticheatLookup } from './awacy';
-import { BreakerOpenError, steamDetails } from './client';
+import { BreakerOpenError, fetchCount, steamDetails } from './client';
 import {
   SCAN_BREAKER_WAIT_MS,
-  SCAN_CACHE_FAST_MS,
   SCAN_GAME_CONCURRENCY,
   SCAN_MAX_BREAKER_PAUSES,
   SCAN_MIN_GAME_SPACING_MS,
@@ -236,10 +235,13 @@ export async function resolveMany(
       if (wait > 0) await sleep(wait, signal);
       if (signal?.aborted) return;
 
-      const startedAt = Date.now();
+      const fetchesBefore = fetchCount();
       let out = await resolveOne(game, settings);
-      if (Date.now() - startedAt < SCAN_CACHE_FAST_MS) {
-        // Cache hit: hand the unused spacing slot back.
+      if (fetchCount() === fetchesBefore) {
+        // No fetch was dispatched anywhere during the resolution: the
+        // game was served from cache — hand the unused spacing slot
+        // back. A concurrent neighbour's fetch can only inflate the
+        // count, so attribution errs toward keeping the spacing.
         nextStartAt = Math.max(Date.now(), nextStartAt - spacing);
       }
 

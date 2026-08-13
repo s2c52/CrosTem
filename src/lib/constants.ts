@@ -117,10 +117,6 @@ export const SCAN_GAME_CONCURRENCY = 2;
  * keep Steam appdetails near 40 req/min and the CodeWeavers HTML
  * scraping well under 1 req/s across a ~1000-game scan. */
 export const SCAN_MIN_GAME_SPACING_MS = 1_500;
-/** A game resolved faster than this never left the local cache — no
- * network round-trip completes that fast — so it consumes no spacing;
- * warm rescans take seconds instead of half an hour. */
-export const SCAN_CACHE_FAST_MS = 250;
 /** Scan-wide pause after a BreakerOpenError before retrying that game.
  * Must exceed BREAKER_COOLDOWN_MS or the retry meets the same open
  * breaker it is waiting out. */
