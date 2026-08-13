@@ -90,6 +90,15 @@ export const CACHE_WRITE_COALESCE_MS = 150;
  * bounding both batch size and worst-case loss if the context dies. */
 export const CACHE_WRITE_FLUSH_MAX = 24;
 
+// --- Primed verdicts (primed.ts) ---
+/** Trailing debounce before a context flushes its primed-verdict delta
+ * (one read-merge-write per burst of resolutions). */
+export const PRIMED_FLUSH_MS = 2_000;
+/** Hard cap on primed index entries; past it the index resets to the
+ * flushing context's delta. ~13 bytes/entry, so the cap bounds the index
+ * near 260KB — small next to the 4MB cache soft limit. */
+export const PRIMED_INDEX_MAX = 20_000;
+
 // --- Options import (options.ts) ---
 /** Max matching-correction entries accepted from an imported JSON file.
  * A real corrections export holds at most a few dozen; a larger file is

@@ -8,6 +8,7 @@ import { MAX_IMPORT_ENTRIES, MAX_IMPORT_VALUE_LEN } from '../lib/constants';
 import { sanitizeChoiceImport } from '../lib/guards';
 import { applyI18n, currentLocale, initExtPageI18n, t } from '../lib/i18n';
 import { ctLogo } from '../lib/logo';
+import { PRIMED_INDEX_KEY } from '../lib/primed';
 import { getSettings, mergeSettings, saveSettings, type Settings } from '../lib/settings';
 import { LOCALE_NATIVE_NAMES } from '../lib/steam-lang';
 
@@ -155,7 +156,9 @@ async function main(): Promise<void> {
 
   $('clear-cache').addEventListener('click', () => {
     void (async () => {
-      await chrome.storage.local.remove(await storageKeys('cache:'));
+      // The primed-verdict index is derived state living outside the
+      // cache: prefix; clearing the cache is a full reset, so it goes too.
+      await chrome.storage.local.remove([...(await storageKeys('cache:')), PRIMED_INDEX_KEY]);
       await refreshCounts();
       flash(t('optCacheCleared'));
     })();

@@ -17,6 +17,13 @@ import { logDebug, logWarn } from './log';
 import { computeVerdict } from './verdict';
 import { getSettings } from './settings';
 import { renderBadge } from './badge';
+import {
+  codeForResult,
+  loadPrimedIndex,
+  notePrimed,
+  resultForCode,
+  type PrimedCode,
+} from './primed';
 import type {
   AutoAttachOpts,
   CwSignal,
@@ -25,6 +32,30 @@ import type {
 } from '../types';
 
 const registry = new WeakMap<Element, AutoAttachOpts>();
+
+// Primed paint: the persisted appid->code map arrives async; elements
+// attached before it lands wait in pendingPrime and get their synchronous
+// paint as soon as the load resolves (that covers the initial screenful,
+// the case priming exists for). No onChanged refresh: extension pages
+// resolve their own badges, so one load per page is enough.
+let primed: Map<string, PrimedCode> | null = null;
+const pendingPrime = new Map<HTMLElement, AutoAttachOpts>();
+
+void loadPrimedIndex().then((map) => {
+  primed = map;
+  for (const [el, opts] of pendingPrime) {
+    if (el.isConnected) primeBadge(el, opts);
+  }
+  pendingPrime.clear();
+});
+
+/** Paints the remembered verdict synchronously; the real resolution
+ * replaces it in place when it lands. */
+function primeBadge(el: HTMLElement, opts: AutoAttachOpts): void {
+  const code = opts.appid ? primed?.get(opts.appid) : undefined;
+  if (code === undefined) return;
+  renderBadge(el, resultForCode(code), opts);
+}
 
 const io = new IntersectionObserver(
   (entries) => {
@@ -44,6 +75,7 @@ const io = new IntersectionObserver(
 export function detach(el: Element): void {
   io.unobserve(el);
   registry.delete(el);
+  pendingPrime.delete(el as HTMLElement);
 }
 
 export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
@@ -51,7 +83,12 @@ export function attach(el: HTMLElement, opts: AutoAttachOpts): void {
     // Immediate provisional badge (5★ without architecture); the architecture
     // is resolved lazily via the observer if there are hints to query the sources.
     renderBadge(el, { kind: 'native', arch: null }, opts);
+    notePrimed(opts.appid, 'n');
     if (!opts.appid && !opts.name) return;
+  } else if (primed) {
+    primeBadge(el, opts);
+  } else {
+    pendingPrime.set(el, opts);
   }
   registry.set(el, opts);
   io.observe(el);
@@ -67,9 +104,11 @@ async function resolveAndRender(el: HTMLElement, opts: AutoAttachOpts): Promise<
     const onPartial = (partial: ResolveResult): void => renderBadge(el, partial, opts);
     const first = await resolve(opts, swr, onPartial);
     renderBadge(el, first, opts);
+    notePrimed(opts.appid, codeForResult(first));
     if (swr.staleServed) {
       const fresh = await resolve(opts);
       if (JSON.stringify(fresh) !== JSON.stringify(first)) renderBadge(el, fresh, opts);
+      notePrimed(opts.appid, codeForResult(fresh));
     }
   } catch (e) {
     logWarn('badge resolution failed', e);
