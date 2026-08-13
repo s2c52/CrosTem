@@ -83,6 +83,38 @@ describe('content/app.ts', () => {
     });
     expect(document.querySelector('#crostem-widget .crostem-skeleton')).toBeNull();
   });
+
+  it('apagar la superficie a mitad de resolución no repinta el contenedor suelto', async () => {
+    document.body.innerHTML = APP_HTML;
+    window.history.pushState({}, '', '/app/1245620/ELDEN_RING/');
+    // Park every worker fetch: callbacks are captured and only released
+    // after the surface is toggled off.
+    const parked: ((res: unknown) => void)[] = [];
+    await import('../src/content/app');
+    (chrome.runtime as unknown as { sendMessage: unknown }).sendMessage = (
+      _msg: unknown,
+      cb: (res: unknown) => void,
+    ) => {
+      parked.push(cb);
+    };
+    await vi.waitFor(() => {
+      expect(document.querySelector('#crostem-widget')?.textContent?.trim()).toBeTruthy();
+    });
+    const container = document.querySelector<HTMLElement>('#crostem-widget');
+    if (!container) throw new Error('widget not mounted');
+
+    mock.emitStorageChange({ settings: { newValue: { surfaces: { app: false } } } }, 'sync');
+    expect(container.isConnected).toBe(false);
+    expect(container.textContent).toBe('');
+
+    // Release the parked fetches: the retired resolution must not render
+    // into the detached container (neither results nor the error state).
+    for (let round = 0; round < 3; round++) {
+      for (const cb of parked.splice(0)) cb(BREAKER_OPEN);
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
+    expect(container.textContent).toBe('');
+  });
 });
 
 describe('content/wishlist.ts', () => {

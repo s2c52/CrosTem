@@ -179,6 +179,13 @@ function fixupHoverCards(): void {
  * Geometric suppression: hide any overlay that intersects a visible
  * hover-card region; the next pass restores it once the card closes.
  */
+// Signature of the last computed pass. While a card stays open the 150ms
+// ticks repeat with identical geometry; the signature (region count +
+// first region rect + scroll offsets) skips the O(overlays) rect reads
+// then. Scroll and resize change the signature by construction, so no
+// separate invalidation listeners are needed.
+let lastSuppressSig: string | null = null;
+
 function suppressCoveredOverlays(): void {
   const regionEls = [
     ...document.querySelectorAll<HTMLElement>(`${HOVER_CARD}, a[data-crostem-hover-hero='1']`),
@@ -187,6 +194,7 @@ function suppressCoveredOverlays(): void {
     // Fast path — no hover card anywhere (the overwhelmingly common case
     // for pointer movement): zero getBoundingClientRect calls, just
     // clear any leftover suppression from a card that closed.
+    lastSuppressSig = null;
     document
       .querySelectorAll('.' + SUPPRESSED_CLASS)
       .forEach((el) => el.classList.remove(SUPPRESSED_CLASS));
@@ -202,23 +210,55 @@ function suppressCoveredOverlays(): void {
     })
     .filter((r) => r.width > 120 && r.height > 100);
 
-  document.querySelectorAll<HTMLElement>('.crostem-overlay').forEach((overlay) => {
+  const first = regions[0];
+  const sig =
+    `${regions.length}:` +
+    (first ? `${first.left},${first.top},${first.width},${first.height}` : '') +
+    `:${window.scrollX},${window.scrollY}`;
+  if (sig === lastSuppressSig) return;
+  lastSuppressSig = sig;
+
+  // All reads first, then all writes: interleaving a class toggle between
+  // rect reads invalidates layout and forces one reflow per overlay.
+  const decisions: [HTMLElement, boolean][] = [
+    ...document.querySelectorAll<HTMLElement>('.crostem-overlay'),
+  ].map((overlay) => {
     const r = overlay.getBoundingClientRect();
     const covered =
       r.width > 0 &&
       regions.some(
         (c) => r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top,
       );
-    overlay.classList.toggle(SUPPRESSED_CLASS, covered);
+    return [overlay, covered];
   });
+  for (const [overlay, covered] of decisions) {
+    overlay.classList.toggle(SUPPRESSED_CLASS, covered);
+  }
+}
+
+// Any hover-card marker, for the fixup gate below.
+const HOVER_MARKERS = `${HOVER_CARD}, ${HOVER_CARD_PRICE}, ${HOVER_HERO_MARK}`;
+
+/** True when a flushed root touches hover-card markup: the root is card
+ * markup itself, contains some, or sits inside a card. Only those
+ * mutations can invalidate an existing overlay. */
+function touchesHoverCardMarkup(roots: readonly Element[]): boolean {
+  for (const root of roots) {
+    if (root.matches(HOVER_MARKERS)) return true;
+    if (root.querySelector(HOVER_MARKERS) !== null) return true;
+    if (root.closest(HOVER_CARD) !== null) return true;
+  }
+  return false;
 }
 
 /** roots = null means a full-document pass (initial scan / overflow). */
 function scan(roots: readonly Element[] | null): void {
-  // Hover-card fixup stays document-wide: it only walks our own
-  // overlays (DOM queries, no layout reads), and React hydration can
-  // mutate far from the overlay it invalidates.
-  fixupHoverCards();
+  // Hover-card fixup remains document-wide WHEN it runs (React hydration
+  // can mutate far from the overlay it invalidates), but ordinary flushes
+  // — carousel paging, lazy images — carry no card markup and skip the
+  // whole overlay walk. The gate is one DOM-query test per root, no
+  // layout reads.
+  if (roots === null || touchesHoverCardMarkup(roots)) fixupHoverCards();
   if (roots === null) {
     document.querySelectorAll<HTMLAnchorElement>(ANCHOR_SEL).forEach(processAnchor);
   } else {
@@ -266,6 +306,9 @@ const surface = {
     scanner.stop();
     document.removeEventListener('mouseover', scheduleSuppress);
     removeInjected();
+    // Recreated overlays start unsuppressed; a stale signature could
+    // wrongly skip the first pass after a restart.
+    lastSuppressSig = null;
   },
 };
 

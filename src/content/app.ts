@@ -10,6 +10,7 @@ import { type SwrPass } from '../lib/cache';
 import { appCacheKey, searchCacheKey, steamCacheKey } from '../lib/client';
 import { logDebug, logWarn } from '../lib/log';
 import { initContentI18n, t } from '../lib/i18n';
+import { codeForLevel, notePrimed } from '../lib/primed';
 import { resolveGame } from '../lib/resolve';
 import { getSettings } from '../lib/settings';
 import { watchSurface } from '../lib/surface';
@@ -34,6 +35,11 @@ if (appidFromPath && nameFromDom) {
 
   const container = document.createElement('div');
   container.id = 'crostem-widget';
+
+  // Mount generation. stop() bumps it; async work captures the value at
+  // entry and bails after every await, so a resolution that outlives a
+  // surface toggle never renders into the detached container.
+  let gen = 0;
 
   const mount = (): boolean => {
     const rightCol = document.querySelector('.game_meta_data');
@@ -61,6 +67,7 @@ if (appidFromPath && nameFromDom) {
     );
 
   const refresh = async (): Promise<void> => {
+    const myGen = gen;
     const savedSlug = await cache.getSourceChoice('cw', appid);
     const keys = [
       searchCacheKey(gameName),
@@ -70,7 +77,7 @@ if (appidFromPath && nameFromDom) {
     ];
     if (savedSlug) keys.push(appCacheKey(savedSlug));
     await cache.remove(...keys);
-    void resolveAll(false);
+    if (myGen === gen) void resolveAll(false);
   };
 
   const showCandidates = (candidates: RankedResult[]): void => {
@@ -106,7 +113,9 @@ if (appidFromPath && nameFromDom) {
     resolution: Awaited<ReturnType<typeof resolveGame>>,
     resolveAll: (forcePicker: boolean) => Promise<void>,
   ): Promise<void> => {
+    const myGen = gen;
     const settings = await getSettings();
+    if (myGen !== gen) return;
     const { cw, agw, agwCandidates, ac, verdict } = resolution;
 
     if (cw.kind === 'ambiguous') {
@@ -141,6 +150,7 @@ if (appidFromPath && nameFromDom) {
   };
 
   const resolveAll = async (forcePicker: boolean): Promise<void> => {
+    const myGen = gen;
     show(renderLoading());
     try {
       // Stale-while-revalidate: paint immediately from whatever the
@@ -150,14 +160,20 @@ if (appidFromPath && nameFromDom) {
       // picker: a background re-render must never yank it away.
       const swr: SwrPass = { staleServed: false };
       const first = await resolveGame(gameName, appid, { forcePicker, swr });
+      if (myGen !== gen) return;
       await renderResolution(first, resolveAll);
+      // Feed the primed index so list surfaces paint this game instantly.
+      notePrimed(appid, codeForLevel(first.verdict));
       if (swr.staleServed && first.cw.kind !== 'ambiguous') {
         const fresh = await resolveGame(gameName, appid, { forcePicker });
+        if (myGen !== gen) return;
         if (fresh.cw.kind !== 'ambiguous' && JSON.stringify(fresh) !== JSON.stringify(first)) {
           await renderResolution(fresh, resolveAll);
         }
+        notePrimed(appid, codeForLevel(fresh.verdict));
       }
     } catch (e) {
+      if (myGen !== gen) return; // the surface is gone; nothing to show
       // Friendly, localized message; the technical detail goes to the console.
       logDebug('widget resolution failed', e);
       show(renderError(t('errorFriendly'), () => void resolveAll(false)));
@@ -169,10 +185,12 @@ if (appidFromPath && nameFromDom) {
       if (!mount()) return;
       if (isNativeMac()) {
         // Immediate badge; the architecture (M Series / Intel) arrives async.
+        const myGen = gen;
+        notePrimed(appid, 'n');
         show(renderNativeBadge());
         void resolveNativeArch(gameName, appid)
           .then((arch) => {
-            if (arch) show(renderNativeBadge(arch));
+            if (arch && myGen === gen) show(renderNativeBadge(arch));
           })
           .catch((e: unknown) => logWarn('native arch resolution failed', e));
         return;
@@ -180,6 +198,7 @@ if (appidFromPath && nameFromDom) {
       void resolveAll(false);
     },
     stop(): void {
+      gen++; // retire in-flight resolutions before detaching
       container.remove();
       container.textContent = '';
     },

@@ -47,8 +47,15 @@ export function createIncrementalScanner(
       for (const node of mutation.addedNodes) {
         if (node.nodeType !== Node.ELEMENT_NODE) continue;
         const el = node as Element;
-        // Our own badges/overlays churn the DOM too; never rescan for them.
-        if (el.classList.contains('crostem-badge') || el.classList.contains('crostem-overlay')) {
+        // Our own UI churns the DOM too — and not just the top-level badge
+        // and overlay elements: renderBadge appends children INSIDE the
+        // badge on every render pass, and the tooltip rebuilds its content
+        // on every hover. A class check on the added node alone misses all
+        // of that, so each of our own paints re-armed the scanner it came
+        // from — and past MAX_PENDING_ROOTS that self-churn escalates to
+        // full-document scans. closest() covers the container and
+        // everything within it.
+        if (el.closest('.crostem-badge, .crostem-overlay, .crostem-tooltip') !== null) {
           continue;
         }
         relevant = true;

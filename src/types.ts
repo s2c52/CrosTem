@@ -89,7 +89,8 @@ export interface AutoAttachOpts {
   name?: string | null;
   /** true = native Mac; false = definitely not; undefined = unknown. */
   native?: boolean;
-  mode: 'overlay' | 'inline';
+  /** compact = dot-only, for rows too dense for the inline badge. */
+  mode: 'overlay' | 'inline' | 'compact';
 }
 
 // --- Additional sources (F2) ---

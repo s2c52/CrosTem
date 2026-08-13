@@ -81,6 +81,23 @@ export const CACHE_QUOTA_SOFT_BYTES = 4 * 1024 * 1024;
 export const CACHE_EVICT_TARGET_BYTES = 3 * 1024 * 1024;
 /** Minimum interval between maintenance runs (sweep + eviction). */
 export const CACHE_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+/** Write-coalescing window: cache.set entries scheduled within it land in
+ * ONE storage.local.set (one quota check, one change event) instead of
+ * 30-90 individual writes on a cold store page. Short enough that a
+ * cross-context reader lags well inside the SWR staleness contract. */
+export const CACHE_WRITE_COALESCE_MS = 150;
+/** Pending entries that force an early flush before the window closes,
+ * bounding both batch size and worst-case loss if the context dies. */
+export const CACHE_WRITE_FLUSH_MAX = 24;
+
+// --- Primed verdicts (primed.ts) ---
+/** Trailing debounce before a context flushes its primed-verdict delta
+ * (one read-merge-write per burst of resolutions). */
+export const PRIMED_FLUSH_MS = 2_000;
+/** Hard cap on primed index entries; past it the index resets to the
+ * flushing context's delta. ~13 bytes/entry, so the cap bounds the index
+ * near 260KB — small next to the 4MB cache soft limit. */
+export const PRIMED_INDEX_MAX = 20_000;
 
 // --- Options import (options.ts) ---
 /** Max matching-correction entries accepted from an imported JSON file.
@@ -90,6 +107,24 @@ export const MAX_IMPORT_ENTRIES = 5_000;
 /** Max length of a single imported choice value (a CodeWeavers slug or
  * AGW page name); longer values are dropped as malformed. */
 export const MAX_IMPORT_VALUE_LEN = 200;
+
+// --- Library scan (bulk.ts) ---
+/** Games resolved concurrently by a bulk scan. Each game fans out up to
+ * three source fetches, so two games keep the 4-lane fetch queue busy
+ * while leaving room for interactive badges resolving alongside. */
+export const SCAN_GAME_CONCURRENCY = 2;
+/** Floor between starts of two games that touch the network. Sized to
+ * keep Steam appdetails near 40 req/min and the CodeWeavers HTML
+ * scraping well under 1 req/s across a ~1000-game scan. */
+export const SCAN_MIN_GAME_SPACING_MS = 1_500;
+/** Scan-wide pause after a BreakerOpenError before retrying that game.
+ * Must exceed BREAKER_COOLDOWN_MS or the retry meets the same open
+ * breaker it is waiting out. */
+export const SCAN_BREAKER_WAIT_MS = BREAKER_COOLDOWN_MS + 30_000;
+/** Breaker pauses tolerated per scan. When an origin stays down, its
+ * breaker keeps reopening; after this many pauses the scan stops
+ * waiting and lets the affected games land in the error tally. */
+export const SCAN_MAX_BREAKER_PAUSES = 3;
 
 // --- UI / DOM scanning ---
 /** Coalescing window for MutationObserver-triggered rescans. */

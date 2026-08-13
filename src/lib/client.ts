@@ -62,6 +62,20 @@ function sendFetchMessage(url: string): Promise<string> {
 // reset the worker-side breaker.
 const failMemo = new Map<string, number>();
 
+// Context-wide count of fetches actually dispatched. bulk.ts snapshots
+// it around a resolution to learn whether the game touched the network —
+// replacing a wall-clock proxy that inverted under real conditions (a
+// fast CDN answer skipped the politeness spacing; warm cache reads on a
+// loaded machine paid it). Cooldown-memo early-throws and a locally-open
+// breaker do not count: nothing was dispatched. Attribution under
+// concurrency errs conservative — a neighbour's fetch keeps my spacing,
+// never skips it.
+let netFetches = 0;
+
+export function fetchCount(): number {
+  return netFetches;
+}
+
 /** Fetch of an external resource through the service worker (avoids CORS).
  * Retries once on transport failures: the worker may have just been
  * restarted by MV3 (its queue state is ephemeral by design). */
@@ -70,6 +84,7 @@ export async function fetchExt(url: string): Promise<string> {
   if (cooldownUntil !== undefined && Date.now() < cooldownUntil) {
     throw new Error('recently failed, cooling down: ' + url);
   }
+  netFetches++;
   try {
     let body: string;
     try {
@@ -110,6 +125,14 @@ export function steamCacheKey(appid: string): string {
   return 'steam:en:' + appid;
 }
 
+// One in-flight fetch+parse per cache key: on a cold page several
+// surfaces can miss on the same lookup at once, and each used to
+// download and parse the same HTML for itself. (The worker queue only
+// dedupes the HTTP request — every caller still received and parsed the
+// full body.) steamDetails already dedupes through its queue.
+const inflightSearches = new Map<string, Promise<CwSearchResult[]>>();
+const inflightApps = new Map<string, Promise<CwAppPage | null>>();
+
 /** Searches CodeWeavers by (simplified) game name. */
 export async function search(name: string, swr?: cache.SwrPass): Promise<CwSearchResult[]> {
   const query = baseName(name);
@@ -118,14 +141,21 @@ export async function search(name: string, swr?: cache.SwrPass): Promise<CwSearc
   const cached = await cache.getSwr<CwSearchResult[]>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
-  const html = await fetchExt(searchUrl(query));
-  const results = parseSearchResults(html);
-  await cache.set(
-    cacheKey,
-    results,
-    results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult(),
-  );
-  return results;
+  let flight = inflightSearches.get(cacheKey);
+  if (!flight) {
+    flight = (async () => {
+      const html = await fetchExt(searchUrl(query));
+      const results = parseSearchResults(html);
+      await cache.set(
+        cacheKey,
+        results,
+        results.length === 0 ? cache.TTL_NEGATIVE : await cache.ttlResult(),
+      );
+      return results;
+    })().finally(() => inflightSearches.delete(cacheKey));
+    inflightSearches.set(cacheKey, flight);
+  }
+  return flight;
 }
 
 /** Downloads and parses a CodeWeavers app page by slug. */
@@ -134,10 +164,17 @@ export async function getApp(slug: string, swr?: cache.SwrPass): Promise<CwAppPa
   const cached = await cache.getSwr<CwAppPage | null>(cacheKey, swr);
   if (cached !== undefined) return cached;
 
-  const html = await fetchExt(appUrl(slug));
-  const data = parseAppPage(html);
-  await cache.set(cacheKey, data, data ? await cache.ttlResult() : cache.TTL_NEGATIVE);
-  return data;
+  let flight = inflightApps.get(cacheKey);
+  if (!flight) {
+    flight = (async () => {
+      const html = await fetchExt(appUrl(slug));
+      const data = parseAppPage(html);
+      await cache.set(cacheKey, data, data ? await cache.ttlResult() : cache.TTL_NEGATIVE);
+      return data;
+    })().finally(() => inflightApps.delete(cacheKey));
+    inflightApps.set(cacheKey, flight);
+  }
+  return flight;
 }
 
 // --- Steam appdetails ---
@@ -205,6 +242,7 @@ async function fetchSteamBody(url: string): Promise<string> {
   if (!steamBreaker.allow(STEAM_ORIGIN)) {
     throw new Error('steam appdetails circuit open');
   }
+  netFetches++;
   const out = await fetchWithPolicy(url, {
     timeoutMs: sourceTimeoutMs(url),
     credentials: 'same-origin',

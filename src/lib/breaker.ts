@@ -9,7 +9,7 @@
 // breaker re-learns; that trade-off is deliberate ("simple breaker").
 // No half-open probe: after the cooldown the counter restarts from zero,
 // so a still-down origin takes another full round of failures to re-open.
-// Acceptable at MAX_CONCURRENT_FETCHES = 2.
+// Acceptable at MAX_CONCURRENT_FETCHES = 4.
 import { BREAKER_COOLDOWN_MS, BREAKER_FAILURES } from './constants';
 
 export interface Breaker {
