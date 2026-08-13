@@ -54,13 +54,7 @@ async function storedUiLang(): Promise<string | null> {
   }
 }
 
-/**
- * Resolve the locale and load its dictionary; call (and await) once per
- * entry point before the first render. Content scripts pass the detected
- * page locale; extension pages (popup/options/onboarding) omit it and get
- * the last language seen on Steam, falling back to the browser language.
- */
-export async function initI18n(lang?: string): Promise<void> {
+async function initI18nFresh(lang?: string): Promise<void> {
   const code =
     normalizeToSupported(lang) ??
     normalizeToSupported(await storedUiLang()) ??
@@ -73,6 +67,32 @@ export async function initI18n(lang?: string): Promise<void> {
   }
   locale = 'en';
   if (code !== 'en') dict = await loadDict('en');
+}
+
+let inflightInit: { key: string | undefined; promise: Promise<void> } | null = null;
+
+/**
+ * Resolve the locale and load its dictionary; call (and await) once per
+ * entry point before the first render. Content scripts pass the detected
+ * page locale; extension pages (popup/options/onboarding) omit it and get
+ * the last language seen on Steam, falling back to the browser language.
+ *
+ * Concurrent same-language calls share one fetch+compile: co-mounted
+ * content scripts (capsules alongside app/search — module state is shared
+ * via common chunks) each init i18n in the same injection burst. Settled
+ * calls are deliberately not memoized — a later call may legitimately
+ * resolve differently (the stored-uiLang cascade, an options re-init).
+ */
+export function initI18n(lang?: string): Promise<void> {
+  if (inflightInit && inflightInit.key === lang) return inflightInit.promise;
+  const entry = {
+    key: lang,
+    promise: initI18nFresh(lang).finally(() => {
+      if (inflightInit === entry) inflightInit = null;
+    }),
+  };
+  inflightInit = entry;
+  return entry.promise;
 }
 
 /** Locale the dictionary was loaded for (for document.documentElement.lang). */
